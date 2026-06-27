@@ -24,6 +24,7 @@
 
 <footer id="site-footer"></footer>
 
+<script src="product.js"></script>
 <script src="app.js"></script>
 <script>
 let pdQty = 1;
@@ -45,7 +46,7 @@ function initPage(){
   document.title = p.name + " — My Health";
   const off = Math.round((1 - p.price/p.oldPrice) * 100);
   const save = p.oldPrice - p.price;
-  const img = p.img ? `<img src="${p.img}" alt="${p.name}">` : p.emoji;
+  const img = imgHTML(p, p.name);
 
   wrap.innerHTML = `
   <div class="crumb"><a href="index.html">Home</a><span>›</span>

@@ -68,6 +68,7 @@
 
 <footer id="site-footer"></footer>
 
+<script src="product.js"></script>
 <script src="app.js"></script>
 <script>
 /* ---- BD divisions → districts (subset; pore full list add korte parba) ---- */
@@ -127,7 +128,7 @@ function renderSummary(){
   const {sub} = cartTotals();
   document.getElementById('sumItems').innerHTML = Object.keys(cart).map(id=>{
     const p=findP(id); if(!p) return ""; const q=cart[id];
-    const img = p.img ? `<img src="${p.img}" alt="">` : p.emoji;
+    const img = imgHTML(p);
     return `<div class="sum-item">
       <div class="si-img">${img}</div>
       <div style="flex:1; min-width:0"><div class="nm">${p.name}</div><div class="qp">${money(p.price)} × ${q}</div></div>

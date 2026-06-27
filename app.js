@@ -41,139 +41,9 @@ const GOALS = [
           oldPrice, price, tags[], brand, size,
           desc, benefits[], use{dose,when,duration}
 ------------------------------------------------------------------------- */
-const PRODUCTS = [
-  { id:1, name:"Whey Protein Isolate 2kg — Chocolate", goal:"muscle", emoji:"🥤", timing:"postworkout",
-    rating:4.8, reviews:412, oldPrice:5200, price:3400, tags:["flash","best"], brand:"NutriPro", size:"2 kg · 66 servings",
-    desc:"Fast-absorbing 100% whey isolate with 27g protein per scoop. Low in carbs and sugar — ideal for lean muscle building and post-workout recovery.",
-    benefits:["27g protein per serving","Supports muscle recovery & growth","Low carb, low sugar","Mixes easily, no clumps"],
-    use:{dose:"1 scoop (30g) with 250ml water/milk", when:"Within 30 min after workout", duration:"Daily"} },
-
-  { id:2, name:"Vitamin C 1000mg with Zinc, 60 Tablets", goal:"immunity", emoji:"🍊", timing:"morning",
-    rating:4.7, reviews:289, oldPrice:850, price:599, tags:["best"], brand:"VitaLife", size:"60 tablets",
-    desc:"High-strength Vitamin C with Zinc to support your immune system, skin health and natural defense — especially during seasonal changes.",
-    benefits:["Boosts immune defense","Antioxidant support","Zinc for faster recovery","One-a-day dosing"],
-    use:{dose:"1 tablet daily", when:"After breakfast", duration:"Ongoing"} },
-
-  { id:3, name:"Omega-3 Fish Oil 1000mg, 120 Softgels", goal:"brain", emoji:"🐟", timing:"anytime",
-    rating:4.9, reviews:531, oldPrice:1800, price:1290, tags:["best","flash"], brand:"OceanPure", size:"120 softgels",
-    desc:"Premium fish oil rich in EPA & DHA for heart, brain and joint health. Molecularly distilled for purity, no fishy aftertaste.",
-    benefits:["Supports heart & brain","EPA + DHA omega-3","Joint & eye health","Purified, no fishy burp"],
-    use:{dose:"1–2 softgels daily", when:"With a meal", duration:"Ongoing"} },
-
-  { id:4, name:"Magnesium Glycinate 400mg, 90 Capsules", goal:"sleep", emoji:"🌿", timing:"night",
-    rating:4.6, reviews:174, oldPrice:1400, price:990, tags:["new"], brand:"CalmWell", size:"90 capsules",
-    desc:"Highly absorbable magnesium glycinate to relax muscles, ease stress and promote deeper, more restful sleep.",
-    benefits:["Promotes relaxation & sleep","Eases muscle cramps","Gentle on stomach","Supports nervous system"],
-    use:{dose:"2 capsules", when:"30–60 min before bed", duration:"Daily"} },
-
-  { id:5, name:"BCAA 2:1:1 Energy Powder — Mango, 30 Serv", goal:"muscle", emoji:"🥭", timing:"postworkout",
-    rating:4.5, reviews:98, oldPrice:2200, price:1650, tags:["flash"], brand:"NutriPro", size:"300g · 30 servings",
-    desc:"Branched-chain amino acids in the ideal 2:1:1 ratio to reduce muscle breakdown, fight fatigue and speed up recovery.",
-    benefits:["Reduces muscle fatigue","Faster recovery","Refreshing mango flavor","Sugar-free"],
-    use:{dose:"1 scoop with 300ml water", when:"During / after workout", duration:"Training days"} },
-
-  { id:6, name:"Vitamin D3 2000 IU, 120 Softgels", goal:"bones", emoji:"☀️", timing:"morning",
-    rating:4.8, reviews:362, oldPrice:900, price:650, tags:["best"], brand:"VitaLife", size:"120 softgels",
-    desc:"Sunshine vitamin for strong bones, immunity and mood. Essential for anyone with limited sun exposure.",
-    benefits:["Strengthens bones & teeth","Supports immunity","Improves mood","Aids calcium absorption"],
-    use:{dose:"1 softgel daily", when:"With a meal", duration:"Ongoing"} },
-
-  { id:7, name:"Ashwagandha KSM-66 600mg, 90 Caps", goal:"sleep", emoji:"🌱", timing:"night",
-    rating:4.7, reviews:245, oldPrice:1600, price:1150, tags:["best","new"], brand:"HerbRoot", size:"90 capsules",
-    desc:"Clinically-studied KSM-66 ashwagandha to lower stress, improve sleep quality and support energy & focus.",
-    benefits:["Reduces stress & anxiety","Improves sleep quality","Supports stamina","Adaptogenic herb"],
-    use:{dose:"1 capsule", when:"After dinner", duration:"Daily for 8+ weeks"} },
-
-  { id:8, name:"Multivitamin for Men, 60 Tablets", goal:"energy", emoji:"💊", timing:"morning",
-    rating:4.6, reviews:201, oldPrice:1200, price:849, tags:[], brand:"VitaLife", size:"60 tablets",
-    desc:"Complete daily multivitamin with 24 essential vitamins and minerals to fill nutritional gaps and support all-day energy.",
-    benefits:["24 vitamins & minerals","All-day energy support","Immunity & metabolism","Convenient one-a-day"],
-    use:{dose:"1 tablet daily", when:"After breakfast", duration:"Ongoing"} },
-
-  { id:9, name:"Biotin 10000mcg Hair & Skin, 60 Caps", goal:"skin", emoji:"✨", timing:"anytime",
-    rating:4.5, reviews:156, oldPrice:1100, price:799, tags:["new"], brand:"GlowLab", size:"60 capsules",
-    desc:"High-potency biotin to strengthen hair, support nail growth and promote healthy, glowing skin.",
-    benefits:["Stronger hair & nails","Healthy glowing skin","Reduces hair fall","High 10000mcg dose"],
-    use:{dose:"1 capsule daily", when:"With a meal", duration:"3+ months for best results"} },
-
-  { id:10, name:"Vitamin B-Complex, 100 Tablets", goal:"energy", emoji:"⚡", timing:"morning",
-    rating:4.7, reviews:188, oldPrice:700, price:520, tags:["flash"], brand:"VitaLife", size:"100 tablets",
-    desc:"All 8 B vitamins in one tablet to convert food into energy, support brain function and reduce tiredness.",
-    benefits:["Fights fatigue","Supports metabolism","Healthy nervous system","All 8 B-vitamins"],
-    use:{dose:"1 tablet daily", when:"After breakfast", duration:"Ongoing"} },
-
-  { id:11, name:"Calcium + Magnesium + Zinc, 90 Tabs", goal:"bones", emoji:"🦴", timing:"anytime",
-    rating:4.6, reviews:142, oldPrice:950, price:699, tags:[], brand:"BoneStrong", size:"90 tablets",
-    desc:"Triple-mineral formula for strong bones, muscle function and recovery — perfect for active adults and seniors.",
-    benefits:["Strong bones & joints","Muscle function","Better mineral absorption","3-in-1 formula"],
-    use:{dose:"1 tablet", when:"After dinner", duration:"Ongoing"} },
-
-  { id:12, name:"L-Carnitine Fat Burner 500mg, 60 Caps", goal:"weight", emoji:"🔥", timing:"morning",
-    rating:4.4, reviews:87, oldPrice:1500, price:1099, tags:["flash"], brand:"LeanFit", size:"60 capsules",
-    desc:"Helps your body turn fat into energy. Great alongside exercise for weight management and workout performance.",
-    benefits:["Supports fat metabolism","Boosts workout energy","Stimulant-free","Vegetarian capsule"],
-    use:{dose:"1 capsule", when:"30 min before workout", duration:"Training days"} },
-
-  { id:13, name:"Creatine Monohydrate 300g Micronized", goal:"muscle", emoji:"💪", timing:"postworkout",
-    rating:4.9, reviews:476, oldPrice:1800, price:1290, tags:["best"], brand:"NutriPro", size:"300g · 60 servings",
-    desc:"The most researched supplement for strength and power. Micronized for easy mixing — increases muscle volume and performance.",
-    benefits:["More strength & power","Increases muscle volume","100% pure creatine","Unflavored, mixes easily"],
-    use:{dose:"5g (1 scoop) with water/juice", when:"Post-workout or anytime", duration:"Daily"} },
-
-  { id:14, name:"Elderberry + Vitamin C Immune Gummies", goal:"immunity", emoji:"🫐", timing:"anytime",
-    rating:4.7, reviews:233, oldPrice:1300, price:950, tags:["new"], brand:"VitaLife", size:"60 gummies",
-    desc:"Delicious elderberry gummies packed with Vitamin C and Zinc — immune support the whole family will enjoy.",
-    benefits:["Tasty immune support","Elderberry + Vit C + Zinc","Great for kids & adults","No artificial colors"],
-    use:{dose:"2 gummies daily", when:"Anytime", duration:"Ongoing"} },
-
-  { id:15, name:"Green Tea Extract 500mg, 90 Caps", goal:"weight", emoji:"🍵", timing:"morning",
-    rating:4.5, reviews:119, oldPrice:850, price:620, tags:[], brand:"HerbRoot", size:"90 capsules",
-    desc:"Concentrated green tea extract rich in EGCG antioxidants to support metabolism and natural fat burning.",
-    benefits:["Supports metabolism","Rich in antioxidants","Natural energy","Supports fat loss"],
-    use:{dose:"1 capsule", when:"Before meals", duration:"Daily"} },
-
-  { id:16, name:"Collagen Peptides Powder 250g", goal:"skin", emoji:"🌸", timing:"anytime",
-    rating:4.8, reviews:301, oldPrice:2400, price:1790, tags:["best","flash"], brand:"GlowLab", size:"250g · 25 servings",
-    desc:"Hydrolyzed collagen peptides for youthful skin, stronger hair & nails, and healthy joints. Unflavored — mix into anything.",
-    benefits:["Smoother, firmer skin","Stronger hair & nails","Joint support","Dissolves clear, tasteless"],
-    use:{dose:"1 scoop (10g)", when:"In coffee, water or smoothie", duration:"Daily for 8+ weeks"} },
-
-  { id:17, name:"Probiotic 50 Billion CFU, 60 Caps", goal:"immunity", emoji:"🦠", timing:"morning",
-    rating:4.6, reviews:167, oldPrice:1900, price:1450, tags:["new"], brand:"GutWell", size:"60 capsules",
-    desc:"50 billion CFU across 12 strains to balance gut flora, improve digestion and strengthen immunity.",
-    benefits:["Better digestion","Gut & immune health","12 probiotic strains","Reduces bloating"],
-    use:{dose:"1 capsule daily", when:"Empty stomach, morning", duration:"Ongoing"} },
-
-  { id:18, name:"Pre-Workout Energy — Blue Raspberry, 30 Serv", goal:"energy", emoji:"🚀", timing:"postworkout",
-    rating:4.7, reviews:214, oldPrice:2500, price:1850, tags:["flash"], brand:"NutriPro", size:"300g · 30 servings",
-    desc:"Explosive energy, focus and pumps. Caffeine, beta-alanine and citrulline to power through your hardest sessions.",
-    benefits:["Intense energy & focus","Better pumps","Delays fatigue","Refreshing flavor"],
-    use:{dose:"1 scoop with 300ml water", when:"20 min before workout", duration:"Training days"} },
-
-  { id:19, name:"Mass Gainer 3kg — Banana", goal:"muscle", emoji:"🍌", timing:"postworkout",
-    rating:4.5, reviews:132, oldPrice:4500, price:3200, tags:[], brand:"NutriPro", size:"3 kg",
-    desc:"High-calorie gainer with protein and complex carbs to help hard-gainers build size and strength.",
-    benefits:["High calories for bulking","Protein + carbs blend","Supports weight gain","Great taste"],
-    use:{dose:"2 scoops with 400ml milk", when:"After workout / between meals", duration:"Daily"} },
-
-  { id:20, name:"Melatonin 5mg Sleep Aid, 100 Tablets", goal:"sleep", emoji:"😴", timing:"night",
-    rating:4.6, reviews:178, oldPrice:600, price:430, tags:["best"], brand:"CalmWell", size:"100 tablets",
-    desc:"Helps you fall asleep faster and reset your sleep cycle — perfect for jet lag or irregular schedules.",
-    benefits:["Fall asleep faster","Resets sleep cycle","Non-habit forming","Wake refreshed"],
-    use:{dose:"1 tablet", when:"30 min before bed", duration:"As needed"} },
-
-  { id:21, name:"Lion's Mane Mushroom 1000mg, 60 Caps", goal:"brain", emoji:"🍄", timing:"morning",
-    rating:4.7, reviews:96, oldPrice:1700, price:1280, tags:["new"], brand:"HerbRoot", size:"60 capsules",
-    desc:"Nootropic mushroom traditionally used to support memory, focus and mental clarity.",
-    benefits:["Supports memory & focus","Mental clarity","Nervous system support","Natural nootropic"],
-    use:{dose:"1 capsule", when:"With breakfast", duration:"Daily"} },
-
-  { id:22, name:"Iron + Folic Acid for Women, 60 Tablets", goal:"energy", emoji:"🩸", timing:"morning",
-    rating:4.5, reviews:143, oldPrice:550, price:399, tags:[], brand:"VitaLife", size:"60 tablets",
-    desc:"Gentle iron with folic acid to fight tiredness and support healthy blood — formulated for women's needs.",
-    benefits:["Fights fatigue & anemia","Gentle on stomach","With folic acid","Supports energy"],
-    use:{dose:"1 tablet daily", when:"After a meal", duration:"As advised"} },
-];
+/* ---------------- PRODUCTS ----------------
+   Product list ekhon ALADA file e: product.js  (HTML e app.js er age load hoy)
+------------------------------------------------------------------------- */
 
 /* =========================================================================
    HELPERS
@@ -185,6 +55,19 @@ const goalLabel = id => (goalObj(id)?.label) || id;
 const stars   = r => "★".repeat(Math.round(r)) + "☆".repeat(5 - Math.round(r));
 const TIMING  = { morning:"🌅 Morning", postworkout:"💪 Post-workout", night:"🌙 Before bed", anytime:"⏱️ Anytime" };
 const param   = key => new URLSearchParams(location.search).get(key);
+
+/* image load fail korle giant alt-text na dekhiye emoji dekhabe */
+function imgFallback(el, emoji){
+  const s = document.createElement('span');
+  s.className = 'img-emoji';
+  s.textContent = emoji || '💊';
+  el.replaceWith(s);
+}
+function imgHTML(p, alt){
+  return p.img
+    ? `<img src="${p.img}" alt="${alt||''}" loading="lazy" onerror="imgFallback(this,'${p.emoji||''}')">`
+    : (p.emoji || '💊');
+}
 
 /* =========================================================================
    CART (localStorage — sob page e share kore)
@@ -236,7 +119,7 @@ function refreshAddButtons(){
 function productCard(p){
   const off = Math.round((1 - p.price/p.oldPrice) * 100);
   const q = cart[p.id];
-  const img = p.img ? `<img src="${p.img}" alt="${p.name}">` : p.emoji;
+  const img = imgHTML(p, p.name);
   return `
   <article class="card">
     <div class="card-img">
@@ -420,7 +303,7 @@ function updateWishUI(){
   }
   body.innerHTML = ids.map(id=>{
     const p=findP(id); if(!p) return "";
-    const img = p.img ? `<img src="${p.img}" alt="">` : p.emoji;
+    const img = imgHTML(p);
     return `<div class="cart-item">
       <a class="ci-img" href="product.html?id=${p.id}">${img}</a>
       <div class="ci-info">
@@ -449,7 +332,7 @@ function updateCartUI(){
   if(foot) foot.style.display = "block";
   body.innerHTML = Object.keys(cart).map(id=>{
     const p=findP(id); if(!p) return ""; const q=cart[id];
-    const img = p.img ? `<img src="${p.img}" alt="">` : p.emoji;
+    const img = imgHTML(p);
     return `<div class="cart-item">
       <div class="ci-img">${img}</div>
       <div class="ci-info">
