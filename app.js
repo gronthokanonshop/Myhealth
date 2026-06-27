@@ -277,6 +277,9 @@ function buildHeader(){
   </div>
   <header class="site">
     <div class="wrap head-main">
+      <button class="menu-toggle" onclick="openMenu()" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
       <a class="logo" href="index.html">
         <span class="mark"></span>
         <span>${CONFIG.brand}<small>${CONFIG.tagline}</small></span>
@@ -354,6 +357,34 @@ function buildDrawer(){
   <div class="toast" id="toast"></div>`;
 }
 
+function buildMenu(){
+  return `
+  <div class="overlay" id="menuOverlay" onclick="closeMenu()"></div>
+  <aside class="menu-drawer" id="menuDrawer" aria-label="Main menu">
+    <div class="menu-head">
+      <a class="logo" href="index.html"><span class="mark"></span><span>${CONFIG.brand}<small>${CONFIG.tagline}</small></span></a>
+      <button onclick="closeMenu()" aria-label="Close">×</button>
+    </div>
+    <nav class="menu-nav">
+      <a href="index.html">🏠 Home</a>
+      <a href="category.html?goal=all">🛒 All Supplements</a>
+      <a class="menu-flash" href="category.html?goal=all">⚡ Flash Sale</a>
+      <div class="menu-label">Shop by Goal</div>
+      ${GOALS.map(g=>`<a href="category.html?goal=${g.id}">${g.emoji} ${g.label}</a>`).join('')}
+      <div class="menu-label">Help</div>
+      <a href="#">📦 Track Order</a>
+      <a href="#">🚚 Delivery Info</a>
+      <a href="#">ℹ️ About Us</a>
+      <a href="#">📞 Contact</a>
+    </nav>
+    <div class="menu-foot">
+      <a class="btn btn-green" href="tel:${CONFIG.hotline}">📞 Call ${CONFIG.hotline}</a>
+    </div>
+  </aside>`;
+}
+function openMenu(){ document.getElementById('menuDrawer')?.classList.add('open'); document.getElementById('menuOverlay')?.classList.add('open'); }
+function closeMenu(){ document.getElementById('menuDrawer')?.classList.remove('open'); document.getElementById('menuOverlay')?.classList.remove('open'); }
+
 function updateCartUI(){
   const {count, sub, delivery, total} = cartTotals();
   const badge = document.getElementById('cartBadge'); if(badge) badge.textContent = count;
@@ -403,6 +434,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const h = document.getElementById('site-header'); if(h) h.innerHTML = buildHeader();
   const f = document.getElementById('site-footer'); if(f) f.innerHTML = buildFooter();
   document.body.insertAdjacentHTML('beforeend', buildDrawer());
+  document.body.insertAdjacentHTML('beforeend', buildMenu());
   updateCartUI();
   if(typeof initPage === 'function') initPage();
 });
