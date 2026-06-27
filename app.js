@@ -190,10 +190,12 @@ const param   = key => new URLSearchParams(location.search).get(key);
    CART (localStorage — sob page e share kore)
    ========================================================================= */
 let cart = loadCart();
-let wishlist = new Set();
+let wishlist = loadWishlist();
 
 function loadCart(){ try{ return JSON.parse(localStorage.getItem(CONFIG.storageKey)) || {}; }catch(e){ return {}; } }
 function saveCart(){ try{ localStorage.setItem(CONFIG.storageKey, JSON.stringify(cart)); }catch(e){} }
+function loadWishlist(){ try{ return new Set(JSON.parse(localStorage.getItem('myhealth_wishlist')) || []); }catch(e){ return new Set(); } }
+function saveWishlist(){ try{ localStorage.setItem('myhealth_wishlist', JSON.stringify([...wishlist])); }catch(e){} }
 
 function addToCart(id, qty){
   id = Number(id); qty = qty || 1;
@@ -239,7 +241,7 @@ function productCard(p){
   <article class="card">
     <div class="card-img">
       ${off>0 ? `<span class="disc">${off}% OFF</span>` : ""}
-      <button class="wish" data-wish="${p.id}" onclick="toggleWish(${p.id},this)" aria-label="Wishlist">♥</button>
+      <button class="wish ${wishlist.has(p.id)?'on':''}" data-wish="${p.id}" onclick="toggleWish(${p.id},this)" aria-label="Wishlist">♥</button>
       <a href="product.html?id=${p.id}">${img}</a>
       <span class="timing">${TIMING[p.timing]||TIMING.anytime}</span>
     </div>
@@ -259,10 +261,20 @@ function productCard(p){
 }
 
 function toggleWish(id, el){
+  id = Number(id);
   wishlist.has(id) ? wishlist.delete(id) : wishlist.add(id);
-  if(el) el.classList.toggle('on', wishlist.has(id));
+  saveWishlist();
+  refreshWishHearts();
+  updateWishUI();
   toast(wishlist.has(id) ? "Added to wishlist ♥" : "Removed from wishlist");
 }
+function refreshWishHearts(){
+  document.querySelectorAll('[data-wish]').forEach(el=>{
+    el.classList.toggle('on', wishlist.has(Number(el.dataset.wish)));
+  });
+}
+function moveToCart(id){ addToCart(id); wishlist.delete(Number(id)); saveWishlist(); refreshWishHearts(); updateWishUI(); }
+function removeWish(id){ wishlist.delete(Number(id)); saveWishlist(); refreshWishHearts(); updateWishUI(); }
 
 /* =========================================================================
    SHARED CHROME — header + cart drawer + toast (inject into every page)
@@ -277,9 +289,6 @@ function buildHeader(){
   </div>
   <header class="site">
     <div class="wrap head-main">
-      <button class="menu-toggle" onclick="openMenu()" aria-label="Open menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-      </button>
       <a class="logo" href="index.html">
         <span class="mark"></span>
         <span>${CONFIG.brand}<small>${CONFIG.tagline}</small></span>
@@ -290,10 +299,17 @@ function buildHeader(){
           onkeydown="if(event.key==='Enter') goSearch(this.value)" />
       </div>
       <div class="head-actions">
+        <button class="iconbtn" onclick="openMenu()" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Menu
+        </button>
         <a class="iconbtn" href="#">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Account
         </a>
-        <button class="iconbtn" onclick="openCart()">
+        <button class="iconbtn" onclick="openWish()" aria-label="Wishlist">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.6-9.3-9C1 8.5 2.5 5.5 5.5 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3 0 4.5 3 2.8 6.5C19 16.4 12 21 12 21z"/></svg>
+          Wishlist<span class="badge" id="wishBadge">0</span>
+        </button>
+        <button class="iconbtn" onclick="openCart()" aria-label="Cart">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M6 6 5 3H2"/></svg>
           Cart<span class="badge" id="cartBadge">0</span>
         </button>
@@ -385,6 +401,40 @@ function buildMenu(){
 function openMenu(){ document.getElementById('menuDrawer')?.classList.add('open'); document.getElementById('menuOverlay')?.classList.add('open'); }
 function closeMenu(){ document.getElementById('menuDrawer')?.classList.remove('open'); document.getElementById('menuOverlay')?.classList.remove('open'); }
 
+function buildWishDrawer(){
+  return `
+  <div class="overlay" id="wishOverlay" onclick="closeWish()"></div>
+  <aside class="drawer" id="wishDrawer" aria-label="Wishlist">
+    <div class="drawer-head"><h3>Wishlist (<span id="wishCount">0</span>)</h3><button onclick="closeWish()" aria-label="Close">×</button></div>
+    <div class="drawer-body" id="wishBody"></div>
+  </aside>`;
+}
+function updateWishUI(){
+  const ids = [...wishlist];
+  const wb = document.getElementById('wishBadge'); if(wb) wb.textContent = ids.length;
+  const wc = document.getElementById('wishCount'); if(wc) wc.textContent = ids.length;
+  const body = document.getElementById('wishBody'); if(!body) return;
+  if(ids.length===0){
+    body.innerHTML = `<div class="cart-empty"><div class="ce">♡</div>Your wishlist is empty.<br><small>Tap the ♥ on any product to save it here.</small></div>`;
+    return;
+  }
+  body.innerHTML = ids.map(id=>{
+    const p=findP(id); if(!p) return "";
+    const img = p.img ? `<img src="${p.img}" alt="">` : p.emoji;
+    return `<div class="cart-item">
+      <a class="ci-img" href="product.html?id=${p.id}">${img}</a>
+      <div class="ci-info">
+        <a href="product.html?id=${p.id}" class="nm" style="display:block">${p.name}</a>
+        <div class="pr">${money(p.price)}</div>
+        <button class="wish-add" onclick="moveToCart(${p.id})">＋ Add to cart</button>
+      </div>
+      <button class="ci-remove" onclick="removeWish(${p.id})" aria-label="Remove">🗑</button>
+    </div>`;
+  }).join('');
+}
+function openWish(){ updateWishUI(); document.getElementById('wishDrawer')?.classList.add('open'); document.getElementById('wishOverlay')?.classList.add('open'); }
+function closeWish(){ document.getElementById('wishDrawer')?.classList.remove('open'); document.getElementById('wishOverlay')?.classList.remove('open'); }
+
 function updateCartUI(){
   const {count, sub, delivery, total} = cartTotals();
   const badge = document.getElementById('cartBadge'); if(badge) badge.textContent = count;
@@ -435,6 +485,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const f = document.getElementById('site-footer'); if(f) f.innerHTML = buildFooter();
   document.body.insertAdjacentHTML('beforeend', buildDrawer());
   document.body.insertAdjacentHTML('beforeend', buildMenu());
+  document.body.insertAdjacentHTML('beforeend', buildWishDrawer());
   updateCartUI();
+  updateWishUI();
   if(typeof initPage === 'function') initPage();
 });
