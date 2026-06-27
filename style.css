@@ -383,11 +383,26 @@ footer ul a:hover{ color:var(--lime); }
   .goals{ grid-template-columns:repeat(3,1fr); } .foot-grid{ grid-template-columns:1fr 1fr; }
 }
 @media (max-width:620px){
-  .head-main{ height:auto; gap:8px; flex-wrap:wrap; padding:10px 0; }
-  .head-actions{ gap:0; }
-  .iconbtn{ padding:7px 8px; font-size:10px; gap:3px; }
-  .iconbtn svg{ width:22px; height:22px; }
+  /* ---- header: logo + all icons in ONE row, search below ---- */
+  .head-main{ height:auto; gap:6px; flex-wrap:wrap; padding:9px 0; align-items:center; }
+  .logo{ font-size:18px; gap:7px; }
+  .logo .mark{ width:32px; height:32px; font-size:16px; }
+  .logo small{ display:none; }                 /* hide subtitle on mobile */
+  .head-actions{ gap:1px; margin-left:auto; }
+  .iconbtn{ padding:6px 5px; font-size:0; gap:0; }   /* icon-only */
+  .iconbtn svg{ width:23px; height:23px; }
+  .badge{ top:0; right:0; min-width:16px; height:16px; font-size:10px; }
   .search{ order:3; flex-basis:100%; max-width:none; }
+  .search input{ height:42px; }
+  .catnav .wrap{ padding:8px 14px; }
+
+  /* ---- hero ---- */
+  .hero{ padding:18px 0 4px; }
+  .hero-main{ padding:26px 22px; }
+  .hero-side{ gap:12px; }
+  .promo{ padding:18px 20px; min-height:120px; }
+  .hero-stats{ gap:18px; }
+
   .goals{ grid-template-columns:repeat(2,1fr); } .trust-grid{ grid-template-columns:1fr; }
   .foot-grid{ grid-template-columns:1fr; } .news{ padding:24px; }
 
