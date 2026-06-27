@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+<title>Shop Supplements — My Health</title>
+<meta name="description" content="Browse all supplements by health goal — immunity, energy, muscle, brain, sleep and more." />
+<meta name="theme-color" content="#0F5132" />
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="wrap">
+  <div class="crumb"><a href="index.html">Home</a><span>›</span><span id="crumbCat">All Supplements</span></div>
+
+  <div class="cat-hero">
+    <h1 id="catTitle">All Supplements</h1>
+    <p id="catDesc">Browse our full range of authentic supplements and nutrition.</p>
+    <span class="emoji" id="catEmoji">🛒</span>
+  </div>
+
+  <div class="cat-layout">
+    <!-- Sidebar filters -->
+    <aside class="filters">
+      <h4>Health Goal</h4>
+      <div class="fgoal" id="goalFilters"></div>
+      <h4>Quick filters</h4>
+      <div class="fgoal" id="tagFilters">
+        <button onclick="setTag('all')" class="on" data-tag="all">All products</button>
+        <button onclick="setTag('flash')" data-tag="flash">⚡ On sale</button>
+        <button onclick="setTag('best')" data-tag="best">⭐ Best sellers</button>
+        <button onclick="setTag('new')" data-tag="new">🆕 New arrivals</button>
+      </div>
+    </aside>
+
+    <!-- Results -->
+    <div>
+      <!-- mobile goal chips -->
+      <div class="chips" id="chips"></div>
+
+      <div class="cat-toolbar">
+        <div class="count" id="resultCount"></div>
+        <select id="sortBy" onchange="render()">
+          <option value="pop">Sort: Popular</option>
+          <option value="low">Price: Low → High</option>
+          <option value="high">Price: High → Low</option>
+          <option value="disc">Biggest discount</option>
+          <option value="rate">Top rated</option>
+        </select>
+      </div>
+
+      <div class="grid" id="catGrid"></div>
+    </div>
+  </div>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="app.js"></script>
+<script>
+let activeGoal = param('goal') || 'all';
+let activeTag  = 'all';
+let searchQ    = (param('q') || '').toLowerCase().trim();
+
+function initPage(){
+  // sidebar goal list with counts
+  const counts = {};
+  PRODUCTS.forEach(p=> counts[p.goal] = (counts[p.goal]||0)+1 );
+  const gf = document.getElementById('goalFilters');
+  gf.innerHTML =
+    `<button onclick="setGoal('all')" data-goal="all"><span>All goals</span><span class="c">${PRODUCTS.length}</span></button>` +
+    GOALS.map(g=>`<button onclick="setGoal('${g.id}')" data-goal="${g.id}"><span>${g.emoji} ${g.label}</span><span class="c">${counts[g.id]||0}</span></button>`).join('');
+  // mobile chips
+  document.getElementById('chips').innerHTML =
+    `<button onclick="setGoal('all')" data-chip="all">All</button>` +
+    GOALS.map(g=>`<button onclick="setGoal('${g.id}')" data-chip="${g.id}">${g.emoji} ${g.label}</button>`).join('');
+
+  // if arrived via search, show it in the global search box
+  if(searchQ){ const s=document.getElementById('globalSearch'); if(s) s.value = searchQ; }
+
+  applyHero();
+  render();
+}
+
+function setGoal(id){ activeGoal=id; searchQ=''; applyHero(); render(); }
+function setTag(t){ activeTag=t; render(); }
+
+function applyHero(){
+  const g = goalObj(activeGoal);
+  const title = searchQ ? `Results for “${searchQ}”` : (g ? g.label + " Supplements" : "All Supplements");
+  document.getElementById('catTitle').textContent = title;
+  document.getElementById('crumbCat').textContent = title;
+  document.getElementById('catEmoji').textContent = g ? g.emoji : "🛒";
+  document.getElementById('catDesc').textContent = g
+    ? `Curated ${g.label.toLowerCase()} supplements — ${g.note}.`
+    : "Browse our full range of authentic supplements and nutrition.";
+  // mark active buttons
+  document.querySelectorAll('[data-goal]').forEach(b=> b.classList.toggle('on', b.dataset.goal===activeGoal));
+  document.querySelectorAll('[data-chip]').forEach(b=> b.classList.toggle('on', b.dataset.chip===activeGoal));
+}
+
+function render(){
+  let list = PRODUCTS.filter(p=>{
+    const mg = activeGoal==='all' || p.goal===activeGoal;
+    const mt = activeTag==='all'  || p.tags.includes(activeTag);
+    const mq = !searchQ || p.name.toLowerCase().includes(searchQ) ||
+               goalLabel(p.goal).toLowerCase().includes(searchQ) || (p.brand||'').toLowerCase().includes(searchQ);
+    return mg && mt && mq;
+  });
+
+  const sort = document.getElementById('sortBy').value;
+  const disc = p => 1 - p.price/p.oldPrice;
+  if(sort==='low')  list.sort((a,b)=>a.price-b.price);
+  if(sort==='high') list.sort((a,b)=>b.price-a.price);
+  if(sort==='disc') list.sort((a,b)=>disc(b)-disc(a));
+  if(sort==='rate') list.sort((a,b)=>b.rating-a.rating);
+
+  document.getElementById('resultCount').textContent = `${list.length} product${list.length!==1?'s':''} found`;
+  document.getElementById('catGrid').innerHTML = list.length
+    ? list.map(productCard).join('')
+    : `<div style="grid-column:1/-1; text-align:center; padding:60px; color:var(--muted)">
+         <div style="font-size:48px">🔍</div>No products match. Try another goal or search.</div>`;
+  document.querySelectorAll('[data-tag]').forEach(b=> b.classList.toggle('on', b.dataset.tag===activeTag));
+}
+</script>
+</body>
+</html>

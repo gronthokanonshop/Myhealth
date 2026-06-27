@@ -4,396 +4,27 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
 <title>My Health — Authentic Supplements & Nutrition in Bangladesh</title>
-<meta name="description" content="My Health — Bangladesh's supplement store. Shop vitamins, protein, immunity, energy & nutrition by health goal. 100% authentic, fast delivery, bKash & Nagad." />
+<meta name="description" content="Shop genuine vitamins, protein, immunity & nutrition supplements by health goal. 100% authentic, fast delivery, bKash & Nagad." />
 <meta name="theme-color" content="#0F5132" />
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-/* =========================================================================
-   MY HEALTH — supplement e-commerce template
-   -------------------------------------------------------------------------
-   EDIT QUICK GUIDE (ami pore update korbo):
-   1) Brand name / phone / delivery fee  -> see CONFIG block in <script>
-   2) Products                           -> see PRODUCTS array in <script>
-   3) Colors                             -> change the CSS variables below
-   ========================================================================= */
-
-:root{
-  /* --- Brand palette (vitality green + lime energy accent) --- */
-  --pine:    #0F5132;   /* deep premium green (headers, dark areas) */
-  --leaf:    #16A34A;   /* primary green (buttons, links) */
-  --leaf-d:  #11803A;   /* hover green */
-  --lime:    #BEF264;   /* energy accent (highlights) */
-  --amber:   #F59E0B;   /* discount / offer badge */
-  --rose:    #E11D48;   /* sale red */
-  --cream:   #F5F8F3;   /* page background */
-  --ink:     #102A1E;   /* main text */
-  --muted:   #5B6B62;   /* secondary text */
-  --line:    #E1EAE3;   /* borders */
-  --card:    #FFFFFF;
-
-  --r-sm: 10px;
-  --r:    16px;
-  --r-lg: 22px;
-  --shadow: 0 6px 22px rgba(16,42,30,.08);
-  --shadow-h: 0 14px 36px rgba(16,42,30,.16);
-  --maxw: 1180px;
-
-  --display: 'Sora', system-ui, sans-serif;
-  --body: 'Plus Jakarta Sans', system-ui, sans-serif;
-}
-
-*{ box-sizing:border-box; }
-html{ scroll-behavior:smooth; }
-body{
-  margin:0; font-family:var(--body); color:var(--ink);
-  background:var(--cream); line-height:1.5; -webkit-font-smoothing:antialiased;
-}
-a{ color:inherit; text-decoration:none; }
-img{ max-width:100%; display:block; }
-button{ font-family:inherit; cursor:pointer; border:none; background:none; }
-.wrap{ max-width:var(--maxw); margin:0 auto; padding:0 18px; }
-h1,h2,h3{ font-family:var(--display); margin:0; line-height:1.15; letter-spacing:-.02em; }
-
-/* ---------- Top utility bar ---------- */
-.utilbar{ background:var(--pine); color:#dff3e6; font-size:13px; }
-.utilbar .wrap{ display:flex; gap:18px; align-items:center; justify-content:space-between; height:38px; }
-.utilbar .u-left{ display:flex; gap:18px; align-items:center; overflow:hidden; white-space:nowrap; }
-.utilbar b{ color:#fff; }
-.utilbar .lime{ color:var(--lime); }
-@media (max-width:680px){ .utilbar .u-right{ display:none; } }
-
-/* ---------- Header ---------- */
-header.site{ background:#fff; position:sticky; top:0; z-index:40; border-bottom:1px solid var(--line); }
-.head-main{ display:flex; align-items:center; gap:18px; height:72px; }
-.logo{ display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:800; font-size:22px; color:var(--pine); }
-.logo .mark{
-  width:38px; height:38px; border-radius:11px; display:grid; place-items:center;
-  background:linear-gradient(150deg,var(--leaf),var(--pine)); color:#fff; font-size:20px;
-  box-shadow:0 4px 12px rgba(15,81,50,.35);
-}
-.logo .mark::after{ content:"✚"; font-weight:800; }
-.logo small{ display:block; font-family:var(--body); font-weight:500; font-size:11px; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; margin-top:-2px;}
-
-.search{ flex:1; max-width:560px; position:relative; }
-.search input{
-  width:100%; height:46px; border:1.5px solid var(--line); border-radius:999px;
-  padding:0 48px 0 46px; font-size:15px; background:var(--cream); outline:none; transition:.2s;
-}
-.search input:focus{ border-color:var(--leaf); background:#fff; }
-.search .ico{ position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--muted); }
-
-.head-actions{ display:flex; align-items:center; gap:6px; margin-left:auto; }
-.iconbtn{
-  position:relative; display:flex; flex-direction:column; align-items:center; gap:2px;
-  padding:8px 12px; border-radius:12px; color:var(--ink); font-size:11px; font-weight:600; transition:.15s;
-}
-.iconbtn:hover{ background:var(--cream); }
-.iconbtn svg{ width:24px; height:24px; }
-.badge{
-  position:absolute; top:2px; right:6px; min-width:18px; height:18px; padding:0 5px;
-  background:var(--rose); color:#fff; border-radius:999px; font-size:11px; font-weight:700;
-  display:grid; place-items:center;
-}
-.menu-toggle{ display:none; }
-
-/* ---------- Category nav strip ---------- */
-.catnav{ background:#fff; border-bottom:1px solid var(--line); }
-.catnav .wrap{ display:flex; gap:6px; overflow-x:auto; padding:10px 18px; scrollbar-width:none; }
-.catnav .wrap::-webkit-scrollbar{ display:none; }
-.catpill{
-  flex:0 0 auto; padding:8px 16px; border-radius:999px; font-size:14px; font-weight:600;
-  color:var(--muted); border:1.5px solid var(--line); background:#fff; white-space:nowrap; transition:.15s;
-}
-.catpill:hover{ color:var(--leaf); border-color:var(--leaf); }
-.catpill.flash{ color:var(--rose); border-color:#fbd6dd; background:#fff5f6; }
-.catpill.flash::before{ content:"⚡ "; }
-
-/* ---------- Hero ---------- */
-.hero{ padding:34px 0 8px; }
-.hero-grid{ display:grid; grid-template-columns:1.15fr .85fr; gap:24px; align-items:stretch; }
-.hero-main{
-  background:
-    radial-gradient(120% 120% at 100% 0%, rgba(190,242,100,.35), transparent 55%),
-    linear-gradient(145deg,var(--pine),#0a3d26);
-  color:#fff; border-radius:var(--r-lg); padding:38px 36px; position:relative; overflow:hidden;
-  display:flex; flex-direction:column; justify-content:center;
-}
-.hero-main::after{
-  content:""; position:absolute; right:-60px; bottom:-60px; width:240px; height:240px;
-  background:radial-gradient(circle, rgba(190,242,100,.22), transparent 70%); border-radius:50%;
-}
-.hero-eyebrow{ display:inline-flex; gap:8px; align-items:center; font-size:13px; font-weight:600;
-  background:rgba(255,255,255,.12); padding:6px 14px; border-radius:999px; width:fit-content; color:var(--lime); }
-.hero h1{ font-size:clamp(28px,4vw,44px); font-weight:800; margin:16px 0 12px; }
-.hero h1 em{ color:var(--lime); font-style:normal; }
-.hero p{ color:#cfe6d6; font-size:16px; max-width:440px; margin:0 0 22px; }
-.hero-cta{ display:flex; gap:12px; flex-wrap:wrap; }
-.btn{
-  display:inline-flex; align-items:center; gap:8px; padding:13px 22px; border-radius:999px;
-  font-weight:700; font-size:15px; transition:.18s; border:1.5px solid transparent;
-}
-.btn-lime{ background:var(--lime); color:var(--pine); }
-.btn-lime:hover{ transform:translateY(-2px); box-shadow:0 10px 24px rgba(190,242,100,.4); }
-.btn-ghost{ border-color:rgba(255,255,255,.45); color:#fff; }
-.btn-ghost:hover{ background:rgba(255,255,255,.12); }
-.hero-stats{ display:flex; gap:26px; margin-top:26px; }
-.hero-stats div{ font-size:12px; color:#bcd9c5; }
-.hero-stats b{ display:block; font-family:var(--display); font-size:22px; color:#fff; font-weight:700; }
-
-/* hero side cards */
-.hero-side{ display:grid; grid-template-rows:1fr 1fr; gap:16px; }
-.promo{
-  border-radius:var(--r-lg); padding:22px 24px; position:relative; overflow:hidden; display:flex;
-  flex-direction:column; justify-content:center; color:#fff; min-height:140px;
-}
-.promo h3{ font-size:20px; margin-bottom:6px; }
-.promo span{ font-size:14px; opacity:.92; }
-.promo .big{ font-family:var(--display); font-weight:800; font-size:30px; margin-top:4px; }
-.promo.a{ background:linear-gradient(135deg,var(--leaf),#0c7a3a); }
-.promo.b{ background:linear-gradient(135deg,var(--amber),#e0760a); }
-.promo .emoji{ position:absolute; right:14px; bottom:6px; font-size:64px; opacity:.22; }
-
-/* ---------- Trust strip ---------- */
-.trust{ margin:26px 0; }
-.trust-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
-.trust-card{ background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:16px 18px;
-  display:flex; gap:12px; align-items:center; }
-.trust-card .ti{ width:40px; height:40px; flex:0 0 auto; border-radius:11px; display:grid; place-items:center;
-  background:var(--cream); font-size:20px; }
-.trust-card b{ display:block; font-size:14px; }
-.trust-card small{ color:var(--muted); font-size:12px; }
-
-/* ---------- Section heading ---------- */
-.section{ margin:34px 0; }
-.sec-head{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:18px; gap:12px; }
-.sec-head .eyebrow{ font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--leaf); }
-.sec-head h2{ font-size:clamp(22px,3vw,28px); font-weight:700; margin-top:4px; }
-.sec-head .seeall{ font-weight:600; color:var(--leaf); font-size:14px; white-space:nowrap; }
-.sec-head .seeall:hover{ text-decoration:underline; }
-
-/* ---------- Shop by Goal (signature) ---------- */
-.goals{ display:grid; grid-template-columns:repeat(6,1fr); gap:14px; }
-.goal{
-  background:#fff; border:1.5px solid var(--line); border-radius:var(--r); padding:18px 12px; text-align:center;
-  transition:.18s; cursor:pointer;
-}
-.goal:hover{ border-color:var(--leaf); transform:translateY(-3px); box-shadow:var(--shadow); }
-.goal.active{ border-color:var(--leaf); background:#f1faf3; }
-.goal .gemoji{ width:54px; height:54px; margin:0 auto 10px; border-radius:50%; display:grid; place-items:center;
-  font-size:26px; background:var(--cream); }
-.goal b{ font-size:14px; display:block; }
-.goal small{ font-size:11px; color:var(--muted); }
-
-/* ---------- Carousel ---------- */
-.carousel{ display:flex; gap:14px; overflow-x:auto; padding:4px 2px 10px; scroll-snap-type:x mandatory; scrollbar-width:thin; }
-.carousel::-webkit-scrollbar{ height:8px; }
-.carousel::-webkit-scrollbar-thumb{ background:var(--line); border-radius:99px; }
-.carousel .card{ flex:0 0 220px; scroll-snap-align:start; }
-
-/* ---------- Product grid ---------- */
-.grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; }
-
-/* ---------- Product card ---------- */
-.card{
-  background:var(--card); border:1px solid var(--line); border-radius:var(--r); overflow:hidden;
-  display:flex; flex-direction:column; transition:.18s; position:relative;
-}
-.card:hover{ box-shadow:var(--shadow-h); transform:translateY(-3px); border-color:#d3e6d9; }
-.card-img{ aspect-ratio:1/1; position:relative; display:grid; place-items:center; font-size:58px;
-  background:linear-gradient(160deg,#f1faf4,#e6f4ec); }
-.card-img img{ width:100%; height:100%; object-fit:cover; }
-.disc{ position:absolute; top:10px; left:10px; background:var(--rose); color:#fff; font-size:12px;
-  font-weight:700; padding:4px 9px; border-radius:8px; }
-.wish{ position:absolute; top:8px; right:8px; width:34px; height:34px; border-radius:50%; background:#fff;
-  display:grid; place-items:center; box-shadow:0 2px 8px rgba(0,0,0,.1); font-size:16px; color:#c8d2cb; }
-.wish.on{ color:var(--rose); }
-.timing{ position:absolute; bottom:10px; left:10px; background:rgba(255,255,255,.94); backdrop-filter:blur(4px);
-  font-size:11px; font-weight:600; padding:4px 9px; border-radius:999px; color:var(--pine); border:1px solid var(--line); }
-
-.card-body{ padding:13px 14px 14px; display:flex; flex-direction:column; gap:7px; flex:1; }
-.goal-tag{ font-size:11px; font-weight:700; color:var(--leaf); text-transform:uppercase; letter-spacing:.05em; }
-.card-name{ font-size:14px; font-weight:600; line-height:1.35; color:var(--ink);
-  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:38px; }
-.rating{ display:flex; align-items:center; gap:4px; font-size:12px; color:var(--muted); }
-.stars{ color:var(--amber); letter-spacing:1px; }
-.price-row{ display:flex; align-items:baseline; gap:8px; margin-top:auto; }
-.price{ font-family:var(--display); font-weight:700; font-size:18px; color:var(--ink); }
-.old{ font-size:13px; color:#a9b4ad; text-decoration:line-through; }
-.add{
-  margin-top:6px; height:40px; border-radius:11px; background:var(--leaf); color:#fff; font-weight:700;
-  font-size:14px; display:flex; align-items:center; justify-content:center; gap:7px; transition:.15s;
-}
-.add:hover{ background:var(--leaf-d); }
-.add.in{ background:#eaf6ee; color:var(--leaf); }
-
-/* ---------- Stack banner ---------- */
-.stack{ background:
-   radial-gradient(120% 140% at 0% 0%, rgba(190,242,100,.3), transparent 50%),
-   linear-gradient(135deg,#123b27,#0a3520); border-radius:var(--r-lg); padding:40px; color:#fff;
-   display:grid; grid-template-columns:1.2fr .8fr; gap:24px; align-items:center; overflow:hidden; position:relative; }
-.stack h2{ font-size:clamp(24px,3.4vw,34px); margin-bottom:12px; }
-.stack h2 em{ color:var(--lime); font-style:normal; }
-.stack p{ color:#cfe6d6; max-width:420px; margin:0 0 20px; }
-.stack-steps{ display:flex; gap:10px; flex-wrap:wrap; }
-.stack-steps span{ background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); padding:8px 14px;
-  border-radius:999px; font-size:13px; font-weight:600; }
-.stack-visual{ display:flex; gap:10px; justify-content:center; font-size:52px; }
-@media (max-width:760px){ .stack{ grid-template-columns:1fr; } .stack-visual{ display:none; } }
-
-/* ---------- Newsletter ---------- */
-.news{ background:#fff; border:1px solid var(--line); border-radius:var(--r-lg); padding:34px;
-  display:grid; grid-template-columns:1fr auto; gap:20px; align-items:center; }
-.news h2{ font-size:24px; }
-.news p{ color:var(--muted); margin:6px 0 0; }
-.news form{ display:flex; gap:10px; }
-.news input{ height:50px; border:1.5px solid var(--line); border-radius:999px; padding:0 20px; min-width:240px; font-size:15px; outline:none; }
-.news input:focus{ border-color:var(--leaf); }
-@media (max-width:680px){ .news{ grid-template-columns:1fr; } .news form{ flex-direction:column; } .news input{ min-width:0; } }
-
-/* ---------- Footer ---------- */
-footer{ background:var(--pine); color:#cfe3d6; margin-top:46px; padding:46px 0 24px; }
-.foot-grid{ display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:30px; }
-footer .logo{ color:#fff; margin-bottom:12px; }
-footer .logo small{ color:#9ec3aa; }
-footer h4{ color:#fff; font-family:var(--display); font-size:15px; margin:0 0 14px; }
-footer ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:9px; font-size:14px; }
-footer ul a:hover{ color:var(--lime); }
-.foot-pay{ display:flex; gap:8px; margin-top:14px; }
-.foot-pay span{ background:rgba(255,255,255,.1); padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; color:#fff; }
-.foot-bottom{ border-top:1px solid rgba(255,255,255,.12); margin-top:34px; padding-top:18px;
-  display:flex; justify-content:space-between; gap:12px; font-size:13px; color:#9ec3aa; flex-wrap:wrap; }
-.socials{ display:flex; gap:10px; }
-.socials a{ width:34px; height:34px; border-radius:9px; background:rgba(255,255,255,.1); display:grid; place-items:center; }
-.socials a:hover{ background:var(--leaf); }
-
-/* ---------- Cart drawer ---------- */
-.overlay{ position:fixed; inset:0; background:rgba(16,42,30,.5); opacity:0; visibility:hidden; transition:.25s; z-index:60; }
-.overlay.open{ opacity:1; visibility:visible; }
-.drawer{
-  position:fixed; top:0; right:0; height:100%; width:400px; max-width:92vw; background:#fff; z-index:61;
-  transform:translateX(100%); transition:transform .3s cubic-bezier(.4,0,.2,1); display:flex; flex-direction:column;
-}
-.drawer.open{ transform:translateX(0); }
-.drawer-head{ padding:20px 22px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; }
-.drawer-head h3{ font-size:19px; }
-.drawer-head button{ font-size:24px; color:var(--muted); line-height:1; }
-.drawer-body{ flex:1; overflow-y:auto; padding:12px 18px; }
-.cart-empty{ text-align:center; padding:60px 20px; color:var(--muted); }
-.cart-empty .ce{ font-size:54px; margin-bottom:10px; }
-.cart-item{ display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); }
-.cart-item .ci-img{ width:62px; height:62px; border-radius:12px; background:linear-gradient(160deg,#f1faf4,#e6f4ec);
-  display:grid; place-items:center; font-size:28px; flex:0 0 auto; overflow:hidden; }
-.cart-item .ci-img img{ width:100%; height:100%; object-fit:cover; }
-.ci-info{ flex:1; min-width:0; }
-.ci-info .nm{ font-size:13px; font-weight:600; line-height:1.3; }
-.ci-info .pr{ color:var(--leaf); font-weight:700; font-family:var(--display); margin-top:3px; }
-.qty{ display:inline-flex; align-items:center; gap:0; border:1.5px solid var(--line); border-radius:9px; margin-top:7px; }
-.qty button{ width:28px; height:28px; font-size:16px; color:var(--ink); }
-.qty span{ width:30px; text-align:center; font-weight:600; font-size:14px; }
-.ci-remove{ color:#c4ccc7; font-size:18px; align-self:flex-start; }
-.ci-remove:hover{ color:var(--rose); }
-.drawer-foot{ border-top:1px solid var(--line); padding:18px 22px; }
-.sumline{ display:flex; justify-content:space-between; font-size:14px; color:var(--muted); margin-bottom:8px; }
-.sumline.total{ font-size:18px; color:var(--ink); font-weight:700; font-family:var(--display); margin:12px 0 16px; }
-.checkout{ width:100%; height:52px; border-radius:14px; background:var(--leaf); color:#fff; font-weight:700; font-size:16px; }
-.checkout:hover{ background:var(--leaf-d); }
-.pay-note{ text-align:center; font-size:12px; color:var(--muted); margin-top:10px; }
-
-/* ---------- Toast ---------- */
-.toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink);
-  color:#fff; padding:13px 22px; border-radius:999px; font-size:14px; font-weight:600; opacity:0; visibility:hidden;
-  transition:.25s; z-index:70; box-shadow:var(--shadow-h); display:flex; gap:8px; align-items:center; }
-.toast.show{ opacity:1; visibility:visible; transform:translateX(-50%) translateY(0); }
-
-/* ---------- Responsive ---------- */
-@media (max-width:900px){
-  .hero-grid{ grid-template-columns:1fr; }
-  .trust-grid{ grid-template-columns:repeat(2,1fr); }
-  .goals{ grid-template-columns:repeat(3,1fr); }
-  .foot-grid{ grid-template-columns:1fr 1fr; }
-}
-@media (max-width:620px){
-  .head-main{ height:62px; gap:10px; }
-  .search{ order:3; flex-basis:100%; max-width:none; }
-  .head-main{ flex-wrap:wrap; padding-bottom:10px; }
-  .logo .mark{ width:34px; height:34px; }
-  .goals{ grid-template-columns:repeat(2,1fr); }
-  .trust-grid{ grid-template-columns:1fr; }
-  .foot-grid{ grid-template-columns:1fr; }
-  .news{ padding:24px; }
-}
-@media (prefers-reduced-motion:reduce){ *{ transition:none!important; animation:none!important; } }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- ================= TOP UTILITY BAR ================= -->
-<div class="utilbar">
-  <div class="wrap">
-    <div class="u-left">🚚 <b>Free delivery</b> on orders over <span class="lime">৳1500</span> &nbsp;·&nbsp; Same-day in Dhaka</div>
-    <div class="u-right">📞 Hotline: <b>16XXX</b> &nbsp;·&nbsp; Mon–Sun, 9am–10pm</div>
-  </div>
-</div>
-
-<!-- ================= HEADER ================= -->
-<header class="site">
-  <div class="wrap head-main">
-    <a class="logo" href="#">
-      <span class="mark"></span>
-      <span>My Health<small>Supplements &amp; Nutrition</small></span>
-    </a>
-
-    <div class="search">
-      <span class="ico">🔍</span>
-      <input id="searchInput" type="search" placeholder="Search vitamins, protein, omega-3, ashwagandha…" />
-    </div>
-
-    <div class="head-actions">
-      <a class="iconbtn" href="#">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
-        Account
-      </a>
-      <button class="iconbtn" onclick="openCart()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M6 6 5 3H2"/></svg>
-        Cart
-        <span class="badge" id="cartBadge">0</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Category nav -->
-  <nav class="catnav">
-    <div class="wrap">
-      <button class="catpill flash" onclick="filterGoal('all')">Flash Sale</button>
-      <button class="catpill" onclick="filterGoal('all')">All Supplements</button>
-      <button class="catpill" onclick="filterGoal('immunity')">Immunity</button>
-      <button class="catpill" onclick="filterGoal('energy')">Energy &amp; Vitality</button>
-      <button class="catpill" onclick="filterGoal('muscle')">Protein &amp; Muscle</button>
-      <button class="catpill" onclick="filterGoal('brain')">Brain &amp; Focus</button>
-      <button class="catpill" onclick="filterGoal('sleep')">Sleep &amp; Calm</button>
-      <button class="catpill" onclick="filterGoal('bones')">Bones &amp; Joints</button>
-      <button class="catpill" onclick="filterGoal('weight')">Weight &amp; Metabolism</button>
-      <button class="catpill" onclick="filterGoal('skin')">Skin &amp; Hair</button>
-    </div>
-  </nav>
-</header>
+<div id="site-header"></div>
 
 <main class="wrap">
 
-  <!-- ================= HERO ================= -->
   <section class="hero">
     <div class="hero-grid">
       <div class="hero-main">
         <span class="hero-eyebrow">✦ 100% Authentic · Lab-tested</span>
         <h1>Fuel your body with <em>supplements that work</em></h1>
-        <p>Shop genuine vitamins, protein, and herbal nutrition picked for your health goal. Verified imports, honest prices, delivered fast.</p>
+        <p>Shop genuine vitamins, protein and herbal nutrition picked for your health goal. Verified imports, honest prices, delivered fast.</p>
         <div class="hero-cta">
           <a class="btn btn-lime" href="#goals">Shop by goal →</a>
-          <a class="btn btn-ghost" href="#all">Browse all</a>
+          <a class="btn btn-ghost" href="category.html?goal=all">Browse all</a>
         </div>
         <div class="hero-stats">
           <div><b>2,000+</b>Products</div>
@@ -402,23 +33,16 @@ footer ul a:hover{ color:var(--lime); }
         </div>
       </div>
       <div class="hero-side">
-        <div class="promo a">
-          <h3>Protein Festival</h3>
-          <span>Whey, mass gainer &amp; BCAA</span>
-          <div class="big">Up to 35% OFF</div>
-          <span class="emoji">💪</span>
-        </div>
+        <a class="promo a" href="category.html?goal=muscle">
+          <h3>Protein Festival</h3><span>Whey, mass gainer &amp; BCAA</span><div class="big">Up to 35% OFF</div><span class="emoji">💪</span>
+        </a>
         <div class="promo b">
-          <h3>First order?</h3>
-          <span>Use code <b>HEALTH10</b></span>
-          <div class="big">Extra 10% OFF</div>
-          <span class="emoji">🎁</span>
+          <h3>First order?</h3><span>Use code <b>HEALTH10</b></span><div class="big">Extra 10% OFF</div><span class="emoji">🎁</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ================= TRUST STRIP ================= -->
   <section class="trust">
     <div class="trust-grid">
       <div class="trust-card"><div class="ti">✅</div><div><b>100% Authentic</b><small>Direct from brands</small></div></div>
@@ -428,68 +52,44 @@ footer ul a:hover{ color:var(--lime); }
     </div>
   </section>
 
-  <!-- ================= SHOP BY GOAL (signature) ================= -->
   <section class="section" id="goals">
-    <div class="sec-head">
-      <div>
-        <div class="eyebrow">Personalised</div>
-        <h2>Shop by your health goal</h2>
-      </div>
-    </div>
-    <div class="goals" id="goalGrid"><!-- JS renders goals --></div>
+    <div class="sec-head"><div><div class="eyebrow">Personalised</div><h2>Shop by your health goal</h2></div></div>
+    <div class="goals" id="goalGrid"></div>
   </section>
 
-  <!-- ================= FLASH SALE CAROUSEL ================= -->
   <section class="section">
-    <div class="sec-head">
-      <div><div class="eyebrow" style="color:var(--rose)">⚡ Ends soon</div><h2>Flash Sale</h2></div>
-      <a class="seeall" href="#all">See all →</a>
-    </div>
-    <div class="carousel" id="flashRow"><!-- JS --></div>
+    <div class="sec-head"><div><div class="eyebrow" style="color:var(--rose)">⚡ Ends soon</div><h2>Flash Sale</h2></div>
+      <a class="seeall" href="category.html?goal=all">See all →</a></div>
+    <div class="carousel" id="flashRow"></div>
   </section>
 
-  <!-- ================= BEST SELLERS CAROUSEL ================= -->
   <section class="section">
-    <div class="sec-head">
-      <div><div class="eyebrow">Loved by customers</div><h2>Best Sellers</h2></div>
-      <a class="seeall" href="#all">See all →</a>
-    </div>
-    <div class="carousel" id="bestRow"><!-- JS --></div>
+    <div class="sec-head"><div><div class="eyebrow">Loved by customers</div><h2>Best Sellers</h2></div>
+      <a class="seeall" href="category.html?goal=all">See all →</a></div>
+    <div class="carousel" id="bestRow"></div>
   </section>
 
-  <!-- ================= BUILD YOUR STACK ================= -->
   <section class="section">
     <div class="stack">
       <div>
         <h2>Build your own <em>supplement stack</em></h2>
         <p>Tell us your goal and we'll combine the right products into one bundle — at a better price than buying separately.</p>
-        <div class="stack-steps">
-          <span>1 · Pick a goal</span>
-          <span>2 · Add essentials</span>
-          <span>3 · Save up to 20%</span>
-        </div>
+        <div class="stack-steps"><span>1 · Pick a goal</span><span>2 · Add essentials</span><span>3 · Save up to 20%</span></div>
       </div>
       <div class="stack-visual">🧴 💊 🫙</div>
     </div>
   </section>
 
-  <!-- ================= ALL SUPPLEMENTS (filterable grid) ================= -->
   <section class="section" id="all">
-    <div class="sec-head">
-      <div><div class="eyebrow">Full catalog</div><h2 id="gridTitle">All Supplements</h2></div>
-      <a class="seeall" href="#" onclick="filterGoal('all');return false;">Reset filter</a>
-    </div>
-    <div class="grid" id="productGrid"><!-- JS --></div>
+    <div class="sec-head"><div><div class="eyebrow">Full catalog</div><h2>New Arrivals</h2></div>
+      <a class="seeall" href="category.html?goal=all">View all products →</a></div>
+    <div class="grid" id="newRow"></div>
   </section>
 
-  <!-- ================= NEWSLETTER ================= -->
   <section class="section">
     <div class="news">
-      <div>
-        <h2>Get health tips &amp; offers</h2>
-        <p>Join our newsletter for supplement guides and members-only discounts.</p>
-      </div>
-      <form onsubmit="subscribe(event)">
+      <div><h2>Get health tips &amp; offers</h2><p>Join our newsletter for supplement guides and members-only discounts.</p></div>
+      <form onsubmit="event.preventDefault(); this.reset(); toast('Subscribed ✓');">
         <input type="email" placeholder="Your email address" required />
         <button class="btn btn-lime" type="submit">Subscribe</button>
       </form>
@@ -498,346 +98,21 @@ footer ul a:hover{ color:var(--lime); }
 
 </main>
 
-<!-- ================= FOOTER ================= -->
-<footer>
-  <div class="wrap">
-    <div class="foot-grid">
-      <div>
-        <a class="logo" href="#"><span class="mark"></span><span>My Health<small>Supplements &amp; Nutrition</small></span></a>
-        <p style="font-size:14px; max-width:280px;">Bangladesh's trusted store for authentic supplements, vitamins and nutrition. Delivered to all 64 districts.</p>
-        <div class="foot-pay"><span>bKash</span><span>Nagad</span><span>Card</span><span>COD</span></div>
-      </div>
-      <div>
-        <h4>Shop</h4>
-        <ul>
-          <li><a href="#all">All Supplements</a></li>
-          <li><a href="#goals">Shop by Goal</a></li>
-          <li><a href="#">Protein &amp; Muscle</a></li>
-          <li><a href="#">Vitamins</a></li>
-          <li><a href="#">Herbal</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Help</h4>
-        <ul>
-          <li><a href="#">Track Order</a></li>
-          <li><a href="#">Delivery Info</a></li>
-          <li><a href="#">Return Policy</a></li>
-          <li><a href="#">FAQ</a></li>
-          <li><a href="#">Contact</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Company</h4>
-        <ul>
-          <li><a href="#">About Us</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms &amp; Conditions</a></li>
-          <li><a href="#">Careers</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="foot-bottom">
-      <span>© 2026 My Health. All rights reserved.</span>
-      <div class="socials">
-        <a href="#">f</a><a href="#">📷</a><a href="#">▶</a><a href="#">in</a>
-      </div>
-    </div>
-  </div>
-</footer>
+<footer id="site-footer"></footer>
 
-<!-- ================= CART DRAWER ================= -->
-<div class="overlay" id="overlay" onclick="closeCart()"></div>
-<aside class="drawer" id="drawer" aria-label="Shopping cart">
-  <div class="drawer-head">
-    <h3>Your Cart (<span id="cartCount">0</span>)</h3>
-    <button onclick="closeCart()" aria-label="Close">×</button>
-  </div>
-  <div class="drawer-body" id="cartBody"></div>
-  <div class="drawer-foot" id="cartFoot" style="display:none">
-    <div class="sumline"><span>Subtotal</span><span id="subTotal">৳0</span></div>
-    <div class="sumline"><span>Delivery</span><span id="delFee">৳60</span></div>
-    <div class="sumline total"><span>Total</span><span id="grandTotal">৳0</span></div>
-    <button class="checkout" onclick="checkout()">Proceed to Checkout</button>
-    <div class="pay-note">🔒 Secure payment · bKash · Nagad · Cash on Delivery</div>
-  </div>
-</aside>
-
-<!-- ================= TOAST ================= -->
-<div class="toast" id="toast"></div>
-
+<script src="app.js"></script>
 <script>
-/* =========================================================================
-   CONFIG  —  ekhane sob basic setting (pore easily change korte parba)
-   ========================================================================= */
-const CONFIG = {
-  brand:        "My Health",
-  currency:     "৳",
-  deliveryFee:  60,          // delivery charge (৳)
-  freeDeliveryOver: 1500,    // ei amount er beshi hole free delivery
-  storageKey:   "myhealth_cart"  // localStorage key (tomar prefix pattern)
-};
-
-/* =========================================================================
-   GOALS  —  Shop by Goal cards (signature feature)
-   ========================================================================= */
-const GOALS = [
-  { id:"immunity", label:"Immunity",  emoji:"🛡️", note:"Vit C · Zinc" },
-  { id:"energy",   label:"Energy",    emoji:"⚡",  note:"B-Complex" },
-  { id:"muscle",   label:"Muscle",    emoji:"💪",  note:"Whey · BCAA" },
-  { id:"brain",    label:"Brain",     emoji:"🧠",  note:"Omega-3" },
-  { id:"sleep",    label:"Sleep",     emoji:"🌙",  note:"Magnesium" },
-  { id:"bones",    label:"Bones",     emoji:"🦴",  note:"Calcium · D3" },
-  { id:"weight",   label:"Weight",    emoji:"⚖️",  note:"Fat burner" },
-  { id:"skin",     label:"Skin&Hair", emoji:"✨",  note:"Biotin" },
-];
-
-/* =========================================================================
-   PRODUCTS  —  ei array edit korle product change hoy.
-   field guide:
-     id, name, goal (GOALS er id), emoji (placeholder), img (URL chaile dao, na dile emoji dekhabe),
-     timing ("morning"/"postworkout"/"night"/"anytime"), rating, reviews,
-     oldPrice, price, tags: ["flash","best","new"]
-   ========================================================================= */
-const PRODUCTS = [
-  { id:1,  name:"Whey Protein Isolate 2kg — Chocolate", goal:"muscle", emoji:"🥤", timing:"postworkout", rating:4.8, reviews:412, oldPrice:5200, price:3400, tags:["flash","best"] },
-  { id:2,  name:"Vitamin C 1000mg with Zinc, 60 Tablets", goal:"immunity", emoji:"🍊", timing:"morning", rating:4.7, reviews:289, oldPrice:850, price:599, tags:["best"] },
-  { id:3,  name:"Omega-3 Fish Oil 1000mg, 120 Softgels", goal:"brain", emoji:"🐟", timing:"anytime", rating:4.9, reviews:531, oldPrice:1800, price:1290, tags:["best","flash"] },
-  { id:4,  name:"Magnesium Glycinate 400mg, 90 Capsules", goal:"sleep", emoji:"🌿", timing:"night", rating:4.6, reviews:174, oldPrice:1400, price:990, tags:["new"] },
-  { id:5,  name:"BCAA 2:1:1 Energy Powder — Mango 30 Serv", goal:"muscle", emoji:"🥭", timing:"postworkout", rating:4.5, reviews:98, oldPrice:2200, price:1650, tags:["flash"] },
-  { id:6,  name:"Vitamin D3 2000 IU, 120 Softgels", goal:"bones", emoji:"☀️", timing:"morning", rating:4.8, reviews:362, oldPrice:900, price:650, tags:["best"] },
-  { id:7,  name:"Ashwagandha KSM-66 600mg, 90 Caps", goal:"sleep", emoji:"🌱", timing:"night", rating:4.7, reviews:245, oldPrice:1600, price:1150, tags:["best","new"] },
-  { id:8,  name:"Multivitamin for Men, 60 Tablets", goal:"energy", emoji:"💊", timing:"morning", rating:4.6, reviews:201, oldPrice:1200, price:849, tags:[] },
-  { id:9,  name:"Biotin 10000mcg Hair & Skin, 60 Caps", goal:"skin", emoji:"✨", timing:"anytime", rating:4.5, reviews:156, oldPrice:1100, price:799, tags:["new"] },
-  { id:10, name:"Vitamin B-Complex, 100 Tablets", goal:"energy", emoji:"⚡", timing:"morning", rating:4.7, reviews:188, oldPrice:700, price:520, tags:["flash"] },
-  { id:11, name:"Calcium + Magnesium + Zinc, 90 Tabs", goal:"bones", emoji:"🦴", timing:"anytime", rating:4.6, reviews:142, oldPrice:950, price:699, tags:[] },
-  { id:12, name:"L-Carnitine Fat Burner 500mg, 60 Caps", goal:"weight", emoji:"🔥", timing:"morning", rating:4.4, reviews:87, oldPrice:1500, price:1099, tags:["flash"] },
-  { id:13, name:"Creatine Monohydrate 300g Micronized", goal:"muscle", emoji:"💪", timing:"postworkout", rating:4.9, reviews:476, oldPrice:1800, price:1290, tags:["best"] },
-  { id:14, name:"Elderberry + Vitamin C Immune Gummies", goal:"immunity", emoji:"🫐", timing:"anytime", rating:4.7, reviews:233, oldPrice:1300, price:950, tags:["new"] },
-  { id:15, name:"Green Tea Extract 500mg, 90 Caps", goal:"weight", emoji:"🍵", timing:"morning", rating:4.5, reviews:119, oldPrice:850, price:620, tags:[] },
-  { id:16, name:"Collagen Peptides Powder 250g — Unflavored", goal:"skin", emoji:"🌸", timing:"anytime", rating:4.8, reviews:301, oldPrice:2400, price:1790, tags:["best","flash"] },
-  { id:17, name:"Probiotic 50 Billion CFU, 60 Caps", goal:"immunity", emoji:"🦠", timing:"morning", rating:4.6, reviews:167, oldPrice:1900, price:1450, tags:["new"] },
-  { id:18, name:"Pre-Workout Energy — Blue Raspberry 30 Serv", goal:"energy", emoji:"🚀", timing:"postworkout", rating:4.7, reviews:214, oldPrice:2500, price:1850, tags:["flash"] },
-  { id:19, name:"Mass Gainer 3kg — Banana", goal:"muscle", emoji:"🍌", timing:"postworkout", rating:4.5, reviews:132, oldPrice:4500, price:3200, tags:[] },
-  { id:20, name:"Melatonin 5mg Sleep Aid, 100 Tablets", goal:"sleep", emoji:"😴", timing:"night", rating:4.6, reviews:178, oldPrice:600, price:430, tags:["best"] },
-  { id:21, name:"Lion's Mane Mushroom 1000mg Focus, 60 Caps", goal:"brain", emoji:"🍄", timing:"morning", rating:4.7, reviews:96, oldPrice:1700, price:1280, tags:["new"] },
-  { id:22, name:"Iron + Folic Acid for Women, 60 Tablets", goal:"energy", emoji:"🩸", timing:"morning", rating:4.5, reviews:143, oldPrice:550, price:399, tags:[] },
-];
-
-/* =========================================================================
-   STATE + STORAGE
-   ========================================================================= */
-let cart = loadCart();          // { id: qty }
-let wishlist = new Set();
-let activeGoal = "all";
-
-function loadCart(){
-  try { return JSON.parse(localStorage.getItem(CONFIG.storageKey)) || {}; }
-  catch(e){ return {}; }
+function initPage(){
+  // Shop by Goal cards
+  document.getElementById('goalGrid').innerHTML = GOALS.map(g=>`
+    <a class="goal" href="category.html?goal=${g.id}">
+      <div class="gemoji">${g.emoji}</div><b>${g.label}</b><small>${g.note}</small>
+    </a>`).join('');
+  // Carousels + new arrivals
+  document.getElementById('flashRow').innerHTML = PRODUCTS.filter(p=>p.tags.includes('flash')).map(productCard).join('');
+  document.getElementById('bestRow').innerHTML  = PRODUCTS.filter(p=>p.tags.includes('best')).map(productCard).join('');
+  document.getElementById('newRow').innerHTML   = PRODUCTS.filter(p=>p.tags.includes('new')).map(productCard).join('');
 }
-function saveCart(){
-  try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(cart)); } catch(e){}
-}
-const money = n => CONFIG.currency + Number(n).toLocaleString('en-IN');
-const findP = id => PRODUCTS.find(p => p.id === id);
-
-const TIMING = {
-  morning:    {t:"🌅 Morning"},
-  postworkout:{t:"💪 Post-workout"},
-  night:      {t:"🌙 Before bed"},
-  anytime:    {t:"⏱️ Anytime"},
-};
-
-/* =========================================================================
-   RENDER — product card
-   ========================================================================= */
-function stars(r){
-  const full = Math.round(r);
-  return "★".repeat(full) + "☆".repeat(5-full);
-}
-function goalLabel(id){ const g = GOALS.find(g=>g.id===id); return g ? g.label : id; }
-
-function productCard(p){
-  const off = Math.round((1 - p.price / p.oldPrice) * 100);
-  const inCart = cart[p.id];
-  const wished = wishlist.has(p.id) ? "on" : "";
-  const imgInner = p.img
-    ? `<img src="${p.img}" alt="${p.name}">`
-    : p.emoji;
-  return `
-  <article class="card">
-    <div class="card-img">
-      ${off>0 ? `<span class="disc">${off}% OFF</span>` : ""}
-      <button class="wish ${wished}" onclick="toggleWish(${p.id})" aria-label="Wishlist">♥</button>
-      ${imgInner}
-      <span class="timing">${TIMING[p.timing]?.t || "⏱️ Anytime"}</span>
-    </div>
-    <div class="card-body">
-      <span class="goal-tag">${goalLabel(p.goal)}</span>
-      <div class="card-name">${p.name}</div>
-      <div class="rating"><span class="stars">${stars(p.rating)}</span> ${p.rating} <span>(${p.reviews})</span></div>
-      <div class="price-row">
-        <span class="price">${money(p.price)}</span>
-        ${p.oldPrice>p.price ? `<span class="old">${money(p.oldPrice)}</span>` : ""}
-      </div>
-      <button class="add ${inCart?'in':''}" onclick="addToCart(${p.id})">
-        ${inCart ? `✓ In cart (${inCart})` : "＋ Add to cart"}
-      </button>
-    </div>
-  </article>`;
-}
-
-/* =========================================================================
-   RENDER — sections
-   ========================================================================= */
-function renderGoals(){
-  document.getElementById('goalGrid').innerHTML = GOALS.map(g => `
-    <div class="goal ${activeGoal===g.id?'active':''}" onclick="filterGoal('${g.id}')">
-      <div class="gemoji">${g.emoji}</div>
-      <b>${g.label}</b>
-      <small>${g.note}</small>
-    </div>`).join('');
-}
-
-function renderRow(elId, list){
-  document.getElementById(elId).innerHTML = list.map(productCard).join('');
-}
-
-function renderGrid(){
-  const q = (document.getElementById('searchInput').value || "").toLowerCase().trim();
-  let list = PRODUCTS.filter(p=>{
-    const matchGoal = activeGoal==="all" || p.goal===activeGoal;
-    const matchQ = !q || p.name.toLowerCase().includes(q) || goalLabel(p.goal).toLowerCase().includes(q);
-    return matchGoal && matchQ;
-  });
-  document.getElementById('gridTitle').textContent =
-    activeGoal==="all" ? "All Supplements" : goalLabel(activeGoal) + " Supplements";
-  const grid = document.getElementById('productGrid');
-  grid.innerHTML = list.length
-    ? list.map(productCard).join('')
-    : `<div style="grid-column:1/-1; text-align:center; padding:50px; color:var(--muted)">
-         <div style="font-size:48px">🔍</div>No products found. Try another goal or search.</div>`;
-}
-
-function renderAll(){
-  renderGoals();
-  renderRow('flashRow', PRODUCTS.filter(p=>p.tags.includes('flash')));
-  renderRow('bestRow',  PRODUCTS.filter(p=>p.tags.includes('best')));
-  renderGrid();
-  updateCartUI();
-}
-
-/* =========================================================================
-   FILTER + SEARCH
-   ========================================================================= */
-function filterGoal(id){
-  activeGoal = id;
-  renderGoals();
-  renderGrid();
-  document.getElementById('all').scrollIntoView({behavior:'smooth', block:'start'});
-}
-document.getElementById('searchInput').addEventListener('input', renderGrid);
-
-/* =========================================================================
-   WISHLIST
-   ========================================================================= */
-function toggleWish(id){
-  wishlist.has(id) ? wishlist.delete(id) : wishlist.add(id);
-  renderAll();
-  toast(wishlist.has(id) ? "Added to wishlist ♥" : "Removed from wishlist");
-}
-
-/* =========================================================================
-   CART
-   ========================================================================= */
-function addToCart(id){
-  cart[id] = (cart[id]||0) + 1;
-  saveCart(); updateCartUI(); renderGrid(); renderAll();
-  toast("Added to cart 🛒");
-}
-function changeQty(id, delta){
-  cart[id] = (cart[id]||0) + delta;
-  if(cart[id] <= 0) delete cart[id];
-  saveCart(); updateCartUI(); renderGrid(); renderAll();
-}
-function removeItem(id){
-  delete cart[id];
-  saveCart(); updateCartUI(); renderGrid(); renderAll();
-}
-
-function cartTotals(){
-  let count=0, sub=0;
-  for(const id in cart){
-    const p = findP(Number(id)); if(!p) continue;
-    count += cart[id]; sub += p.price * cart[id];
-  }
-  const delivery = (sub===0 || sub>=CONFIG.freeDeliveryOver) ? 0 : CONFIG.deliveryFee;
-  return { count, sub, delivery, total: sub + delivery };
-}
-
-function updateCartUI(){
-  const {count, sub, delivery, total} = cartTotals();
-  document.getElementById('cartBadge').textContent = count;
-  document.getElementById('cartCount').textContent = count;
-
-  const body = document.getElementById('cartBody');
-  const foot = document.getElementById('cartFoot');
-
-  if(count===0){
-    body.innerHTML = `<div class="cart-empty"><div class="ce">🛒</div>
-      Your cart is empty.<br><small>Add supplements to get started.</small></div>`;
-    foot.style.display = "none";
-    return;
-  }
-  foot.style.display = "block";
-  body.innerHTML = Object.keys(cart).map(id=>{
-    const p = findP(Number(id)); if(!p) return "";
-    const q = cart[id];
-    const imgInner = p.img ? `<img src="${p.img}" alt="">` : p.emoji;
-    return `<div class="cart-item">
-      <div class="ci-img">${imgInner}</div>
-      <div class="ci-info">
-        <div class="nm">${p.name}</div>
-        <div class="pr">${money(p.price)}</div>
-        <div class="qty">
-          <button onclick="changeQty(${p.id},-1)">−</button>
-          <span>${q}</span>
-          <button onclick="changeQty(${p.id},1)">＋</button>
-        </div>
-      </div>
-      <button class="ci-remove" onclick="removeItem(${p.id})" aria-label="Remove">🗑</button>
-    </div>`;
-  }).join('');
-
-  document.getElementById('subTotal').textContent = money(sub);
-  document.getElementById('delFee').textContent = delivery===0 ? "FREE" : money(delivery);
-  document.getElementById('grandTotal').textContent = money(total);
-}
-
-function openCart(){ document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('open'); }
-function closeCart(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
-
-function checkout(){
-  const {count, total} = cartTotals();
-  if(count===0) return;
-  // TODO: ekhane tomar real checkout page / Firebase order logic boshabe
-  toast(`Order ready · ${money(total)} · checkout connect koro`);
-}
-
-/* =========================================================================
-   MISC
-   ========================================================================= */
-let toastTimer;
-function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=> t.classList.remove('show'), 1800);
-}
-function subscribe(e){ e.preventDefault(); e.target.reset(); toast("Subscribed ✓ Check your inbox"); }
-
-/* INIT */
-renderAll();
 </script>
 </body>
 </html>

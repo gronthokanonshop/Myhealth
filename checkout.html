@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+<title>Checkout — My Health</title>
+<meta name="theme-color" content="#0F5132" />
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="wrap" id="coWrap">
+  <div class="crumb"><a href="index.html">Home</a><span>›</span><a href="category.html?goal=all">Shop</a><span>›</span><span>Checkout</span></div>
+  <h1 style="font-size:clamp(24px,4vw,32px); margin:18px 0 6px;">Checkout</h1>
+
+  <div class="co-layout">
+    <!-- LEFT: form -->
+    <div>
+      <div class="co-card">
+        <h3><span class="num">1</span> Contact &amp; Delivery</h3>
+        <p class="sub">Ekhane order ta kothay pathabo bolun.</p>
+        <div class="field"><label>Full name *</label><input id="fName" placeholder="Your name" /></div>
+        <div class="f2">
+          <div class="field"><label>Phone number *</label><input id="fPhone" inputmode="numeric" placeholder="01XXXXXXXXX" /></div>
+          <div class="field"><label>Email (optional)</label><input id="fEmail" type="email" placeholder="you@email.com" /></div>
+        </div>
+        <div class="f2">
+          <div class="field"><label>Division *</label><select id="fDivision" onchange="loadDistricts()"><option value="">Select division</option></select></div>
+          <div class="field"><label>District *</label><select id="fDistrict"><option value="">Select district</option></select></div>
+        </div>
+        <div class="field"><label>Full address *</label><textarea id="fAddress" placeholder="House, road, area, thana…"></textarea></div>
+        <div class="field"><label>Delivery note (optional)</label><input id="fNote" placeholder="Landmark / instructions" /></div>
+      </div>
+
+      <div class="co-card">
+        <h3><span class="num">2</span> Payment Method</h3>
+        <p class="sub">Apnar pochonder payment select korun.</p>
+        <div class="pay-opts" id="payOpts">
+          <label class="pay-opt sel"><input type="radio" name="pay" value="cod" checked onchange="selPay(this)"><span class="pi">💵</span><div><b>Cash on Delivery</b><small>Product hatay peye taka din</small></div></label>
+          <label class="pay-opt"><input type="radio" name="pay" value="bkash" onchange="selPay(this)"><span class="pi">📱</span><div><b>bKash</b><small>Send Money / Payment</small></div></label>
+          <label class="pay-opt"><input type="radio" name="pay" value="nagad" onchange="selPay(this)"><span class="pi">📲</span><div><b>Nagad</b><small>Mobile payment</small></div></label>
+          <label class="pay-opt"><input type="radio" name="pay" value="card" onchange="selPay(this)"><span class="pi">💳</span><div><b>Card</b><small>Visa / Mastercard</small></div></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: summary -->
+    <aside class="summary">
+      <h3>Order Summary</h3>
+      <div id="sumItems"></div>
+      <div class="coupon">
+        <input id="couponCode" placeholder="Coupon code (e.g. HEALTH10)" />
+        <button onclick="applyCoupon()">Apply</button>
+      </div>
+      <div class="sumline"><span>Subtotal</span><span id="sSub">৳0</span></div>
+      <div class="sumline" id="sCouponRow" style="display:none; color:var(--leaf)"><span>Discount (<span id="sCouponName"></span>)</span><span id="sCoupon">-৳0</span></div>
+      <div class="sumline"><span>Delivery</span><span id="sDel">৳0</span></div>
+      <div class="sumline total"><span>Total</span><span id="sTotal">৳0</span></div>
+      <button class="place-order" id="placeBtn" onclick="placeOrder()">Place Order</button>
+      <div class="pay-note">🔒 Your information is secure</div>
+    </aside>
+  </div>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="app.js"></script>
+<script>
+/* ---- BD divisions → districts (subset; pore full list add korte parba) ---- */
+const BD = {
+  "Dhaka": ["Dhaka","Gazipur","Narayanganj","Tangail","Munshiganj","Manikganj","Narsingdi","Kishoreganj","Faridpur"],
+  "Chattogram": ["Chattogram","Cox's Bazar","Cumilla","Feni","Noakhali","Brahmanbaria","Chandpur","Rangamati","Bandarban"],
+  "Sylhet": ["Sylhet","Moulvibazar","Habiganj","Sunamganj"],
+  "Rajshahi": ["Rajshahi","Bogura","Pabna","Sirajganj","Natore","Naogaon","Joypurhat","Chapainawabganj"],
+  "Khulna": ["Khulna","Jashore","Satkhira","Bagerhat","Kushtia","Jhenaidah","Magura","Narail","Chuadanga","Meherpur"],
+  "Barishal": ["Barishal","Bhola","Patuakhali","Pirojpur","Barguna","Jhalokathi"],
+  "Rangpur": ["Rangpur","Dinajpur","Kurigram","Gaibandha","Nilphamari","Lalmonirhat","Thakurgaon","Panchagarh"],
+  "Mymensingh": ["Mymensingh","Jamalpur","Netrokona","Sherpur"]
+};
+let couponPct = 0, couponName = "";
+
+function initPage(){
+  // empty cart guard
+  if(cartTotals().count === 0){
+    document.getElementById('coWrap').innerHTML = `
+      <div class="success">
+        <div class="ok" style="background:#fff4f4; color:var(--rose)">🛒</div>
+        <h1>Your cart is empty</h1>
+        <p>Add some supplements before checking out.</p>
+        <a class="btn btn-green" style="margin-top:18px" href="category.html?goal=all">Browse products</a>
+      </div>`;
+    return;
+  }
+  // divisions
+  const dv = document.getElementById('fDivision');
+  Object.keys(BD).forEach(d=> dv.insertAdjacentHTML('beforeend', `<option value="${d}">${d}</option>`));
+  renderSummary();
+}
+
+function loadDistricts(){
+  const dv = document.getElementById('fDivision').value;
+  const dd = document.getElementById('fDistrict');
+  dd.innerHTML = `<option value="">Select district</option>`;
+  (BD[dv]||[]).forEach(c=> dd.insertAdjacentHTML('beforeend', `<option value="${c}">${c}</option>`));
+  // Dhaka district = free/standard delivery; baire = outer fee
+  renderSummary();
+}
+
+function selPay(el){
+  document.querySelectorAll('.pay-opt').forEach(o=>o.classList.remove('sel'));
+  el.closest('.pay-opt').classList.add('sel');
+}
+
+function deliveryFee(){
+  const district = document.getElementById('fDistrict')?.value || "";
+  const {sub} = cartTotals();
+  if(sub >= CONFIG.freeDeliveryOver) return 0;
+  if(district && district !== "Dhaka") return CONFIG.deliveryFeeOuter;
+  return CONFIG.deliveryFee;
+}
+
+function renderSummary(){
+  const {sub} = cartTotals();
+  document.getElementById('sumItems').innerHTML = Object.keys(cart).map(id=>{
+    const p=findP(id); if(!p) return ""; const q=cart[id];
+    const img = p.img ? `<img src="${p.img}" alt="">` : p.emoji;
+    return `<div class="sum-item">
+      <div class="si-img">${img}</div>
+      <div style="flex:1; min-width:0"><div class="nm">${p.name}</div><div class="qp">${money(p.price)} × ${q}</div></div>
+      <div class="lp">${money(p.price*q)}</div>
+    </div>`;
+  }).join('');
+
+  const del = deliveryFee();
+  const discount = Math.round(sub * couponPct / 100);
+  const total = sub - discount + del;
+
+  document.getElementById('sSub').textContent = money(sub);
+  document.getElementById('sDel').textContent = del===0 ? "FREE" : money(del);
+  const cr = document.getElementById('sCouponRow');
+  if(couponPct>0){ cr.style.display='flex'; document.getElementById('sCouponName').textContent=couponName;
+    document.getElementById('sCoupon').textContent = "-"+money(discount); }
+  else cr.style.display='none';
+  document.getElementById('sTotal').textContent = money(total);
+}
+
+function applyCoupon(){
+  const code = (document.getElementById('couponCode').value||'').trim().toUpperCase();
+  if(CONFIG.coupons[code]){ couponPct = CONFIG.coupons[code]; couponName = code;
+    toast(`Coupon ${code} applied · ${couponPct}% off ✓`); }
+  else { couponPct=0; couponName=''; toast("Invalid coupon code"); }
+  renderSummary();
+}
+
+function placeOrder(){
+  const name = val('fName'), phone = val('fPhone'), div = val('fDivision'),
+        dist = val('fDistrict'), addr = val('fAddress');
+  if(!name || !phone || !div || !dist || !addr){ toast("Please fill all required fields *"); return; }
+  if(!/^01\d{9}$/.test(phone)){ toast("Enter a valid 11-digit phone (01XXXXXXXXX)"); return; }
+
+  const pay = document.querySelector('input[name=pay]:checked').value;
+  const {sub} = cartTotals();
+  const del = deliveryFee();
+  const discount = Math.round(sub*couponPct/100);
+  const order = {
+    id: "MH" + Date.now().toString().slice(-8),
+    items: Object.keys(cart).map(id=>({ id:Number(id), name:findP(id).name, qty:cart[id], price:findP(id).price })),
+    customer: { name, phone, email:val('fEmail'), division:div, district:dist, address:addr, note:val('fNote') },
+    payment: pay, subtotal:sub, discount, coupon:couponName, delivery:del, total: sub-discount+del,
+    placedAt: new Date().toISOString()
+  };
+
+  /* ===========================================================
+     TODO (tomar Firebase order logic ekhane boshabe):
+     - Firebase Realtime DB te order push koro (orders write-public)
+     - phoneIndex update koro phone-based tracking er jonno
+     - usedCoupons update koro (per-phone enforcement)
+     uodaharon:  firebase.database().ref('orders').push(order);
+     =========================================================== */
+  console.log("ORDER:", order);
+
+  // clear cart + show success
+  cart = {}; saveCart(); updateCartUI();
+  document.getElementById('coWrap').innerHTML = `
+    <div class="success">
+      <div class="ok">✓</div>
+      <h1>Order placed successfully!</h1>
+      <p>Dhonnobad, ${name}! Amra shiggiri apnar sathe confirm korar jonno call korbo.</p>
+      <div class="oid">Order ID: ${order.id}</div>
+      <p style="font-size:14px">Payment: <b>${payLabel(pay)}</b> · Total: <b>${money(order.total)}</b></p>
+      <p style="font-size:14px">Delivery to: ${dist}, ${div}</p>
+      <a class="btn btn-green" style="margin-top:20px" href="index.html">Continue shopping</a>
+    </div>`;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+const val = id => (document.getElementById(id)?.value || '').trim();
+const payLabel = p => ({cod:"Cash on Delivery", bkash:"bKash", nagad:"Nagad", card:"Card"})[p] || p;
+</script>
+</body>
+</html>

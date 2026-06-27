@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+<title>Product — My Health</title>
+<meta name="theme-color" content="#0F5132" />
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="wrap" id="pdWrap">
+  <!-- JS renders product detail here -->
+</main>
+
+<section class="wrap section">
+  <div class="sec-head"><div><div class="eyebrow">You may also like</div><h2 id="relTitle">Related products</h2></div></div>
+  <div class="carousel" id="relRow"></div>
+</section>
+
+<footer id="site-footer"></footer>
+
+<script src="app.js"></script>
+<script>
+let pdQty = 1;
+let pdProduct = null;
+
+function initPage(){
+  pdProduct = findP(param('id'));
+  const wrap = document.getElementById('pdWrap');
+
+  if(!pdProduct){
+    wrap.innerHTML = `<div style="text-align:center; padding:80px 20px; color:var(--muted)">
+      <div style="font-size:60px">😕</div><h2 style="margin:14px 0">Product not found</h2>
+      <a class="btn btn-green" href="category.html?goal=all">Browse all products</a></div>`;
+    document.querySelector('section.section').style.display='none';
+    return;
+  }
+
+  const p = pdProduct;
+  document.title = p.name + " — My Health";
+  const off = Math.round((1 - p.price/p.oldPrice) * 100);
+  const save = p.oldPrice - p.price;
+  const img = p.img ? `<img src="${p.img}" alt="${p.name}">` : p.emoji;
+
+  wrap.innerHTML = `
+  <div class="crumb"><a href="index.html">Home</a><span>›</span>
+    <a href="category.html?goal=${p.goal}">${goalLabel(p.goal)}</a><span>›</span><span>${p.name}</span></div>
+
+  <div class="pd">
+    <div class="pd-media">
+      <div class="pd-img">${off>0?`<span class="disc">${off}% OFF</span>`:''}${img}</div>
+      <div class="pd-thumbs">
+        <div class="sel">${p.emoji}</div><div>🏷️</div><div>📦</div>
+      </div>
+    </div>
+
+    <div class="pd-detail">
+      <div class="pd-goal">${goalLabel(p.goal)} · ${p.brand||''}</div>
+      <h1>${p.name}</h1>
+      <div class="pd-rating"><span class="stars">${stars(p.rating)}</span> <b>${p.rating}</b> · ${p.reviews} reviews · <span style="color:var(--leaf)">In stock</span></div>
+
+      <div class="pd-price">
+        <span class="price">${money(p.price)}</span>
+        ${p.oldPrice>p.price?`<span class="old">${money(p.oldPrice)}</span><span class="save">Save ${money(save)}</span>`:''}
+      </div>
+
+      <div class="pd-badges">
+        <span>📦 ${p.size||'Standard pack'}</span>
+        <span>${TIMING[p.timing]||TIMING.anytime}</span>
+        <span>✅ 100% Authentic</span>
+        <span>🚚 Delivery 12–48 hrs</span>
+      </div>
+
+      <p style="color:var(--muted); font-size:15px;">${p.desc||''}</p>
+
+      <div class="pd-buy">
+        <div class="qtybox">
+          <button onclick="setPdQty(-1)">−</button><span id="pdQty">1</span><button onclick="setPdQty(1)">＋</button>
+        </div>
+        <button class="btn btn-green" onclick="addToCart(${p.id}, pdQty); toast('Added '+pdQty+' to cart 🛒');">＋ Add to Cart</button>
+        <button class="btn btn-lime" onclick="addToCart(${p.id}, pdQty); location.href='checkout.html';">Buy Now</button>
+      </div>
+
+      <div class="pd-info">
+        <h3>Key Benefits</h3>
+        <ul>${(p.benefits||[]).map(b=>`<li>${b}</li>`).join('')}</ul>
+
+        <h3>How to use</h3>
+        <div class="howto">
+          <div><div class="he">🥄</div><b>Dosage</b><small>${p.use?.dose||'-'}</small></div>
+          <div><div class="he">⏰</div><b>Best time</b><small>${p.use?.when||'-'}</small></div>
+          <div><div class="he">📅</div><b>Duration</b><small>${p.use?.duration||'-'}</small></div>
+        </div>
+
+        <p style="font-size:13px; color:var(--muted); background:var(--cream); padding:12px 14px; border-radius:12px;">
+          ⚠️ Supplements are not a substitute for a balanced diet. Consult a doctor if pregnant, nursing, or on medication.
+        </p>
+      </div>
+    </div>
+  </div>`;
+
+  // related products: same goal, exclude current
+  const related = PRODUCTS.filter(x=>x.goal===p.goal && x.id!==p.id).slice(0,8);
+  const relRow = document.getElementById('relRow');
+  if(related.length){ relRow.innerHTML = related.map(productCard).join(''); }
+  else { document.querySelector('section.section').style.display='none'; }
+}
+
+function setPdQty(d){
+  pdQty = Math.max(1, pdQty + d);
+  document.getElementById('pdQty').textContent = pdQty;
+}
+</script>
+</body>
+</html>
