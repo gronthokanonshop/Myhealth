@@ -201,8 +201,10 @@ function buildHeader(){
       </a>
       <div class="search">
         <span class="ico">🔍</span>
-        <input id="globalSearch" type="search" placeholder="Search vitamins, protein, omega-3…"
-          onkeydown="if(event.key==='Enter') goSearch(this.value)" />
+        <input id="globalSearch" type="search" autocomplete="off" placeholder="Search vitamins, protein, omega-3…"
+          oninput="liveSearch(this.value)"
+          onkeydown="if(event.key==='Enter') goSearch(this.value); if(event.key==='Escape') closeSearch();" />
+        <div class="search-results" id="searchResults"></div>
       </div>
       <div class="head-actions">
         <button class="iconbtn" onclick="openMenu()" aria-label="Menu">
@@ -375,6 +377,40 @@ function updateCartUI(){
 function openCart(){ document.getElementById('drawer')?.classList.add('open'); document.getElementById('overlay')?.classList.add('open'); }
 function closeCart(){ document.getElementById('drawer')?.classList.remove('open'); document.getElementById('overlay')?.classList.remove('open'); }
 function goSearch(q){ location.href = "category.html?q=" + encodeURIComponent(q||""); }
+
+/* live search dropdown — product cards with price + discount badge */
+function liveSearch(q){
+  const box = document.getElementById('searchResults');
+  if(!box) return;
+  q = (q||'').toLowerCase().trim();
+  if(q.length < 1){ closeSearch(); return; }
+  const matches = PRODUCTS.filter(p =>
+    (p.name||'').toLowerCase().includes(q) ||
+    goalLabel(p.goal).toLowerCase().includes(q) ||
+    (p.brand||'').toLowerCase().includes(q)
+  ).slice(0, 6);
+  if(!matches.length){
+    box.innerHTML = `<div class="sr-empty">No products found for “${q}”</div>`;
+    box.classList.add('open'); return;
+  }
+  box.innerHTML = matches.map(p=>{
+    const off = p.oldPrice>p.price ? Math.round((1 - p.price/p.oldPrice)*100) : 0;
+    return `<a class="sr-row" href="product.html?id=${p.id}">
+      <span class="sr-img">${imgHTML(p)}</span>
+      <span class="sr-info">
+        <span class="sr-name">${p.name}</span>
+        <span class="sr-meta">
+          <span class="sr-price">${money(p.price)}</span>
+          ${p.oldPrice>p.price?`<span class="sr-old">${money(p.oldPrice)}</span>`:''}
+          ${off>0?`<span class="sr-off">${off}% OFF</span>`:''}
+        </span>
+      </span>
+    </a>`;
+  }).join('') + `<a class="sr-all" href="category.html?q=${encodeURIComponent(q)}">See all results for “${q}” →</a>`;
+  box.classList.add('open');
+}
+function closeSearch(){ const b=document.getElementById('searchResults'); if(b){ b.classList.remove('open'); b.innerHTML=''; } }
+document.addEventListener('click', e=>{ if(!e.target.closest('.search')) closeSearch(); });
 
 let toastTimer;
 function toast(msg){
