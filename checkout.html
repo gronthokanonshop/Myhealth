@@ -7,6 +7,7 @@
 <meta name="theme-color" content="#0F5132" />
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="images/heart.svg">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -68,6 +69,9 @@
 
 <footer id="site-footer"></footer>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script src="product.js"></script>
 <script src="app.js"></script>
 <script>
@@ -172,20 +176,39 @@ function placeOrder(){
     items: Object.keys(cart).map(id=>({ id:Number(id), name:findP(id).name, qty:cart[id], price:findP(id).price })),
     customer: { name, phone, email:val('fEmail'), division:div, district:dist, address:addr, note:val('fNote') },
     payment: pay, subtotal:sub, discount, coupon:couponName, delivery:del, total: sub-discount+del,
-    placedAt: new Date().toISOString()
+    status: "pending", placedAt: new Date().toISOString()
   };
 
   /* ===========================================================
-     TODO (tomar Firebase order logic ekhane boshabe):
-     - Firebase Realtime DB te order push koro (orders write-public)
-     - phoneIndex update koro phone-based tracking er jonno
-     - usedCoupons update koro (per-phone enforcement)
-     uodaharon:  firebase.database().ref('orders').push(order);
+     Order Firebase e push hocche -> admin panel e (sob device) dekha jabe.
+     Firebase na thakle localStorage fallback.
      =========================================================== */
-  console.log("ORDER:", order);
+  const placeBtn = document.getElementById('placeBtn');
+  if(placeBtn){ placeBtn.disabled = true; placeBtn.textContent = 'Placing order…'; }
 
-  // clear cart + show success
-  cart = {}; saveCart(); updateCartUI();
+  function done(){
+    cart = {}; saveCart(); updateCartUI();
+    showOrderSuccess(order, name, div, dist, pay);
+  }
+
+  if(window.fdb){
+    window.fdb.ref('orders').push(order)
+      .then(done)
+      .catch(err=>{
+        if(placeBtn){ placeBtn.disabled = false; placeBtn.textContent = 'Place Order'; }
+        alert('Order save failed: ' + err.message + '\nInternet check kore abar try korun.');
+      });
+  } else {
+    try {
+      const all = JSON.parse(localStorage.getItem('myhealth_orders') || '[]');
+      all.unshift(order);
+      localStorage.setItem('myhealth_orders', JSON.stringify(all));
+    } catch(e){}
+    done();
+  }
+}
+
+function showOrderSuccess(order, name, div, dist, pay){
   document.getElementById('coWrap').innerHTML = `
     <div class="success">
       <div class="ok">✓</div>

@@ -56,12 +56,35 @@ const stars   = r => "★".repeat(Math.round(r)) + "☆".repeat(5 - Math.round(r
 const TIMING  = { morning:"🌅 Morning", postworkout:"💪 Post-workout", night:"🌙 Before bed", anytime:"⏱️ Anytime" };
 const param   = key => new URLSearchParams(location.search).get(key);
 
+/* Product source priority:  Firebase  ->  product.js seed (fallback).
+   Admin panel product gula Firebase e rakhe; storefront ekhane theke pore. */
+function bootProducts(done){
+  if(window.fdb){
+    window.fdb.ref('products').once('value').then(snap=>{
+      const val = snap.val();
+      if(val){
+        const arr = Object.values(val).filter(Boolean);
+        if(arr.length){ PRODUCTS.length = 0; arr.forEach(p=>PRODUCTS.push(p)); }
+      }
+      done();
+    }).catch(e=>{ console.warn('Firebase products load failed, using seed:', e); done(); });
+  } else {
+    done();
+  }
+}
+
 /* image load fail korle giant alt-text na dekhiye emoji dekhabe */
 function imgFallback(el, emoji){
   const s = document.createElement('span');
   s.className = 'img-emoji';
   s.textContent = emoji || '💊';
   el.replaceWith(s);
+}
+/* two-tone wordmark: prothom word orange, baki context color */
+function brandWordmark(){
+  const parts = (CONFIG.brand||'My Health').split(' ');
+  const name = `<span class="o">${parts[0]}</span>${parts.length>1?' '+parts.slice(1).join(' '):''}`;
+  return `<span class="wm"><span class="wm-name">${name}</span><small>${CONFIG.tagline}</small></span>`;
 }
 function imgHTML(p, alt){
   return p.img
@@ -174,7 +197,7 @@ function buildHeader(){
     <div class="wrap head-main">
       <a class="logo" href="index.html">
         <span class="mark"></span>
-        <span>${CONFIG.brand}<small>${CONFIG.tagline}</small></span>
+        ${brandWordmark()}
       </a>
       <div class="search">
         <span class="ico">🔍</span>
@@ -213,7 +236,7 @@ function buildFooter(){
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <a class="logo" href="index.html"><span class="mark"></span><span>${CONFIG.brand}<small>${CONFIG.tagline}</small></span></a>
+        <a class="logo" href="index.html"><span class="mark"></span>${brandWordmark()}</a>
         <p style="font-size:14px; max-width:280px;">Bangladesh's trusted store for authentic supplements, vitamins and nutrition. Delivered to all 64 districts.</p>
         <div class="foot-pay"><span>bKash</span><span>Nagad</span><span>Card</span><span>COD</span></div>
       </div>
@@ -261,7 +284,7 @@ function buildMenu(){
   <div class="overlay" id="menuOverlay" onclick="closeMenu()"></div>
   <aside class="menu-drawer" id="menuDrawer" aria-label="Main menu">
     <div class="menu-head">
-      <a class="logo" href="index.html"><span class="mark"></span><span>${CONFIG.brand}<small>${CONFIG.tagline}</small></span></a>
+      <a class="logo" href="index.html"><span class="mark"></span>${brandWordmark()}</a>
       <button onclick="closeMenu()" aria-label="Close">×</button>
     </div>
     <nav class="menu-nav">
@@ -371,5 +394,5 @@ document.addEventListener('DOMContentLoaded', ()=>{
   document.body.insertAdjacentHTML('beforeend', buildWishDrawer());
   updateCartUI();
   updateWishUI();
-  if(typeof initPage === 'function') initPage();
+  bootProducts(()=>{ if(typeof initPage === 'function') initPage(); });
 });

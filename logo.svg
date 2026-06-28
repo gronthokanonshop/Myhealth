@@ -1,0 +1,6 @@
+<svg viewBox="0 0 372 100" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="48" fill="#ffffff"/>
+  <path d="M50 76 C31 59 21 47 21 37.5 C21 29 27.5 23.5 35 23.5 C41 23.5 46 27.5 50 33.5 C54 27.5 59 23.5 65 23.5 C72.5 23.5 79 29 79 37.5 C79 47 69 59 50 76 Z" fill="#EA7317"/>
+  <polyline points="27,49 40,49 44,40 50,59 55,35 60,49 73,49" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+  <text x="118" y="66" font-family="Sora, Segoe UI, Arial, sans-serif" font-weight="800" font-size="48" fill="#EA7317" letter-spacing="1">MY HEALTH</text>
+</svg>
