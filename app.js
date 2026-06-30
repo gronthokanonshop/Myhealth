@@ -55,6 +55,8 @@ const goalLabel = id => (goalObj(id)?.label) || id;
 const stars   = r => "★".repeat(Math.round(r)) + "☆".repeat(5 - Math.round(r));
 const TIMING  = { morning:"🌅 Morning", postworkout:"💪 Post-workout", night:"🌙 Before bed", anytime:"⏱️ Anytime" };
 const param   = key => new URLSearchParams(location.search).get(key);
+/* stock check — admin er stockToggle ekhane match kore (stock:false = out) */
+const inStock = p => !!p && p.stock !== false && p.stock != null;
 
 /* Product source priority:  Firebase  ->  product.js seed (fallback).
    Admin panel product gula Firebase e rakhe; storefront ekhane theke pore. */
@@ -105,6 +107,8 @@ function saveWishlist(){ try{ localStorage.setItem('myhealth_wishlist', JSON.str
 
 function addToCart(id, qty){
   id = Number(id); qty = qty || 1;
+  const p = findP(id);
+  if(p && !inStock(p)){ toast("Out of stock 😔"); return; }
   cart[id] = (cart[id]||0) + qty;
   saveCart(); updateCartUI(); refreshAddButtons();
   toast("Added to cart 🛒");
@@ -128,6 +132,7 @@ function cartTotals(){
 function refreshAddButtons(){
   document.querySelectorAll('[data-add]').forEach(btn=>{
     const id = Number(btn.dataset.add);
+    if(btn.disabled) return; /* out-of-stock button — leave as is */
     const q = cart[id];
     if(btn.classList.contains('add')){
       btn.classList.toggle('in', !!q);
@@ -142,11 +147,12 @@ function refreshAddButtons(){
 function productCard(p){
   const off = Math.round((1 - p.price/p.oldPrice) * 100);
   const q = cart[p.id];
+  const oos = !inStock(p);
   const img = imgHTML(p, p.name);
   return `
-  <article class="card">
+  <article class="card${oos?' is-oos':''}">
     <div class="card-img">
-      ${off>0 ? `<span class="disc">${off}% OFF</span>` : ""}
+      ${oos ? `<span class="disc oos">Out of stock</span>` : (off>0 ? `<span class="disc">${off}% OFF</span>` : "")}
       <button class="wish ${wishlist.has(p.id)?'on':''}" data-wish="${p.id}" onclick="toggleWish(${p.id},this)" aria-label="Wishlist">♥</button>
       <a href="product.html?id=${p.id}">${img}</a>
       <span class="timing">${TIMING[p.timing]||TIMING.anytime}</span>
@@ -159,8 +165,8 @@ function productCard(p){
         <span class="price">${money(p.price)}</span>
         ${p.oldPrice>p.price ? `<span class="old">${money(p.oldPrice)}</span>` : ""}
       </div>
-      <button class="add ${q?'in':''}" data-add="${p.id}" onclick="addToCart(${p.id})">
-        ${q ? `✓ In cart (${q})` : "＋ Add to cart"}
+      <button class="add ${q?'in':''}" data-add="${p.id}" ${oos?'disabled':''} onclick="${oos?'':`addToCart(${p.id})`}">
+        ${oos ? "Out of stock" : (q ? `✓ In cart (${q})` : "＋ Add to cart")}
       </button>
     </div>
   </article>`;

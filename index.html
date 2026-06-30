@@ -113,10 +113,30 @@ function initPage(){
     <a class="goal" href="category.html?goal=${g.id}">
       <div class="gemoji">${g.emoji}</div><b>${g.label}</b><small>${g.note}</small>
     </a>`).join('');
-  // Carousels + new arrivals
-  document.getElementById('flashRow').innerHTML = PRODUCTS.filter(p=>p.tags.includes('flash')).map(productCard).join('');
-  document.getElementById('bestRow').innerHTML  = PRODUCTS.filter(p=>p.tags.includes('best')).map(productCard).join('');
-  document.getElementById('newRow').innerHTML   = PRODUCTS.filter(p=>p.tags.includes('new')).map(productCard).join('');
+
+  /* tag thakle tag onujayi, na thakle automatic fallback —
+     ei jonno admin diye add kora product (jeguloy tag set kora nei) o
+     homepage e dekha jabe, ar tags undefined hole crash hobe na. */
+  const has  = (p,t) => (p.tags || []).includes(t);
+  const disc = p => (p.oldPrice > p.price) ? 1 - p.price/p.oldPrice : 0;
+
+  let flash = PRODUCTS.filter(p => has(p,'flash'));
+  if(flash.length < 4) flash = [...PRODUCTS].filter(p => disc(p) > 0).sort((a,b)=> disc(b)-disc(a));
+
+  let best = PRODUCTS.filter(p => has(p,'best'));
+  if(best.length < 4) best = [...PRODUCTS].sort((a,b)=> (b.rating-a.rating) || (b.reviews-a.reviews));
+
+  let neu = PRODUCTS.filter(p => has(p,'new'));
+  if(neu.length < 4) neu = [...PRODUCTS].slice(-12).reverse();
+
+  const fill = (id, list) =>
+    document.getElementById(id).innerHTML =
+      list.slice(0,12).map(productCard).join('') ||
+      `<p style="color:var(--muted); padding:14px">No products yet — add some from the admin panel.</p>`;
+
+  fill('flashRow', flash);
+  fill('bestRow',  best);
+  fill('newRow',   neu);
 }
 </script>
 </body>

@@ -51,6 +51,7 @@ function initPage(){
   const off = Math.round((1 - p.price/p.oldPrice) * 100);
   const save = p.oldPrice - p.price;
   const img = imgHTML(p, p.name);
+  const oos = !inStock(p);
 
   wrap.innerHTML = `
   <div class="crumb"><a href="index.html">Home</a><span>›</span>
@@ -67,7 +68,9 @@ function initPage(){
     <div class="pd-detail">
       <div class="pd-goal">${goalLabel(p.goal)} · ${p.brand||''}</div>
       <h1>${p.name}</h1>
-      <div class="pd-rating"><span class="stars">${stars(p.rating)}</span> <b>${p.rating}</b> · ${p.reviews} reviews · <span style="color:var(--leaf)">In stock</span></div>
+      <div class="pd-rating"><span class="stars">${stars(p.rating)}</span> <b>${p.rating}</b> · ${p.reviews} reviews · ${oos
+        ? `<b style="display:inline-block;background:#ffe4e4;color:#c0392b;padding:3px 12px;border-radius:999px;font-weight:800">● Out of stock</b>`
+        : `<b style="display:inline-block;background:#e6f5e9;color:#1a7a35;padding:3px 12px;border-radius:999px;font-weight:800">● In stock</b>`}</div>
 
       <div class="pd-price">
         <span class="price">${money(p.price)}</span>
@@ -87,8 +90,8 @@ function initPage(){
         <div class="qtybox">
           <button onclick="setPdQty(-1)">−</button><span id="pdQty">1</span><button onclick="setPdQty(1)">＋</button>
         </div>
-        <button class="btn btn-green" onclick="addToCart(${p.id}, pdQty); toast('Added '+pdQty+' to cart 🛒');">＋ Add to Cart</button>
-        <button class="btn btn-lime" onclick="addToCart(${p.id}, pdQty); location.href='checkout.html';">Buy Now</button>
+        <button class="btn btn-green" ${oos?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="${oos?'':`addToCart(${p.id}, pdQty); toast('Added '+pdQty+' to cart 🛒');`}">${oos?'Out of stock':'＋ Add to Cart'}</button>
+        <button class="btn btn-lime" ${oos?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="${oos?'':`addToCart(${p.id}, pdQty); location.href='checkout.html';`}">Buy Now</button>
       </div>
 
       <div class="pd-info">

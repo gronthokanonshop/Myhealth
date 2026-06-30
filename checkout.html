@@ -173,7 +173,10 @@ function placeOrder(){
   const discount = Math.round(sub*couponPct/100);
   const order = {
     id: "MH" + Date.now().toString().slice(-8),
-    items: Object.keys(cart).map(id=>({ id:Number(id), name:findP(id).name, qty:cart[id], price:findP(id).price })),
+    items: Object.keys(cart).map(id=>{
+      const p = findP(id); if(!p) return null;
+      return { id:Number(id), name:p.name, qty:cart[id], price:p.price };
+    }).filter(Boolean),
     customer: { name, phone, email:val('fEmail'), division:div, district:dist, address:addr, note:val('fNote') },
     payment: pay, subtotal:sub, discount, coupon:couponName, delivery:del, total: sub-discount+del,
     status: "pending", placedAt: new Date().toISOString()
