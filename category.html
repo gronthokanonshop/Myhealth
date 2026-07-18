@@ -23,40 +23,43 @@
     <p id="catDesc">Browse our full range of authentic supplements and nutrition.</p>
   </div>
 
-  <div class="cat-layout">
-    <!-- Sidebar filters -->
-    <aside class="filters">
-      <h4>Category</h4>
-      <div class="fcat" id="goalFilters"></div>
-      <h4>Quick filters</h4>
-      <div class="fgoal" id="tagFilters">
-        <button onclick="setTag('all')" class="on" data-tag="all">All products</button>
-        <button onclick="setTag('flash')" data-tag="flash">On sale</button>
-        <button onclick="setTag('best')" data-tag="best">Best sellers</button>
-        <button onclick="setTag('new')" data-tag="new">New arrivals</button>
-      </div>
-    </aside>
-
-    <!-- Results -->
-    <div>
-      <!-- mobile goal chips -->
-      <div class="chips" id="chips"></div>
-
-      <div class="cat-toolbar">
-        <div class="count" id="resultCount"></div>
-        <select id="sortBy" onchange="render()">
-          <option value="pop">Sort: Popular</option>
-          <option value="low">Price: Low → High</option>
-          <option value="high">Price: High → Low</option>
-          <option value="disc">Biggest discount</option>
-          <option value="rate">Top rated</option>
-        </select>
-      </div>
-
-      <div class="grid" id="catGrid"></div>
+  <div class="cat-results">
+    <div class="cat-toolbar">
+      <button class="filter-btn" onclick="openFilterDrawer()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+        Filter
+      </button>
+      <div class="count" id="resultCount"></div>
+      <select id="sortBy" onchange="render()">
+        <option value="pop">Sort: Popular</option>
+        <option value="low">Price: Low → High</option>
+        <option value="high">Price: High → Low</option>
+        <option value="disc">Biggest discount</option>
+        <option value="rate">Top rated</option>
+      </select>
     </div>
+
+    <div class="grid" id="catGrid"></div>
   </div>
 </main>
+
+<!-- Filter drawer -->
+<div class="overlay" id="filterOverlay" onclick="closeFilterDrawer()"></div>
+<aside class="drawer filter-drawer" id="filterDrawer" aria-label="Filters">
+  <div class="drawer-head"><h3>Filters</h3><button onclick="closeFilterDrawer()" aria-label="Close">×</button></div>
+  <div class="drawer-body">
+    <h4>Category</h4>
+    <div class="fcat" id="goalFilters"></div>
+    <h4>Quick filters</h4>
+    <div class="fgoal" id="tagFilters">
+      <button onclick="setTag('all')" class="on" data-tag="all">All products</button>
+      <button onclick="setTag('flash')" data-tag="flash">On sale</button>
+      <button onclick="setTag('best')" data-tag="best">Best sellers</button>
+      <button onclick="setTag('new')" data-tag="new">New arrivals</button>
+    </div>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-dark" style="width:100%; justify-content:center" onclick="closeFilterDrawer()">Show results</button></div>
+</aside>
 
 <footer id="site-footer"></footer>
 
@@ -98,11 +101,6 @@ function initPage(){
         </div>
       </details>`).join('');
 
-  // mobile chips — flat list of all subcategories (simpler on small screens)
-  document.getElementById('chips').innerHTML =
-    `<button onclick="setGoal('all')" data-chip="all">All</button>` +
-    GOALS.map(g=>`<button onclick="setGoal('${g.id}')" data-chip="${g.id}">${g.label}</button>`).join('');
-
   // if arrived via search, show it in the global search box
   if(searchQ){ const s=document.getElementById('globalSearch'); if(s) s.value = searchQ; }
 
@@ -110,8 +108,10 @@ function initPage(){
   render();
 }
 
-function setGoal(id){ activeGoal=id; searchQ=''; applyHero(); render(); }
+function setGoal(id){ activeGoal=id; searchQ=''; applyHero(); render(); closeFilterDrawer(); }
 function setTag(t){ activeTag=t; render(); }
+function openFilterDrawer(){ document.getElementById('filterDrawer')?.classList.add('open'); document.getElementById('filterOverlay')?.classList.add('open'); }
+function closeFilterDrawer(){ document.getElementById('filterDrawer')?.classList.remove('open'); document.getElementById('filterOverlay')?.classList.remove('open'); }
 
 function applyHero(){
   const sub = goalObj(activeGoal);          // subcategory match
@@ -125,7 +125,6 @@ function applyHero(){
     : (cat ? `Browse all ${cat.label.toLowerCase()} products.` : "Browse our full range of authentic products.");
   // mark active buttons/accordion
   document.querySelectorAll('[data-goal]').forEach(b=> b.classList.toggle('on', b.dataset.goal===activeGoal));
-  document.querySelectorAll('[data-chip]').forEach(b=> b.classList.toggle('on', b.dataset.chip===activeGoal));
   const openGroup = sub ? document.querySelector(`.fcat-group[data-cat="${categoryOf(sub.id)?.id}"]`) : document.querySelector(`.fcat-group[data-cat="${activeGoal}"]`);
   document.querySelectorAll('.fcat-group').forEach(d=> d.open = (d===openGroup));
 }

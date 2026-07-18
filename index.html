@@ -10,6 +10,529 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
 <link rel="stylesheet" href="style.css">
+<style>
+/* ─── TRUST STRIP — perfect alignment fix ─── */
+.trust-card-single {
+  display: flex;
+  flex-wrap: nowrap;           /* desktop: 1 row */
+  align-items: stretch;        /* equal height columns */
+  justify-content: center;
+  gap: 0;
+}
+
+.trust-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;         /* icon + text vertically centered */
+  gap: 12px;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 18px 20px;
+  text-align: left;
+}
+
+/* divider between items */
+.trust-item + .trust-item {
+  border-left: 1px solid rgba(0,0,0,.07);
+}
+
+.ti-badge {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  min-height: 52px;
+  border-radius: 50%;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative;
+  overflow: visible;
+  /* reset any inherited padding/margin that shifts content */
+  padding: 0 !important;
+  margin: 0;
+  line-height: 1;
+  font-size: 0;       /* collapse any whitespace-based gap */
+}
+
+/* force the SVG inside ti-badge to be centered and not stretch */
+.ti-badge svg {
+  display: block !important;
+  width: 22px !important;
+  height: 22px !important;
+  flex-shrink: 0;
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+}
+
+.trust-item > div {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.trust-item b {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.trust-item span {
+  font-size: .8rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.trust-item small {
+  font-size: .72rem;
+  line-height: 1.35;
+  opacity: .65;
+  /* clamp to 2 lines so varying text length doesn't break alignment */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ─── CATEGORY NAV HEADER ─── */
+.cat-nav-section {
+  padding-top: 32px !important;
+  padding-bottom: 28px !important;
+}
+
+.cat-nav-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.cat-nav-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cat-nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #0F5132;
+  background: rgba(15,81,50,.09);
+  border-radius: 999px;
+  padding: 4px 10px;
+  width: fit-content;
+}
+
+.cat-nav-title {
+  font-size: 1.6rem !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  margin: 0 !important;
+  color: #1a1a1a;
+}
+
+.cat-nav-title em {
+  font-style: normal;
+  color: #0F5132;
+}
+
+.cat-nav-sub {
+  font-size: .82rem;
+  color: #888;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.cat-nav-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .8rem;
+  font-weight: 600;
+  color: #0F5132;
+  white-space: nowrap;
+  padding: 7px 14px;
+  border: 1.5px solid rgba(15,81,50,.3);
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background .18s, border-color .18s;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.cat-nav-all:hover {
+  background: rgba(15,81,50,.07);
+  border-color: #0F5132;
+}
+
+/* ─── CATEGORY CHIP — bigger round image ─── */
+.cat-chips-row {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 16px 20px;
+  justify-content: flex-start;
+}
+
+.cat-chip {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 10px !important;
+  text-align: center;
+  flex-shrink: 0;
+  text-decoration: none;
+  min-width: 88px;
+  transition: transform .18s;
+}
+
+.cat-chip:hover {
+  transform: translateY(-3px);
+}
+
+.cat-chip > span:last-child {
+  font-size: .78rem;
+  font-weight: 600;
+  color: #222;
+  line-height: 1.3;
+  max-width: 88px;
+}
+
+.cc-img {
+  width: 88px !important;
+  height: 88px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0;
+  border: 2.5px solid rgba(15,81,50,.12);
+  background: #f5f2ec;
+  box-shadow: 0 2px 10px rgba(0,0,0,.07);
+  transition: border-color .18s, box-shadow .18s;
+}
+
+.cat-chip:hover .cc-img {
+  border-color: #0F5132;
+  box-shadow: 0 4px 18px rgba(15,81,50,.15);
+}
+
+.cc-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cc-initial {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0F5132;
+}
+
+/* ─── MOBILE (≤ 640px) ─── */
+@media (max-width: 640px) {
+
+  /* Trust: 2×2 grid */
+  .trust-card-single {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    flex-wrap: wrap;
+  }
+
+  .trust-item {
+    padding: 14px 12px;
+    gap: 10px;
+  }
+
+  /* remove left border on 1st column items */
+  .trust-item:nth-child(odd) {
+    border-left: none;
+  }
+
+  /* bottom border between rows */
+  .trust-item:nth-child(-n+2) {
+    border-bottom: 1px solid rgba(0,0,0,.07);
+  }
+
+  .ti-badge {
+    width: 40px;
+    height: 40px;
+  }
+
+  .trust-item b {
+    font-size: .9rem;
+  }
+
+  .trust-item span {
+    font-size: .72rem;
+  }
+
+  .trust-item small {
+    font-size: .67rem;
+  }
+
+  /* Category nav header — stack on mobile */
+  .cat-nav-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .cat-nav-title {
+    font-size: 1.25rem !important;
+  }
+
+  .cat-nav-sub {
+    display: none; /* save space on mobile */
+  }
+
+  /* Category chips — horizontal scroll on mobile */
+  .cat-chips-row {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    gap: 12px 14px !important;
+    padding-bottom: 10px;
+    scrollbar-width: none;
+  }
+  .cat-chips-row::-webkit-scrollbar { display: none; }
+
+  .cat-chip {
+    scroll-snap-align: start;
+    min-width: 72px !important;
+    flex: 0 0 auto !important;   /* override style.css @620px: .cat-chip{ flex:0 0 76px } */
+  }
+
+  .cc-img {
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  .cat-chip > span:last-child {
+    font-size: .72rem;
+    max-width: 70px;
+  }
+}
+
+/* ─── TABLET (641–1024px) ─── */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .trust-card-single {
+    flex-wrap: wrap;
+  }
+  .trust-item {
+    flex: 1 1 45%;
+    min-width: 45%;
+  }
+  .trust-item:nth-child(odd) {
+    border-left: none;
+  }
+  .trust-item:nth-child(-n+2) {
+    border-bottom: 1px solid rgba(0,0,0,.07);
+  }
+}
+
+/* ─── PRODUCT CARD — slightly smaller than original 265px ─── */
+
+article.card {
+  width: 230px !important;
+  min-width: 230px !important;
+  max-width: 230px !important;
+  flex: 0 0 230px !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* image container */
+article.card .card-img {
+  height: 220px !important;
+  width: 100% !important;
+  aspect-ratio: unset !important;   /* style.css এ aspect-ratio:1/1 আছে — এটা cancel করতে হবে */
+  overflow: hidden !important;
+  position: relative !important;
+  flex-shrink: 0 !important;
+}
+
+article.card .card-img img,
+article.card .card-img .img-ph,
+article.card .card-img .img-emoji {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+}
+
+article.card .card-img img {
+  object-fit: contain !important;
+  position: static !important;
+}
+
+/* placeholder — center এ রাখো, full height fill করো */
+article.card .card-img .img-ph,
+article.card .card-img .img-emoji {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* placeholder এর ভেতরের a tag যেটা absolute inset:0 নেয় */
+article.card .card-img a {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 58px !important;
+}
+
+article.card .card-img a img {
+  position: static !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
+
+/* info body — natural padding, left-aligned */
+article.card .card-body {
+  padding: 11px 12px 13px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  text-align: left !important;
+}
+
+/* brand label */
+article.card .card-brand {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: .03em !important;
+  text-transform: uppercase !important;
+  display: block !important;
+  color: var(--muted) !important;
+}
+
+/* product name */
+article.card .card-name {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+  color: var(--ink) !important;
+  text-align: left !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  min-height: 34px !important;
+}
+
+article.card .card-name a {
+  font-size: inherit !important;
+  line-height: inherit !important;
+  color: inherit !important;
+}
+
+/* price row — left aligned */
+article.card .price-row {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+  margin-top: auto !important;
+  padding-top: 3px !important;
+  text-align: left !important;
+}
+
+article.card .price {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+article.card .old {
+  font-size: 11px !important;
+  opacity: .55 !important;
+  text-decoration: line-through !important;
+}
+
+/* add to cart button */
+article.card .add {
+  font-size: 11px !important;
+  height: 30px !important;
+  width: 100% !important;
+  border-radius: 7px !important;
+  margin-top: 5px !important;
+}
+
+/* discount badge */
+article.card .disc {
+  font-size: 10px !important;
+  padding: 3px 7px !important;
+}
+
+/* wishlist button */
+article.card .wish {
+  width: 30px !important;
+  height: 30px !important;
+  font-size: 14px !important;
+}
+
+/* quick view */
+article.card .qv-btn {
+  font-size: 11px !important;
+}
+
+/* carousel gap */
+.carousel {
+  gap: 12px !important;
+}
+
+/* ─── MOBILE ─── */
+@media (max-width: 640px) {
+  article.card {
+    width: 155px !important;
+    min-width: 155px !important;
+    max-width: 155px !important;
+    flex: 0 0 155px !important;
+  }
+
+  article.card .card-img {
+    height: 155px !important;
+    aspect-ratio: unset !important;
+  }
+
+  article.card .card-img img,
+  article.card .card-img .img-ph,
+  article.card .card-img .img-emoji {
+    height: 155px !important;
+    max-height: 155px !important;
+  }
+
+  article.card .card-name {
+    font-size: 12px !important;
+    min-height: 30px !important;
+  }
+
+  article.card .price {
+    font-size: 13px !important;
+  }
+}
+</style>
 <!-- ⚠️ DOMAIN PLACEHOLDER: niche "https://YOUR-DOMAIN.com" gulo domain kenar por real URL diye bodlao -->
 <script type="application/ld+json">
 {
@@ -44,40 +567,66 @@
 
 <main class="wrap">
 
-  <section class="hero">
-    <div class="hero-grid">
+  <section class="hero hero-light">
+    <div class="hero-banner" id="heroBanner">
+      <img class="hero-banner-img" id="heroBannerImg" alt="" fetchpriority="high">
       <div class="hero-main">
-        <span class="hero-eyebrow">100% Authentic · Lab-tested</span>
-        <h1>Everything for your <em>health & beauty</em></h1>
-        <p>Genuine supplements, skincare, haircare, makeup and mother & baby essentials — verified imports, honest prices, delivered fast.</p>
+        <span class="hero-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4.5"/></svg>
+          100% Authentic · Lab-tested
+        </span>
+        <h1>Everything for your <em>health &amp; beauty</em></h1>
+        <p>Genuine supplements, skincare, haircare, makeup and mother &amp; baby essentials — verified imports, honest prices, delivered fast.</p>
         <div class="hero-cta">
-          <a class="btn btn-lime" href="#categoryRows">Shop by category →</a>
-          <a class="btn btn-ghost" href="category.html?goal=all">Browse all</a>
-        </div>
-        <div class="hero-stats">
-          <div><b>2,000+</b>Products</div>
-          <div><b>50k+</b>Happy customers</div>
-          <div><b>64</b>Districts delivery</div>
-        </div>
-      </div>
-      <div class="hero-side">
-        <a class="promo a" href="category.html?goal=muscle">
-          <h3>Protein Festival</h3><span>Whey, mass gainer &amp; BCAA</span><div class="big">Up to 35% OFF</div>
-        </a>
-        <div class="promo b">
-          <h3>First order?</h3><span>Use code <b>HEALTH10</b></span><div class="big">Extra 10% OFF</div>
+          <a class="btn btn-dark" href="#categoryRows">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+            Shop by category
+          </a>
+          <a class="btn btn-outline-dark" href="category.html?goal=all">Browse all products</a>
         </div>
       </div>
     </div>
   </section>
 
   <section class="trust">
-    <div class="trust-grid">
-      <div class="trust-card"><div><b>100% Authentic</b><small>Direct from brands</small></div></div>
-      <div class="trust-card"><div><b>Lab Verified</b><small>Quality checked</small></div></div>
-      <div class="trust-card"><div><b>Fast Delivery</b><small>Same-day in Dhaka</small></div></div>
-      <div class="trust-card"><div><b>bKash · Nagad · COD</b><small>Secure payment</small></div></div>
+    <div class="trust-card-single" id="trustCard">
+      <div class="trust-item">
+        <span class="ti-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></span>
+        <div><b>2,000+</b><span>Products</span><small>Wide range of authentic brands</small></div>
+      </div>
+      <div class="trust-item">
+        <span class="ti-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.5 3-5.5 6-5.5s6 2 6 5.5"/><circle cx="17" cy="9" r="2.3"/><path d="M15.5 14.2c2.4.3 4.5 2 4.5 5.3"/></svg></span>
+        <div><b>50k+</b><span>Happy Customers</span><small>Trusted by thousands across the country</small></div>
+      </div>
+      <div class="trust-item">
+        <span class="ti-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="12" height="9" rx="1"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17.5" cy="18" r="1.6"/></svg></span>
+        <div><b>64</b><span>Districts Delivery</span><small>Fast &amp; reliable delivery to your doorstep</small></div>
+      </div>
+      <div class="trust-item">
+        <span class="ti-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4.5"/></svg></span>
+        <div><b>100% Authentic</b><span>Lab-tested Products</span><small>Original products, assured quality</small></div>
+      </div>
     </div>
+  </section>
+
+  <section class="section promo-row" id="heroBanners"></section>
+
+  <section class="section cat-nav-section">
+    <div class="cat-nav-head">
+      <div class="cat-nav-title-wrap">
+        <span class="cat-nav-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          Categories
+        </span>
+        <h2 class="cat-nav-title">Shop by <em>Category</em></h2>
+        <p class="cat-nav-sub">Find exactly what you need — from supplements to skincare</p>
+      </div>
+      <a class="cat-nav-all" href="category.html?goal=all">
+        Browse all
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <div class="cat-chips-row" id="catIconsRow"></div>
   </section>
 
   <section class="section">
@@ -129,7 +678,87 @@
 <script src="product.js"></script>
 <script src="app.js"></script>
 <script>
+/* Hero-r pichoner ekta fixed background image — admin panel > Banners >
+   "Hero Banner Image" theke upload kora hoy (rotating na, EKTAI fixed chobi).
+   Chobi na thakle plain gradient background e text overlay thik moto e dekhabe. */
+function loadHeroImage(){
+  const box = document.getElementById('heroBanner');
+  const imgEl = document.getElementById('heroBannerImg');
+  if(!box || !imgEl || !window.fdb) return;
+  window.fdb.ref('heroImage').once('value').then(snap=>{
+    const url = snap.val();
+    if(!url) return;
+    box.classList.add('has-img');
+    /* image full download hoyar por smooth fade-in — hothat "pop" kore
+       dekha jaoar bodole nice transition, load-e kono delay dekhay na */
+    imgEl.onload = () => imgEl.classList.add('loaded');
+    imgEl.src = url;
+  }).catch(()=>{});
+}
+
+/* Hero banner-gula (age hardcoded chilo) ekhon admin panel > Banners theke
+   maintain kora jay — Firebase 'banners' node theke pore, khali thakle ei
+   default duita dekhay (fallback, jate hero-side kokhono khali na thake). */
+const DEFAULT_BANNERS = [
+  { title:"Protein Festival", subtitle:"Whey, mass gainer & BCAA", bigText:"Up to 35% OFF", link:"category.html?goal=muscle", theme:"a" },
+  { title:"First order?", subtitle:"Use code HEALTH10", bigText:"Extra 10% OFF", link:"", theme:"b" },
+];
+const BANNER_ICONS = {
+  a: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 9-9 9-9-9V4a2 2 0 0 1 2-2h7z"/><circle cx="7.5" cy="7.5" r="1.3"/></svg>`,
+  b: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="4" rx="1"/><rect x="4" y="13" width="16" height="8" rx="1"/><path d="M12 9v12M12 9c-1.5-4-6-4-6-1.5S9 9 12 9zM12 9c1.5-4 6-4 6-1.5S15 9 12 9z"/></svg>`,
+};
+function renderHeroBanners(list){
+  const box = document.getElementById('heroBanners');
+  if(!box) return;
+  box.innerHTML = list.slice(0,2).map(b=>{
+    const tag = b.link ? 'a' : 'div';
+    const hrefAttr = b.link ? ` href="${b.link}"` : '';
+    /* admin nijer banayano chobi dile — pura image-i banner hoye jay (nijer
+       design/text soho), text+color card ar dekhabe na */
+    if(b.img){
+      return `<${tag} class="promo-img"${hrefAttr}><img src="${b.img}" alt="${(b.title||'').replace(/"/g,'&quot;')}" loading="lazy"></${tag}>`;
+    }
+    const theme = b.theme==='b' ? 'b' : 'a';
+    return `<${tag} class="promo ${theme}"${hrefAttr}>
+      <span class="promo-badge">${BANNER_ICONS[theme]}</span>
+      <div class="promo-text"><h3>${b.title||''}</h3><div class="big">${b.bigText||''}</div><span>${b.subtitle||''}</span></div>
+      ${b.link ? `<span class="promo-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>` : ''}
+    </${tag}>`;
+  }).join('');
+}
+
+/* ---- Category quick-nav chip row (homepage) ----
+   Shudhu simple chip — kono SVG icon nei. Admin panel > Banners > Category
+   Images theke chobi upload korle chip-e sei chobi dekhabe (nahole shudhu text). */
+function renderCategoryChips(images){
+  const box = document.getElementById('catIconsRow');
+  if(!box) return;
+  box.innerHTML = CATEGORIES.map(c=>`
+    <a class="cat-chip" href="category.html?goal=${c.id}">
+      <span class="cc-img">${images && images[c.id] ? `<img src="${images[c.id]}" alt="">` : `<span class="cc-initial">${c.label.charAt(0)}</span>`}</span>
+      <span>${c.label}</span>
+    </a>`).join('');
+}
+function loadCategoryChips(){
+  if(!window.fdb){ renderCategoryChips(null); return; }
+  window.fdb.ref('categoryImages').once('value')
+    .then(snap=> renderCategoryChips(snap.val()))
+    .catch(()=> renderCategoryChips(null));
+}
+function loadHeroBanners(){
+  if(!window.fdb){ renderHeroBanners(DEFAULT_BANNERS); return; }
+  window.fdb.ref('banners').once('value').then(snap=>{
+    const val = snap.val();
+    const list = val ? Object.values(val).filter(b=>b && b.active!==false).sort((a,b)=>(a.order||0)-(b.order||0)) : [];
+    renderHeroBanners(list.length ? list : DEFAULT_BANNERS);
+  }).catch(()=> renderHeroBanners(DEFAULT_BANNERS));
+}
+
 function initPage(){
+  loadHeroImage();
+  loadHeroBanners();
+  loadCategoryChips();
+
   /* tag thakle tag onujayi, na thakle automatic fallback —
      ei jonno admin diye add kora product (jeguloy tag set kora nei) o
      homepage e dekha jabe, ar tags undefined hole crash hobe na. */
@@ -152,7 +781,7 @@ function initPage(){
     return `
     <section class="section cat-row">
       <a class="cat-band" href="category.html?goal=${c.id}">
-        <span class="cat-band-emoji">${c.emoji}</span>
+        <span class="cat-band-spacer"></span>
         <h2>${c.label}</h2>
         <span class="cat-band-see">See all →</span>
       </a>

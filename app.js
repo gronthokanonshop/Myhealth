@@ -436,59 +436,8 @@ function buildHeader(){
         </button>
       </div>
     </div>
-    <nav class="catnav">
-      <div class="wrap">
-        <a class="catpill flash" href="category.html?goal=all">Flash Sale</a>
-        <a class="catpill" href="category.html?goal=all">All Products</a>
-        ${CATEGORIES.map(c=>`
-          <div class="cat-drop" onmouseenter="openCatDrop(this,'${c.id}')" onmouseleave="scheduleCloseCatDrop()">
-            <a class="catpill cat-drop-trigger" href="category.html?goal=${c.id}" onclick="if(window.matchMedia('(hover:hover)').matches){event.preventDefault();toggleCatDrop(this,'${c.id}');}">
-              ${c.label}
-              <svg class="cat-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
-            </a>
-          </div>`).join('')}
-      </div>
-    </nav>
-  </header>
-  <div class="cat-drop-panel" id="catDropPanel" onmouseenter="cancelCloseCatDrop()" onmouseleave="scheduleCloseCatDrop()"></div>`;
+  </header>`;
 }
-
-/* =========================================================================
-   HEADER CATEGORY DROPDOWN — desktop hover mega-menu (position:fixed, tai
-   catnav er horizontal scroll container-e clip hoy na)
-   ========================================================================= */
-let catDropTimer = null, catDropOpenId = null;
-function openCatDrop(triggerWrap, catId){
-  if(!window.matchMedia('(hover:hover)').matches) return; /* touch device e hover nai — click e toggle hobe */
-  cancelCloseCatDrop();
-  showCatDrop(triggerWrap, catId);
-}
-function toggleCatDrop(linkEl, catId){
-  const panel = document.getElementById('catDropPanel');
-  if(catDropOpenId === catId && panel.classList.contains('open')){ closeCatDrop(); return; }
-  showCatDrop(linkEl.closest('.cat-drop'), catId);
-}
-function showCatDrop(triggerWrap, catId){
-  const cat = categoryObj(catId); if(!cat || !triggerWrap) return;
-  const panel = document.getElementById('catDropPanel'); if(!panel) return;
-  catDropOpenId = catId;
-  panel.innerHTML = `
-    <div class="cat-drop-grid">
-      ${cat.subs.map(s=>`<a href="category.html?goal=${s.id}">${s.label}</a>`).join('')}
-    </div>
-    <a class="cat-drop-all" href="category.html?goal=${cat.id}">View all ${cat.label} →</a>`;
-  const r = triggerWrap.getBoundingClientRect();
-  panel.style.top  = Math.round(r.bottom) + 'px';
-  panel.style.left = Math.round(Math.max(12, Math.min(r.left, window.innerWidth - 320))) + 'px';
-  panel.classList.add('open');
-}
-function scheduleCloseCatDrop(){ clearTimeout(catDropTimer); catDropTimer = setTimeout(closeCatDrop, 180); }
-function cancelCloseCatDrop(){ clearTimeout(catDropTimer); }
-function closeCatDrop(){
-  const panel = document.getElementById('catDropPanel'); if(panel) panel.classList.remove('open');
-  catDropOpenId = null;
-}
-document.addEventListener('click', e=>{ if(!e.target.closest('.cat-drop') && !e.target.closest('.cat-drop-panel')) closeCatDrop(); });
 
 function buildFooter(){
   return `

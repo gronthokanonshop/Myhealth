@@ -323,6 +323,7 @@ tr:last-child td{ border-bottom:none; }
     <nav>
       <button class="on" data-tab="dashboard" onclick="go('dashboard')"><span>Dashboard</span></button>
       <button data-tab="products" onclick="go('products')"><span>Products</span></button>
+      <button data-tab="banners" onclick="go('banners')"><span>Banners</span></button>
       <button data-tab="orders" onclick="go('orders')"><span>Orders</span></button>
       <button data-tab="courier" onclick="go('courier')"><span>Courier</span></button>
       <button data-tab="settings" onclick="go('settings')"><span>Settings</span></button>
@@ -341,6 +342,7 @@ tr:last-child td{ border-bottom:none; }
 <nav class="mob-nav" id="mobNav">
   <button class="on" data-tab="dashboard" onclick="go('dashboard')">Dashboard</button>
   <button data-tab="products" onclick="go('products')">Products</button>
+  <button data-tab="banners" onclick="go('banners')">Banners</button>
   <button data-tab="orders" onclick="go('orders')">Orders</button>
   <button data-tab="courier" onclick="go('courier')">Courier</button>
   <button data-tab="settings" onclick="go('settings')">Settings</button>
@@ -410,6 +412,19 @@ const CATS = [
   {id:"honey",    label:"Foods · Honey"},
   {id:"drygoods", label:"Foods · Dry Goods"},
 ];
+/* Top-level 8 category (storefront homepage-e "Shop by Category" chip row-e
+   dekhay) — ei list o app.js-er CATEGORIES-er top-level id/label-er sathe
+   MIL rekhe cholte hobe. */
+const TOP_CATEGORIES = [
+  {id:"supplements", label:"Vitamins & Supplements"},
+  {id:"facecare",     label:"Face Care"},
+  {id:"haircare",     label:"Hair Care"},
+  {id:"bodycare",     label:"Body Care"},
+  {id:"makeup",        label:"Makeup"},
+  {id:"motherbaby",   label:"Mother & Baby"},
+  {id:"menscare",     label:"Men's Care"},
+  {id:"foods",          label:"Foods"},
+];
 const TAGS = ["flash","best","new"];
 
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -430,6 +445,9 @@ const goalLabel = id => { const c=CATS.find(x=>x.id===id); return c?c.label:id; 
 
 let products = [];
 let orders = [];
+let banners = [];
+let categoryImages = {};
+let heroImage = '';
 let curTab = 'dashboard';
 let seeded = false;
 
@@ -510,6 +528,20 @@ function attachListeners(){
     orders.sort((a,b)=> new Date(b.placedAt||0) - new Date(a.placedAt||0));
     if(['dashboard','orders'].includes(curTab)) renderCurrent();
   });
+  window.fdb.ref('banners').on('value', snap=>{
+    const val = snap.val();
+    banners = val ? Object.entries(val).map(([k,v])=>({_key:k, ...v})) : [];
+    banners.sort((a,b)=> (a.order||0)-(b.order||0));
+    if(curTab==='banners') renderCurrent();
+  });
+  window.fdb.ref('categoryImages').on('value', snap=>{
+    categoryImages = snap.val() || {};
+    if(curTab==='banners') renderCurrent();
+  });
+  window.fdb.ref('heroImage').on('value', snap=>{
+    heroImage = snap.val() || '';
+    if(curTab==='banners') renderCurrent();
+  });
 }
 function seedProducts(){
   const obj = {};
@@ -558,7 +590,7 @@ function syncWithProductJs(){
     .then(()=> alert(`Sync সম্পূর্ণ! ${toDelete.length}টা মুছে গেছে, ${toAdd.length}টা যোগ হয়েছে, ${toUpdate.length}টা আপডেট হয়েছে।`))
     .catch(e=> alert('Failed: '+e.message));
 }
-function renderCurrent(){ ({dashboard:renderDashboard,products:renderProducts,orders:renderOrders,courier:renderCourier,settings:renderSettings}[curTab]||renderDashboard)(); }
+function renderCurrent(){ ({dashboard:renderDashboard,products:renderProducts,banners:renderBanners,orders:renderOrders,courier:renderCourier,settings:renderSettings}[curTab]||renderDashboard)(); }
 
 function thumb(p){
   const initial = esc((p.name||'?').trim().charAt(0).toUpperCase());
@@ -572,7 +604,7 @@ function go(tab){
   curTab = tab;
   document.querySelectorAll('.side nav button').forEach(b=>b.classList.toggle('on', b.dataset.tab===tab));
   document.querySelectorAll('.mob-nav button').forEach(b=>b.classList.toggle('on', b.dataset.tab===tab));
-  document.getElementById('pageTitle').textContent = ({dashboard:'Dashboard',products:'Products',orders:'Orders',courier:'Courier',settings:'Settings'})[tab];
+  document.getElementById('pageTitle').textContent = ({dashboard:'Dashboard',products:'Products',banners:'Banners',orders:'Orders',courier:'Courier',settings:'Settings'})[tab];
   renderCurrent();
 }
 
@@ -685,6 +717,237 @@ function renderProducts(){
     <div class="note-box"><b>Live:</b> ekhane add/edit/delete korle shoja <b>Firebase</b> e save hoy — website e (sob device) sathe sathe update hobe. Commit/export lagbe na.</div>`;
 }
 
+/* ============================ BANNERS ============================
+   Homepage-r hero-side e 2ta banner (promo box) dekhay — ei list theke
+   top 2ta "active" banner (order onujayi) live dekhabe. Bad-e beshi
+   banner rakha thakle o shudhu prothom 2ta dekha jabe (ready-to-use rotate). */
+function renderBanners(){
+  document.getElementById('content').innerHTML = `
+    <div class="panel">
+      <div class="panel-head"><h2>Hero Banner Image</h2></div>
+      <p style="color:var(--muted);font-size:13px;padding:14px 18px 0;margin:0">
+        হোমপেজের সবচেয়ে উপরের hero-এর ব্যাকগ্রাউন্ড ছবি — একটাই ফিক্সড ছবি (rotate করে না)।
+        উপরে লেখা (headline, বাটন) এর ছবির উপরেই বসবে। ছবি না দিলে সাধারণ রঙিন ব্যাকগ্রাউন্ড দেখাবে।
+      </p>
+      <div class="note-box" style="margin:12px 18px 0">
+        <b>প্রস্তাবিত সাইজ:</b> ১৬০০ × ৬০০ পিক্সেল (ratio প্রায় ২.৭:১) — চওড়া/landscape ছবি। ছবিটা
+        কন্টেইনারে auto-crop হয়ে বসে (<code>cover</code>), তাই মাপ হুবহু না মিললেও চলবে —
+        তবে এই ratio-র কাছাকাছি রাখলে কম কাটা পড়বে।<br>
+        <b>জরুরি:</b> ছবির <b>ডান পাশে</b> মূল প্রোডাক্ট/বিষয়বস্তু রাখুন — বাম পাশ লেখার
+        (headline/বাটন) নিচে ঢাকা পড়ে যাবে, তাই বামে গুরুত্বপূর্ণ কিছু না রাখাই ভালো।
+        ফাইল সাইজ ৫০০KB-এর কম রাখলে পেজ দ্রুত লোড হবে।
+      </div>
+      <div style="padding:14px 18px">
+        <div class="courier-card">
+          <div class="cc-logo" style="overflow:hidden;width:64px;height:64px">${heroImage?`<img src="${esc(heroImage)}" alt="" style="width:100%;height:100%;object-fit:cover">`:'—'}</div>
+          <div class="cc-info"><div class="cc-name">${heroImage?'ছবি সেট করা আছে':'এখনো কোনো ছবি নেই'}</div></div>
+          <div class="cc-acts">
+            <input type="file" id="hero_img_file" accept="image/*" style="display:none" onchange="uploadHeroImage()">
+            <button class="b b-ghost b-sm" onclick="document.getElementById('hero_img_file').click()">Upload</button>
+            ${heroImage?`<button class="b b-rose b-sm" onclick="removeHeroImage()">Remove</button>`:''}
+          </div>
+        </div>
+        <div id="hero_img_status" style="font-size:12px;margin-top:6px"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Banners (${banners.length})</h2>
+        <div class="panel-tools">
+          <button class="b b-green b-sm" onclick="openBanner()">Add Banner</button>
+        </div>
+      </div>
+      ${banners.length ? `
+      <div class="table-wrap">
+        <table><thead><tr><th>Order</th><th>Banner</th><th>Link</th><th>Status</th><th></th></tr></thead><tbody>
+          ${banners.map(b=>`<tr>
+            <td><b>${b.order||0}</b></td>
+            <td><div style="display:flex;gap:11px;align-items:center">
+              ${b.img?`<img class="t-img" src="${esc(b.img)}" alt="">`:`<div class="t-emoji">—</div>`}
+              <div><b>${esc(b.title)}</b><div class="tag-mini">${b.img?'Custom image':esc(b.subtitle||'')+' · '+esc(b.bigText||'')}</div></div>
+            </div></td>
+            <td class="tag-mini">${b.link?esc(b.link):'—'}</td>
+            <td><button class="stock-toggle ${b.active!==false?'in':'out'}" onclick="toggleBannerActive('${b._key}',${b.active===false})">${b.active!==false?'Active':'Hidden'}</button></td>
+            <td><div class="row-acts">
+              <button class="b b-ghost b-sm" onclick="openBanner('${b._key}')">Edit</button>
+              <button class="b b-rose b-sm" onclick="delBanner('${b._key}')">Delete</button>
+            </div></td>
+          </tr>`).join('')}
+        </tbody></table>
+      </div>
+      <div class="m-card-list">
+        ${banners.map(b=>`<div class="m-card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+            <div>
+              <div style="font-weight:700;font-size:15px">${esc(b.title)}</div>
+              <div class="tag-mini">${esc(b.subtitle||'')} · ${esc(b.bigText||'')}</div>
+              <div class="tag-mini">Order ${b.order||0}${b.link?' · '+esc(b.link):''}</div>
+            </div>
+            <button class="stock-toggle ${b.active!==false?'in':'out'}" onclick="toggleBannerActive('${b._key}',${b.active===false})">${b.active!==false?'Active':'Hidden'}</button>
+          </div>
+          <div class="m-card-acts">
+            <button class="b b-ghost b-sm" onclick="openBanner('${b._key}')" style="flex:1;justify-content:center">Edit</button>
+            <button class="b b-rose b-sm" onclick="delBanner('${b._key}')" style="flex:1;justify-content:center">Delete</button>
+          </div>
+        </div>`).join('')}
+      </div>
+      ` : `<div class="empty">No banners yet — the homepage shows 2 default banners until you add your own.</div>`}
+    </div>
+    <div class="note-box">Homepage hero-side shows the top 2 <b>active</b> banners (sorted by Order). Add more than 2 to have spares ready — only the first 2 show live.</div>
+
+    <div class="panel" style="margin-top:20px">
+      <div class="panel-head"><h2>Category Images</h2></div>
+      <p style="color:var(--muted);font-size:13px;padding:14px 18px 0;margin:0">
+        হোমপেজের "Shop by Category" chip-এ প্রতিটা ক্যাটাগরির পাশে একটা ছোট ছবি দেখাতে চাইলে এখানে আপলোড করুন।
+        ছবি না দিলে সাদামাটা লেখা-চিপ দেখাবে।
+      </p>
+      <div style="padding:14px 18px;display:flex;flex-direction:column;gap:10px">
+        ${TOP_CATEGORIES.map(c=>`
+          <div class="courier-card">
+            <div class="cc-logo" style="overflow:hidden">${categoryImages[c.id]?`<img src="${esc(categoryImages[c.id])}" alt="" style="width:100%;height:100%;object-fit:cover">`:'—'}</div>
+            <div class="cc-info"><div class="cc-name">${esc(c.label)}</div></div>
+            <div class="cc-acts">
+              <input type="file" id="ci_file_${c.id}" accept="image/*" style="display:none" onchange="uploadCategoryImage('${c.id}')">
+              <button class="b b-ghost b-sm" onclick="document.getElementById('ci_file_${c.id}').click()">Upload</button>
+              ${categoryImages[c.id]?`<button class="b b-rose b-sm" onclick="removeCategoryImage('${c.id}')">Remove</button>`:''}
+            </div>
+          </div>
+          <div id="ci_status_${c.id}" style="font-size:12px;margin-top:-4px"></div>`).join('')}
+      </div>
+    </div>`;
+}
+function uploadCategoryImage(catId){
+  const file = document.getElementById('ci_file_'+catId).files[0];
+  const status = document.getElementById('ci_status_'+catId);
+  if(!file) return;
+  if(!IMGBB_KEY){
+    status.style.color = '#c0392b';
+    status.textContent = 'ImgBB API key set kora nei — Settings > Image Upload (ImgBB) e giye key boshao.';
+    return;
+  }
+  status.style.color = 'var(--muted)';
+  status.textContent = 'Uploading…';
+  const reader = new FileReader();
+  reader.onload = () => {
+    const base64 = reader.result.split(',')[1];
+    const form = new FormData();
+    form.append('image', base64);
+    fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(IMGBB_KEY)}`, { method:'POST', body:form })
+      .then(r=>r.json())
+      .then(j=>{
+        if(j.success && j.data && j.data.url){
+          window.fdb.ref('categoryImages/'+catId).set(j.data.url)
+            .then(()=>{ status.style.color = '#1a7a35'; status.textContent = 'Upload হয়ে গেছে ✓'; })
+            .catch(e=>{ status.style.color = '#c0392b'; status.textContent = 'Save failed: '+e.message; });
+        } else {
+          status.style.color = '#c0392b';
+          status.textContent = 'Upload failed: ' + (j.error?.message || 'unknown error');
+        }
+      })
+      .catch(e=>{ status.style.color = '#c0392b'; status.textContent = 'Upload failed: ' + e.message; });
+  };
+  reader.onerror = () => { status.style.color = '#c0392b'; status.textContent = 'File read failed.'; };
+  reader.readAsDataURL(file);
+}
+function removeCategoryImage(catId){
+  if(!confirm('এই ক্যাটাগরির ছবি সরিয়ে দেবো?')) return;
+  window.fdb.ref('categoryImages/'+catId).remove().catch(e=>alert(e.message));
+}
+function uploadHeroImage(){
+  const file = document.getElementById('hero_img_file').files[0];
+  const status = document.getElementById('hero_img_status');
+  if(!file) return;
+  if(!IMGBB_KEY){
+    status.style.color = '#c0392b';
+    status.textContent = 'ImgBB API key set kora nei — Settings > Image Upload (ImgBB) e giye key boshao.';
+    return;
+  }
+  status.style.color = 'var(--muted)';
+  status.textContent = 'Uploading…';
+  const reader = new FileReader();
+  reader.onload = () => {
+    const base64 = reader.result.split(',')[1];
+    const form = new FormData();
+    form.append('image', base64);
+    fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(IMGBB_KEY)}`, { method:'POST', body:form })
+      .then(r=>r.json())
+      .then(j=>{
+        if(j.success && j.data && j.data.url){
+          window.fdb.ref('heroImage').set(j.data.url)
+            .then(()=>{ status.style.color = '#1a7a35'; status.textContent = 'Upload হয়ে গেছে ✓'; })
+            .catch(e=>{ status.style.color = '#c0392b'; status.textContent = 'Save failed: '+e.message; });
+        } else {
+          status.style.color = '#c0392b';
+          status.textContent = 'Upload failed: ' + (j.error?.message || 'unknown error');
+        }
+      })
+      .catch(e=>{ status.style.color = '#c0392b'; status.textContent = 'Upload failed: ' + e.message; });
+  };
+  reader.onerror = () => { status.style.color = '#c0392b'; status.textContent = 'File read failed.'; };
+  reader.readAsDataURL(file);
+}
+function removeHeroImage(){
+  if(!confirm('Hero banner-er chobi ta sorie debo?')) return;
+  window.fdb.ref('heroImage').remove().catch(e=>alert(e.message));
+}
+function openBanner(key){
+  const b = key!=null ? banners.find(x=>x._key===key) : null;
+  const isEdit = !!b;
+  document.getElementById('modal').innerHTML = `
+    <div class="modal-head"><h3>${isEdit?'Edit':'Add'} Banner</h3><button onclick="closeModal()">×</button></div>
+    <div class="modal-body">
+      <div class="fld"><label>Banner image (optional)</label>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input id="bn_img" value="${esc(b?.img||'')}" placeholder="images\banner.jpg or https://…" style="flex:1;min-width:180px">
+          <input type="file" id="bn_img_file" accept="image/*" style="display:none" onchange="uploadBannerImage()">
+          <button type="button" class="b b-ghost b-sm" onclick="document.getElementById('bn_img_file').click()">Upload</button>
+        </div>
+        <div id="bn_img_status" style="font-size:12px;margin-top:6px"></div>
+        <p style="color:var(--muted);font-size:12px;margin:6px 0 0">নিজের বানানো ব্যানার ছবি upload করলে সেটাই দেখাবে (নিচের Title/Subtitle লেখা তখন আর দেখাবে না — শুধু ছবি + লিংক)। ছবি না দিলে নিচের লেখা দিয়ে রঙিন ব্যানার তৈরি হবে।</p>
+      </div>
+      <div class="fld"><label>Title *</label><input id="bn_title" value="${esc(b?.title||'')}" placeholder="e.g. Protein Festival"></div>
+      <div class="fld"><label>Subtitle</label><input id="bn_subtitle" value="${esc(b?.subtitle||'')}" placeholder="e.g. Whey, mass gainer & BCAA"></div>
+      <div class="fld"><label>Big text</label><input id="bn_big" value="${esc(b?.bigText||'')}" placeholder="e.g. Up to 35% OFF"></div>
+      <div class="fld"><label>Link (optional)</label><input id="bn_link" value="${esc(b?.link||'')}" placeholder="e.g. category.html?goal=muscle"></div>
+      <div class="g2">
+        <div class="fld"><label>Colour theme</label><select id="bn_theme">
+          <option value="a" ${!b||b.theme==='a'?'selected':''}>Orange</option>
+          <option value="b" ${b?.theme==='b'?'selected':''}>Sage green</option>
+        </select></div>
+        <div class="fld"><label>Order</label><input id="bn_order" type="number" value="${b?.order||banners.length}"></div>
+      </div>
+      <label style="display:inline-flex;gap:8px;align-items:center;font-weight:500">
+        <input type="checkbox" id="bn_active" ${!b||b.active!==false?'checked':''}> Active (show on homepage)
+      </label>
+    </div>
+    <div class="modal-foot">
+      <button class="b b-ghost" onclick="closeModal()">Cancel</button>
+      <button class="b b-green" onclick="saveBanner(${isEdit?`'${key}'`:'null'})">${isEdit?'Save changes':'Add banner'}</button>
+    </div>`;
+  openModal();
+}
+function saveBanner(key){
+  const v = id => document.getElementById(id).value.trim();
+  const title = v('bn_title');
+  if(!title){ alert('Title দিতে হবে।'); return; }
+  const data = {
+    title, subtitle: v('bn_subtitle'), bigText: v('bn_big'), link: v('bn_link'), img: v('bn_img'),
+    theme: v('bn_theme'), order: parseInt(v('bn_order'),10)||0,
+    active: document.getElementById('bn_active').checked
+  };
+  const ref = key ? window.fdb.ref('banners/'+key) : window.fdb.ref('banners').push();
+  ref.set(data).then(()=> closeModal()).catch(e=> alert('Save failed: '+e.message));
+}
+function toggleBannerActive(key, nextActive){
+  window.fdb.ref('banners/'+key+'/active').set(nextActive).catch(e=>alert(e.message));
+}
+function delBanner(key){
+  const b = banners.find(x=>x._key===key);
+  if(!confirm(`Delete banner "${b?.title}"?`)) return;
+  window.fdb.ref('banners/'+key).remove().catch(e=>alert('Delete failed: '+e.message));
+}
+
 function openProduct(id){
   const p = id!=null ? products.find(x=>x.id===id) : null;
   const isEdit = !!p;
@@ -788,6 +1051,42 @@ function uploadProductImage(){
       .then(j=>{
         if(j.success && j.data && j.data.url){
           document.getElementById('p_img').value = j.data.url;
+          status.style.color = '#1a7a35';
+          status.textContent = 'Upload হয়ে গেছে ✓';
+        } else {
+          status.style.color = '#c0392b';
+          status.textContent = 'Upload failed: ' + (j.error?.message || 'unknown error');
+        }
+      })
+      .catch(e=>{ status.style.color = '#c0392b'; status.textContent = 'Upload failed: ' + e.message; });
+  };
+  reader.onerror = () => { status.style.color = '#c0392b'; status.textContent = 'File read failed.'; };
+  reader.readAsDataURL(file);
+}
+
+/* Banner form-e "Upload" button diye select kora chobi ImgBB-e push kore,
+   return kora URL shorasori bn_img input-e boshiye dey — product image upload-er moto e. */
+function uploadBannerImage(){
+  const file = document.getElementById('bn_img_file').files[0];
+  const status = document.getElementById('bn_img_status');
+  if(!file) return;
+  if(!IMGBB_KEY){
+    status.style.color = '#c0392b';
+    status.textContent = 'ImgBB API key set kora nei — Settings > Image Upload (ImgBB) e giye key boshao.';
+    return;
+  }
+  status.style.color = 'var(--muted)';
+  status.textContent = 'Uploading…';
+  const reader = new FileReader();
+  reader.onload = () => {
+    const base64 = reader.result.split(',')[1];
+    const form = new FormData();
+    form.append('image', base64);
+    fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(IMGBB_KEY)}`, { method:'POST', body:form })
+      .then(r=>r.json())
+      .then(j=>{
+        if(j.success && j.data && j.data.url){
+          document.getElementById('bn_img').value = j.data.url;
           status.style.color = '#1a7a35';
           status.textContent = 'Upload হয়ে গেছে ✓';
         } else {
