@@ -656,57 +656,66 @@ article.card .qv-btn {
 }
 
 /* ─── MOBILE tweaks for hero + promo ───
-   Real bug in the new screenshot: .hero-main was still using the DESKTOP
-   left-to-right fade (cream → transparent at 100%), which only makes sense
-   when the photo sits to the right and text to the left of the SAME row.
-   On mobile the box goes full width, so that fade left most of the text
-   sitting directly on top of the raw photo with nothing behind it —
-   unreadable, overlapping. Fix: on mobile, stop overlapping the text on
-   the photo at all. Stack them — photo on top (shown in full, uncropped
-   framing), plain solid-background text block below, like a normal card.
-   That's the standard mobile pattern for this kind of hero and it removes
-   the readability problem completely, regardless of what the photo looks
-   like. */
+   Corrected per feedback: text should sit in the photo's empty LEFT-side
+   space (overlay, like desktop) — not stacked below it. The stacked
+   version's problem was a very tall box (aspect-ratio 16/10) forcing
+   object-fit:cover to crop hard into both sides of the photo to fill that
+   shape, which is what cut off the right side (the products). Fix: keep
+   the box close to the photo's own wide/short natural shape (so cover
+   barely has to crop anything), and confine the text block + scrim to
+   roughly the left half — matching where the photo's blank space actually
+   is — instead of letting it span the full width. */
 @media (max-width: 640px) {
   .hero-banner {
-    aspect-ratio: unset !important;
+    aspect-ratio: 2 / 1 !important;
     height: auto !important;
     min-height: 0 !important;
     display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
+    align-items: center !important;
     border-radius: 14px !important;
   }
 
   .hero-banner-img {
-    position: static !important;
-    inset: auto !important;
+    position: absolute !important;
+    inset: 0 !important;
     width: 100% !important;
-    height: auto !important;
-    aspect-ratio: 16 / 10 !important;
+    height: 100% !important;
     object-fit: cover !important;
+    object-position: center !important;
   }
 
   .hero-main {
-    position: static !important;
-    background: var(--cream) !important;
-    padding: 22px 20px 24px !important;
-    max-width: none !important;
+    position: relative !important;
+    max-width: 58% !important;
+    padding: 14px 10px 14px 14px !important;
+    background: linear-gradient(100deg, var(--cream) 0%, var(--cream) 78%, transparent 100%) !important;
+  }
+
+  .hero-eyebrow {
+    font-size: 10px !important;
+    padding: 5px 10px 5px 8px !important;
+  }
+
+  .hero-eyebrow svg {
+    width: 13px !important;
+    height: 13px !important;
   }
 
   .hero h1 {
-    font-size: clamp(1.35rem, 6vw, 1.7rem) !important;
-    margin: 12px 0 10px !important;
+    font-size: clamp(.95rem, 5vw, 1.25rem) !important;
+    margin: 6px 0 6px !important;
+    line-height: 1.15 !important;
   }
 
   .hero p {
-    font-size: .85rem !important;
-    margin: 0 0 16px !important;
+    font-size: .68rem !important;
+    margin: 0 0 10px !important;
+    line-height: 1.4 !important;
   }
 
   .hero-cta {
     flex-direction: column !important;
-    gap: 10px !important;
+    gap: 6px !important;
     width: 100% !important;
   }
 
@@ -716,6 +725,8 @@ article.card .qv-btn {
     box-sizing: border-box !important;
     text-align: center !important;
     justify-content: center !important;
+    padding: 8px 10px !important;
+    font-size: .72rem !important;
   }
 
   .promo-slider {
