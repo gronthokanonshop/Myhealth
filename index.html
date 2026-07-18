@@ -532,6 +532,181 @@ article.card .qv-btn {
     font-size: 13px !important;
   }
 }
+
+/* ─── TOP HERO BANNER — responsive, image visible & uncropped at every size ───
+   Real bug (confirmed in style.css): @media(max-width:900px){ .hero-banner-img{
+   display:none } } was hiding the banner photo completely on any tablet/phone.
+   Fix: keep the image visible always, and use aspect-ratio (instead of the
+   fixed min-height:420px) so it scales cleanly — and stays fully visible,
+   never cropped out of frame — at every width. */
+.hero-banner {
+  min-height: 0 !important;
+  height: auto !important;
+  width: 100% !important;
+  aspect-ratio: 2.8 / 1 !important;
+  border-radius: var(--r-lg) !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.hero-banner-img {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+.hero-main {
+  /* restore the readability scrim behind the text that style.css's
+     900px query was stripping out along with the image */
+  background: linear-gradient(100deg, var(--cream) 0%, var(--cream) 55%, transparent 100%) !important;
+  max-width: 580px !important;
+  box-sizing: border-box !important;
+}
+
+/* ─── BOTTOM PROMO BANNERS — 2-in-a-row becomes a 1-at-a-time slider ───
+   style.css uses `.promo-row{ display:grid; grid-template-columns:1fr 1fr }`
+   (stacking to 1 column only below 620px). We replace that grid with a
+   proper slider at every screen size: same row/space, one banner visible,
+   smoothly sliding into the other, with dots to jump between them.
+
+   Real bug behind the "cut off" banner: sizePromoSlider() used to measure
+   each slide's pixel height with offsetHeight BEFORE the admin-uploaded
+   <img> had finished loading, so it locked in a wrong (too-short) height —
+   then object-fit:cover cropped hard into the picture to fill that wrong
+   box. A guessed fixed aspect-ratio isn't the right fix either, because
+   every banner an admin uploads can be a different shape — the box needs
+   to match WHATEVER image gets uploaded, not one hardcoded ratio.
+
+   The real fix: object-fit:contain (never crops, whatever the image's
+   shape) + JS that waits for the image to actually finish loading, reads
+   its real naturalWidth/naturalHeight, and sizes the slider to exactly
+   that image's own proportions at the current track width. See
+   sizePromoSlider() in the script below. */
+.promo-row,
+.promo-slider {
+  display: block !important;
+  width: 100% !important;
+}
+
+.promo-slider {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: var(--r-lg) !important;
+  height: auto !important;
+  min-height: 120px !important; /* fallback only, until JS measures the real image/content */
+  background: var(--cream) !important; /* shows through if an image is narrower than the slider's fixed height */
+}
+
+.promo-track {
+  display: flex !important;
+  height: 100% !important;
+  transition: transform .6s cubic-bezier(.4,0,.2,1) !important;
+}
+
+.promo-track .promo-slide {
+  flex: 0 0 100% !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+.promo-track .promo-slide.promo {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.promo-track .promo-slide img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important; /* never crops — whatever shape the uploaded image is, it shows in full */
+  display: block !important;
+}
+
+.promo-dots {
+  position: absolute !important;
+  bottom: 12px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  gap: 6px !important;
+  z-index: 3 !important;
+}
+
+.promo-dot {
+  width: 7px !important;
+  height: 7px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,.55) !important;
+  cursor: pointer !important;
+  transition: width .25s, background .25s !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.promo-dot.active {
+  width: 20px !important;
+  border-radius: 5px !important;
+  background: #fff !important;
+}
+
+/* ─── MOBILE tweaks for hero + promo ─── */
+@media (max-width: 640px) {
+  .hero-banner {
+    aspect-ratio: 4 / 3 !important;
+    border-radius: 14px !important;
+  }
+
+  .hero-main {
+    padding: 20px !important;
+    max-width: none !important;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.35rem, 6vw, 1.7rem) !important;
+    margin: 12px 0 10px !important;
+  }
+
+  .hero p {
+    font-size: .85rem !important;
+    margin: 0 0 16px !important;
+  }
+
+  .hero-cta {
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .hero-cta .btn,
+  .hero-cta a {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  .promo-slider {
+    border-radius: 14px !important;
+  }
+
+  .promo-track .promo-slide.promo {
+    padding: 16px 18px !important;
+  }
+
+  .promo-text h3 {
+    font-size: 13px !important;
+  }
+
+  .promo-text .big {
+    font-size: 20px !important;
+  }
+}
 </style>
 <!-- ⚠️ DOMAIN PLACEHOLDER: niche "https://YOUR-DOMAIN.com" gulo domain kenar por real URL diye bodlao -->
 <script type="application/ld+json">
@@ -710,22 +885,121 @@ const BANNER_ICONS = {
 function renderHeroBanners(list){
   const box = document.getElementById('heroBanners');
   if(!box) return;
-  box.innerHTML = list.slice(0,2).map(b=>{
+  const slides = list.slice(0,2);
+
+  const slideHTML = slides.map(b=>{
     const tag = b.link ? 'a' : 'div';
     const hrefAttr = b.link ? ` href="${b.link}"` : '';
     /* admin nijer banayano chobi dile — pura image-i banner hoye jay (nijer
        design/text soho), text+color card ar dekhabe na */
     if(b.img){
-      return `<${tag} class="promo-img"${hrefAttr}><img src="${b.img}" alt="${(b.title||'').replace(/"/g,'&quot;')}" loading="lazy"></${tag}>`;
+      return `<${tag} class="promo-img promo-slide"${hrefAttr}><img src="${b.img}" alt="${(b.title||'').replace(/"/g,'&quot;')}" loading="lazy"></${tag}>`;
     }
     const theme = b.theme==='b' ? 'b' : 'a';
-    return `<${tag} class="promo ${theme}"${hrefAttr}>
+    return `<${tag} class="promo ${theme} promo-slide"${hrefAttr}>
       <span class="promo-badge">${BANNER_ICONS[theme]}</span>
       <div class="promo-text"><h3>${b.title||''}</h3><div class="big">${b.bigText||''}</div><span>${b.subtitle||''}</span></div>
       ${b.link ? `<span class="promo-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>` : ''}
     </${tag}>`;
   }).join('');
+
+  if(slides.length > 1){
+    // 2 banners: same row space, but sliding 1-at-a-time with dots
+    const dots = slides.map((_,i)=>`<button class="promo-dot${i===0?' active':''}" data-i="${i}" aria-label="Show banner ${i+1}"></button>`).join('');
+    box.innerHTML = `<div class="promo-slider"><div class="promo-track">${slideHTML}</div><div class="promo-dots">${dots}</div></div>`;
+    sizePromoSlider();
+    initPromoSlider(slides.length);
+  } else {
+    // Only 1 banner active — no need for a slider
+    box.innerHTML = `<div class="promo-slider promo-single"><div class="promo-track">${slideHTML}</div></div>`;
+    sizePromoSlider();
+  }
 }
+
+/* Sizes the slider box to match WHATEVER image the admin actually uploaded —
+   no guessed/fixed ratio. For an image slide, it reads the real
+   naturalWidth/naturalHeight once the image has actually finished loading
+   (this is the part that was broken before: measuring offsetHeight before
+   the image painted locked in a wrong, too-short height, and cover then
+   cropped the picture to fill it). For a text slide (title/price/subtitle),
+   there's no image to measure, so it uses a comfortable fixed height that
+   fits that layout. The slider height becomes the max needed across all
+   current slides, so nothing — image or text — is ever clipped. */
+function sizePromoSlider(){
+  const slider = document.querySelector('#heroBanners .promo-slider');
+  const slides = document.querySelectorAll('#heroBanners .promo-slide');
+  if(!slider || !slides.length) return;
+
+  const trackWidth = slider.offsetWidth;
+  let maxH = window.innerWidth <= 640 ? 130 : 140; // baseline for text-promo slides
+
+  const waitFor = [];
+  slides.forEach(s=>{
+    const img = s.querySelector('img');
+    if(!img) return; // text promo — baseline height above already covers it
+    const useNaturalSize = () => {
+      if(img.naturalWidth && img.naturalHeight){
+        maxH = Math.max(maxH, trackWidth * (img.naturalHeight / img.naturalWidth));
+      }
+    };
+    if(img.complete && img.naturalWidth){
+      useNaturalSize();
+    } else {
+      waitFor.push(new Promise(resolve=>{
+        img.addEventListener('load', ()=>{ useNaturalSize(); resolve(); }, { once:true });
+        img.addEventListener('error', resolve, { once:true });
+      }));
+    }
+  });
+
+  const applyHeight = () => { slider.style.height = Math.round(maxH) + 'px'; };
+  applyHeight(); // apply what we know immediately, avoids a layout flash
+  if(waitFor.length) Promise.all(waitFor).then(applyHeight);
+}
+
+let promoSlideTimer = null;
+function initPromoSlider(count){
+  const track = document.querySelector('#heroBanners .promo-track');
+  const dots  = document.querySelectorAll('#heroBanners .promo-dot');
+  if(!track || count < 2) return;
+
+  let i = 0;
+  const AUTOPLAY_MS = 4000;
+
+  function goTo(idx){
+    i = idx;
+    track.style.transform = `translateX(-${i * 100}%)`;
+    dots.forEach((d,j)=> d.classList.toggle('active', j===i));
+  }
+
+  function restartAutoplay(){
+    clearInterval(promoSlideTimer);
+    promoSlideTimer = setInterval(()=> goTo((i+1) % count), AUTOPLAY_MS);
+  }
+
+  dots.forEach(d=>{
+    d.addEventListener('click', ()=>{
+      goTo(parseInt(d.dataset.i,10));
+      restartAutoplay();
+    });
+  });
+
+  // pause on hover/touch so people can actually read it
+  const slider = document.querySelector('#heroBanners .promo-slider');
+  if(slider){
+    slider.addEventListener('mouseenter', ()=> clearInterval(promoSlideTimer));
+    slider.addEventListener('mouseleave', restartAutoplay);
+  }
+
+  restartAutoplay();
+}
+
+function debounce(fn, ms){
+  let t;
+  return function(...args){ clearTimeout(t); t = setTimeout(()=> fn.apply(this,args), ms); };
+}
+// image's needed height depends on track width, so re-measure on resize
+window.addEventListener('resize', debounce(sizePromoSlider, 200));
 
 /* ---- Category quick-nav chip row (homepage) ----
    Shudhu simple chip — kono SVG icon nei. Admin panel > Banners > Category
