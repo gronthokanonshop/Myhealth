@@ -655,15 +655,42 @@ article.card .qv-btn {
   background: #fff !important;
 }
 
-/* ─── MOBILE tweaks for hero + promo ─── */
+/* ─── MOBILE tweaks for hero + promo ───
+   Real bug in the new screenshot: .hero-main was still using the DESKTOP
+   left-to-right fade (cream → transparent at 100%), which only makes sense
+   when the photo sits to the right and text to the left of the SAME row.
+   On mobile the box goes full width, so that fade left most of the text
+   sitting directly on top of the raw photo with nothing behind it —
+   unreadable, overlapping. Fix: on mobile, stop overlapping the text on
+   the photo at all. Stack them — photo on top (shown in full, uncropped
+   framing), plain solid-background text block below, like a normal card.
+   That's the standard mobile pattern for this kind of hero and it removes
+   the readability problem completely, regardless of what the photo looks
+   like. */
 @media (max-width: 640px) {
   .hero-banner {
-    aspect-ratio: 4 / 3 !important;
+    aspect-ratio: unset !important;
+    height: auto !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
     border-radius: 14px !important;
   }
 
+  .hero-banner-img {
+    position: static !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16 / 10 !important;
+    object-fit: cover !important;
+  }
+
   .hero-main {
-    padding: 20px !important;
+    position: static !important;
+    background: var(--cream) !important;
+    padding: 22px 20px 24px !important;
     max-width: none !important;
   }
 
