@@ -1,0 +1,11 @@
+# My Health — robots.txt
+# ⚠️ DOMAIN PLACEHOLDER: domain kena hole nicher Sitemap line er
+#    "https://YOUR-DOMAIN.com" real domain diye bodlao.
+
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /checkout.html
+Disallow: /account.html
+
+Sitemap: https://YOUR-DOMAIN.com/sitemap.xml

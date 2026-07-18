@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
 <title>Product — My Health</title>
+<meta name="description" content="View product details, benefits, dosage and price — 100% authentic supplements from My Health, delivered across Bangladesh." />
 <meta name="theme-color" content="#0F5132" />
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -18,6 +19,24 @@
   <!-- JS renders product detail here -->
 </main>
 
+<section class="wrap section" id="reviewSection" style="display:none">
+  <div class="sec-head"><div><div class="eyebrow">Customer reviews</div><h2>Ratings & Reviews</h2></div></div>
+  <div class="rev-wrap">
+    <div class="rev-summary" id="revSummary"></div>
+    <div class="rev-list" id="revList"></div>
+    <div class="rev-form">
+      <h3>Write a review</h3>
+      <div class="rev-stars-pick" id="revStarPick"></div>
+      <div class="f2">
+        <div class="field"><label>Your name *</label><input id="rvName" placeholder="Your name" maxlength="60" /></div>
+        <div class="field"><label>Rating</label><input id="rvRatingVal" value="5" readonly /></div>
+      </div>
+      <div class="field"><label>Review *</label><textarea id="rvText" placeholder="Tell us what you think about this product…" maxlength="2000"></textarea></div>
+      <button class="btn btn-green" id="rvSubmit" onclick="postReview()">Submit review</button>
+    </div>
+  </div>
+</section>
+
 <section class="wrap section">
   <div class="sec-head"><div><div class="eyebrow">You may also like</div><h2 id="relTitle">Related products</h2></div></div>
   <div class="carousel" id="relRow"></div>
@@ -27,6 +46,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="product.js"></script>
 <script src="app.js"></script>
@@ -40,7 +60,7 @@ function initPage(){
 
   if(!pdProduct){
     wrap.innerHTML = `<div style="text-align:center; padding:80px 20px; color:var(--muted)">
-      <div style="font-size:60px">😕</div><h2 style="margin:14px 0">Product not found</h2>
+      <h2 style="margin:14px 0">Product not found</h2>
       <a class="btn btn-green" href="category.html?goal=all">Browse all products</a></div>`;
     document.querySelector('section.section').style.display='none';
     return;
@@ -60,9 +80,6 @@ function initPage(){
   <div class="pd">
     <div class="pd-media">
       <div class="pd-img">${off>0?`<span class="disc">${off}% OFF</span>`:''}${img}</div>
-      <div class="pd-thumbs">
-        <div class="sel">${p.emoji}</div><div>🏷️</div><div>📦</div>
-      </div>
     </div>
 
     <div class="pd-detail">
@@ -78,10 +95,10 @@ function initPage(){
       </div>
 
       <div class="pd-badges">
-        <span>📦 ${p.size||'Standard pack'}</span>
+        <span>${p.size||'Standard pack'}</span>
         <span>${TIMING[p.timing]||TIMING.anytime}</span>
-        <span>✅ 100% Authentic</span>
-        <span>🚚 Delivery 12–48 hrs</span>
+        <span>100% Authentic</span>
+        <span>Delivery 12–48 hrs</span>
       </div>
 
       <p style="color:var(--muted); font-size:15px;">${p.desc||''}</p>
@@ -90,7 +107,7 @@ function initPage(){
         <div class="qtybox">
           <button onclick="setPdQty(-1)">−</button><span id="pdQty">1</span><button onclick="setPdQty(1)">＋</button>
         </div>
-        <button class="btn btn-green" ${oos?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="${oos?'':`addToCart(${p.id}, pdQty); toast('Added '+pdQty+' to cart 🛒');`}">${oos?'Out of stock':'＋ Add to Cart'}</button>
+        <button class="btn btn-green" ${oos?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="${oos?'':`addToCart(${p.id}, pdQty); toast('Added '+pdQty+' to cart');`}">${oos?'Out of stock':'Add to Cart'}</button>
         <button class="btn btn-lime" ${oos?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="${oos?'':`addToCart(${p.id}, pdQty); location.href='checkout.html';`}">Buy Now</button>
       </div>
 
@@ -100,13 +117,13 @@ function initPage(){
 
         <h3>How to use</h3>
         <div class="howto">
-          <div><div class="he">🥄</div><b>Dosage</b><small>${p.use?.dose||'-'}</small></div>
-          <div><div class="he">⏰</div><b>Best time</b><small>${p.use?.when||'-'}</small></div>
-          <div><div class="he">📅</div><b>Duration</b><small>${p.use?.duration||'-'}</small></div>
+          <div><b>Dosage</b><small>${p.use?.dose||'-'}</small></div>
+          <div><b>Best time</b><small>${p.use?.when||'-'}</small></div>
+          <div><b>Duration</b><small>${p.use?.duration||'-'}</small></div>
         </div>
 
         <p style="font-size:13px; color:var(--muted); background:var(--cream); padding:12px 14px; border-radius:12px;">
-          ⚠️ Supplements are not a substitute for a balanced diet. Consult a doctor if pregnant, nursing, or on medication.
+          <b>Note:</b> Supplements are not a substitute for a balanced diet. Consult a doctor if pregnant, nursing, or on medication.
         </p>
       </div>
     </div>
@@ -115,8 +132,101 @@ function initPage(){
   // related products: same goal, exclude current
   const related = PRODUCTS.filter(x=>x.goal===p.goal && x.id!==p.id).slice(0,8);
   const relRow = document.getElementById('relRow');
-  if(related.length){ relRow.innerHTML = related.map(productCard).join(''); }
+  if(related.length){ relRow.innerHTML = related.map(productCard).join(''); document.querySelector('section.section').style.display=''; }
   else { document.querySelector('section.section').style.display='none'; }
+
+  injectProductJsonLd(p, oos);
+  initReviews(p);
+}
+
+/* =========================== PRODUCT REVIEWS =========================== */
+let rvPick = 5;
+function initReviews(p){
+  const sec = document.getElementById('reviewSection');
+  sec.style.display = '';
+  // star picker
+  document.getElementById('revStarPick').innerHTML =
+    [1,2,3,4,5].map(n=>`<button type="button" class="rsp ${n<=rvPick?'on':''}" data-n="${n}" onclick="setRvStar(${n})" aria-label="${n} star">★</button>`).join('');
+  // load + render
+  document.getElementById('revList').innerHTML = `<div class="rev-loading">Loading reviews…</div>`;
+  loadReviews(p.id, list=> renderReviews(p, list));
+}
+function setRvStar(n){
+  rvPick = n;
+  document.getElementById('rvRatingVal').value = n;
+  document.querySelectorAll('.rsp').forEach(b=> b.classList.toggle('on', Number(b.dataset.n)<=n));
+}
+function renderReviews(p, list){
+  const sum = document.getElementById('revSummary');
+  if(list.length){
+    const avg = (list.reduce((s,r)=>s+Number(r.rating||0),0)/list.length);
+    sum.innerHTML = `
+      <div class="rev-big">${avg.toFixed(1)}</div>
+      <div>
+        <div class="stars" style="font-size:20px">${stars(avg)}</div>
+        <div class="tag-mini" style="margin-top:4px">${list.length} customer review${list.length!==1?'s':''}</div>
+      </div>`;
+  } else {
+    sum.innerHTML = `<div class="rev-none">No reviews yet — <b>be the first</b> to review this product!</div>`;
+  }
+  document.getElementById('revList').innerHTML = list.length
+    ? list.map(r=>`<div class="rev-item">
+        <div class="rev-item-head">
+          <span class="rev-avatar">${(r.name||'?').trim().charAt(0).toUpperCase()}</span>
+          <div><b>${escapeHtml(r.name||'Anonymous')}</b><div class="stars" style="font-size:13px">${stars(r.rating)}</div></div>
+          <span class="tag-mini" style="margin-left:auto">${fmtDay(r.ts)}</span>
+        </div>
+        <p>${escapeHtml(r.text||'')}</p>
+      </div>`).join('')
+    : '';
+}
+function postReview(){
+  const name = (document.getElementById('rvName').value||'').trim();
+  const text = (document.getElementById('rvText').value||'').trim();
+  if(!name || !text){ toast('Please enter your name and review'); return; }
+  if(!window.fdb){ toast('Server offline — review could not be sent'); return; }
+  const btn = document.getElementById('rvSubmit');
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  submitReview(pdProduct.id, {name, rating: rvPick, text})
+    .then(()=>{
+      btn.disabled = false; btn.textContent = 'Submit review';
+      document.getElementById('rvName').value = '';
+      document.getElementById('rvText').value = '';
+      toast('Thank you! Your review has been added ✓');
+      loadReviews(pdProduct.id, list=> renderReviews(pdProduct, list));
+    })
+    .catch(e=>{ btn.disabled = false; btn.textContent = 'Submit review'; toast('Review save failed'); console.warn(e); });
+}
+const escapeHtml = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fmtDay(ts){ try{ return new Date(ts).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return ''; } }
+
+/* SEO: Product structured data (JSON-LD) — Google e rich result er jonno.
+   CONFIG.siteUrl e placeholder ase; domain kenar por app.js e bodlalei ekhaneo thik hoye jabe. */
+function injectProductJsonLd(p, oos){
+  document.getElementById('pdJsonLd')?.remove();
+  const ld = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": p.name,
+    "description": p.desc || '',
+    "image": p.img || (CONFIG.siteUrl + "/logo.svg"),
+    "brand": { "@type": "Brand", "name": p.brand || CONFIG.brand },
+    "url": CONFIG.siteUrl + "/product.html?id=" + p.id,
+    "offers": {
+      "@type": "Offer",
+      "price": String(p.price),
+      "priceCurrency": "BDT",
+      "availability": oos ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+      "url": CONFIG.siteUrl + "/product.html?id=" + p.id
+    }
+  };
+  if(p.rating && p.reviews){
+    ld.aggregateRating = { "@type":"AggregateRating", "ratingValue": String(p.rating), "reviewCount": String(p.reviews) };
+  }
+  const s = document.createElement('script');
+  s.type = 'application/ld+json'; s.id = 'pdJsonLd';
+  s.textContent = JSON.stringify(ld);
+  document.head.appendChild(s);
 }
 
 function setPdQty(d){

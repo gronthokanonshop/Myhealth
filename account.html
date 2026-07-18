@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+<title>My Account — My Health</title>
+<meta name="description" content="Sign in to your My Health account to view your order history and manage your profile." />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#0F5132" />
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="wrap">
+  <div class="crumb"><a href="index.html">Home</a><span>›</span><span>My Account</span></div>
+  <div id="acctWrap"></div>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="product.js"></script>
+<script src="app.js"></script>
+<script>
+window.NO_LIVE_RERENDER = true;
+
+function initPage(){
+  if(!window.fauth){
+    document.getElementById('acctWrap').innerHTML = `
+      <div class="track-msg"><p>Account sign-in is temporarily unavailable. Please check your internet connection and reload.</p></div>`;
+    return;
+  }
+  window.fauth.onAuthStateChanged(user=> user ? renderLoggedIn(user) : renderAuthForms('login'));
+}
+
+/* =========================== LOGIN / SIGNUP =========================== */
+function renderAuthForms(mode){
+  document.getElementById('acctWrap').innerHTML = `
+    <div class="acct-auth">
+      <div class="acct-tabs">
+        <button class="${mode==='login'?'on':''}" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="${mode==='signup'?'on':''}" onclick="switchAuthTab('signup')">Create Account</button>
+      </div>
+      ${mode==='login' ? `
+        <div class="co-card">
+          <div class="field"><label>Email</label><input id="liEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
+          <div class="field"><label>Password</label><input id="liPass" type="password" placeholder="Your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+          <button class="btn btn-green" id="liBtn" onclick="doLogin()" style="width:100%">Sign In</button>
+          <button class="acct-link" onclick="doForgotPassword()">Forgot password?</button>
+        </div>` : `
+        <div class="co-card">
+          <div class="field"><label>Full name *</label><input id="suName" placeholder="Your name" autocomplete="name"></div>
+          <div class="field"><label>Email *</label><input id="suEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
+          <div class="field"><label>Phone (optional)</label><input id="suPhone" placeholder="01XXXXXXXXX" autocomplete="tel"></div>
+          <div class="field"><label>Password *</label><input id="suPass" type="password" placeholder="At least 6 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')doSignup()"></div>
+          <button class="btn btn-green" id="suBtn" onclick="doSignup()" style="width:100%">Create Account</button>
+        </div>`}
+    </div>`;
+}
+function switchAuthTab(mode){ renderAuthForms(mode); }
+
+function doSignup(){
+  const name = val('suName'), email = val('suEmail'), phone = val('suPhone'), pass = val('suPass');
+  if(!name || !email || !pass){ toast('Please fill all required fields'); return; }
+  if(pass.length < 6){ toast('Password must be at least 6 characters'); return; }
+  const btn = document.getElementById('suBtn'); btn.disabled = true; btn.textContent = 'Creating account…';
+  window.fauth.createUserWithEmailAndPassword(email, pass)
+    .then(cred => cred.user.updateProfile({displayName:name})
+      .then(()=> window.fdb.ref('users/'+cred.user.uid).set({name, email, phone: phone||'', address:'', createdAt: Date.now()})))
+    .then(()=> toast('Welcome, '+name+'! Your account is ready.'))
+    .catch(e=>{ btn.disabled = false; btn.textContent = 'Create Account'; toast(authErrorMsg(e)); });
+}
+function doLogin(){
+  const email = val('liEmail'), pass = val('liPass');
+  if(!email || !pass){ toast('Please enter email and password'); return; }
+  const btn = document.getElementById('liBtn'); btn.disabled = true; btn.textContent = 'Signing in…';
+  window.fauth.signInWithEmailAndPassword(email, pass)
+    .catch(e=>{ btn.disabled = false; btn.textContent = 'Sign In'; toast(authErrorMsg(e)); });
+}
+function doForgotPassword(){
+  const email = val('liEmail');
+  if(!email){ toast('Enter your email above first, then tap "Forgot password"'); return; }
+  window.fauth.sendPasswordResetEmail(email)
+    .then(()=> toast('Password reset email sent ✓'))
+    .catch(e=> toast(authErrorMsg(e)));
+}
+function authErrorMsg(e){
+  return ({
+    'auth/email-already-in-use': 'This email is already registered — try signing in instead.',
+    'auth/invalid-email':        'Please enter a valid email address.',
+    'auth/weak-password':        'Password must be at least 6 characters.',
+    'auth/wrong-password':       'Incorrect password.',
+    'auth/user-not-found':       'No account found with this email.',
+    'auth/invalid-credential':   'Incorrect email or password.',
+    'auth/too-many-requests':    'Too many attempts — please try again later.',
+  })[e.code] || e.message;
+}
+
+/* =========================== LOGGED-IN DASHBOARD =========================== */
+function renderLoggedIn(user){
+  window.fdb.ref('users/'+user.uid).once('value').then(snap=>{
+    const p = snap.val() || {};
+    renderAcctDashboard(user, p);
+    loadMyOrders(user.uid);
+  }).catch(e=>{
+    /* profile read fail hole (e.g. rules deploy hoyni, ba network issue) blank page na dekhiye
+       ekta clear message + retry deyi, ar khali profile diye dashboard-o dekhiye rakhi jate
+       customer ekdom atke na jay */
+    console.warn('users/{uid} read failed:', e.message);
+    document.getElementById('acctWrap').innerHTML = `
+      <div class="track-msg">
+        <p>We couldn't load your account details right now.<br><small>${e.code==='PERMISSION_DENIED' ? 'This usually means the site is still being set up.' : 'Please check your internet connection.'}</small></p>
+        <button class="btn btn-green" style="margin-top:14px" onclick="renderLoggedIn(window.fauth.currentUser)">Try again</button>
+        <button class="acct-link" onclick="logoutAccount()">Log out</button>
+      </div>`;
+  });
+}
+function renderAcctDashboard(user, p){
+    document.getElementById('acctWrap').innerHTML = `
+      <div class="acct-layout">
+        <div class="co-card acct-profile">
+          <h3>My Profile</h3>
+          <div class="field"><label>Full name</label><input id="pfName" value="${escapeHtml(p.name||user.displayName||'')}"></div>
+          <div class="field"><label>Phone</label><input id="pfPhone" value="${escapeHtml(p.phone||'')}" placeholder="01XXXXXXXXX"></div>
+          <div class="field"><label>Delivery address</label><textarea id="pfAddress" placeholder="House, road, area, thana…">${escapeHtml(p.address||'')}</textarea></div>
+          <div class="field"><label>Email</label><input value="${escapeHtml(user.email||'')}" disabled style="background:var(--cream)"></div>
+          <button class="btn btn-green" onclick="saveProfile('${user.uid}')" style="width:100%">Save changes</button>
+          <button class="btn btn-ghost-green" onclick="logoutAccount()" style="width:100%; margin-top:10px">Log out</button>
+        </div>
+        <div class="acct-orders">
+          <h3>Order History</h3>
+          <div id="acctOrderList"><div class="rev-loading">Loading your orders…</div></div>
+        </div>
+      </div>`;
+}
+function saveProfile(uid){
+  const name = val('pfName'), phone = val('pfPhone'), address = val('pfAddress');
+  if(!name){ toast('Please enter your name'); return; }
+  window.fdb.ref('users/'+uid).update({name, phone, address})
+    .then(()=>{
+      if(window.fauth.currentUser) window.fauth.currentUser.updateProfile({displayName:name});
+      const label = document.getElementById('acctLabel'); if(label) label.textContent = name;
+      toast('Profile updated ✓');
+    })
+    .catch(e=> toast('Save failed: '+e.message));
+}
+function loadMyOrders(uid){
+  const box = document.getElementById('acctOrderList');
+  window.fdb.ref('users/'+uid+'/orders').once('value').then(snap=>{
+    const refs = snap.val() || {};
+    const ids = Object.keys(refs).sort((a,b)=> (refs[b]||0)-(refs[a]||0));
+    if(!ids.length){
+      box.innerHTML = `<div class="cart-empty">No orders yet.<br><small>Orders you place will show up here.</small></div>`;
+      return;
+    }
+    Promise.all(ids.map(id=> window.fdb.ref('orders/'+id).once('value').then(s=>s.val())))
+      .then(orders=>{
+        box.innerHTML = orders.filter(Boolean).map(o=>`
+          <div class="acct-order">
+            <div class="ao-head">
+              <div><b>${o.id}</b><div class="tag-mini">${fmtDay(o.placedAt)}</div></div>
+              <span class="tr-status s-${o.status||'pending'}">${(o.status||'pending').toUpperCase()}</span>
+            </div>
+            <div class="ao-items">${(o.items||[]).map(i=>`${i.name} × ${i.qty}`).join(', ')}</div>
+            <div class="ao-foot">
+              <b>${money(o.total)}</b>
+              <a class="ao-track" href="track.html?id=${encodeURIComponent(o.id)}">Track order →</a>
+            </div>
+          </div>`).join('') || `<div class="cart-empty">No orders yet.</div>`;
+      });
+  });
+}
+
+const val = id => (document.getElementById(id)?.value || '').trim();
+const escapeHtml = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fmtDay(iso){ try{ return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return ''; } }
+</script>
+</body>
+</html>

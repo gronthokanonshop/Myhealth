@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>My Health — Admin Panel</title>
+<meta name="robots" content="noindex, nofollow" />
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
@@ -30,7 +31,6 @@ body{ background:#eef3ef; }
   font-weight:600; font-size:14px; text-align:left; transition:.15s; width:100%; }
 .side nav button:hover{ background:rgba(255,255,255,.08); color:#fff; }
 .side nav button.on{ background:var(--leaf); color:#fff; }
-.side nav .ic{ width:20px; text-align:center; font-size:16px; flex:0 0 auto; }
 .side .logout{ margin:12px; padding:11px 14px; border-radius:10px; background:rgba(255,255,255,.08); color:#fff;
   font-weight:600; font-size:14px; display:flex; align-items:center; gap:10px; justify-content:center; width:calc(100% - 24px); }
 .side .logout:hover{ background:var(--rose); }
@@ -48,7 +48,6 @@ body{ background:#eef3ef; }
 .stat{ background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:16px 18px; }
 .stat .lbl{ font-size:12px; color:var(--muted); font-weight:600; }
 .stat .val{ font-family:var(--display); font-weight:800; font-size:26px; margin-top:5px; }
-.stat .ic{ float:right; font-size:24px; opacity:.85; }
 .stat.green .val{ color:var(--leaf); } .stat.amber .val{ color:var(--amber); } .stat.rose .val{ color:var(--rose); }
 
 /* ===================== PANEL / SECTION CARD ===================== */
@@ -87,7 +86,6 @@ tr:last-child td{ border-bottom:none; }
 .status[data-s="cancelled"]{ color:var(--rose); border-color:#f3c6cf; background:#fff5f6; }
 
 .empty{ text-align:center; padding:40px 20px; color:var(--muted); }
-.empty .e{ font-size:44px; margin-bottom:8px; }
 
 /* ===================== MODAL ===================== */
 .modal-bg{ position:fixed; inset:0; background:rgba(74,34,8,.55); display:none; align-items:flex-start; justify-content:center;
@@ -200,6 +198,10 @@ tr:last-child td{ border-bottom:none; }
 }
 .msd-footer button{ font-size:12px; color:var(--leaf); font-weight:700; cursor:pointer; }
 
+/* ===================== STATUS BADGE (courier pickup) ===================== */
+.stock-badge{ display:inline-block; padding:4px 11px; border-radius:999px; font-size:12px; font-weight:700; white-space:nowrap; }
+.stock-badge.low{ background:#fff8ee; color:var(--amber); border:1px solid #f6dcae; }
+
 /* ===================== STOCK TOGGLE ===================== */
 .stock-toggle{ padding:6px 14px; border-radius:999px; font-size:12px; font-weight:700;
   border:none; cursor:pointer; transition:.15s; white-space:nowrap; }
@@ -251,7 +253,6 @@ tr:last-child td{ border-bottom:none; }
     border:none; background:none; cursor:pointer; transition:.15s; padding:6px 4px;
     text-decoration:none; -webkit-tap-highlight-color:transparent;
   }
-  .mob-nav button .mn-ic, .mob-nav a .mn-ic{ font-size:20px; line-height:1; }
   .mob-nav button.on{ color:var(--leaf); }
   .mob-nav button:active, .mob-nav a:active{ background:rgba(255,255,255,.08); }
 
@@ -266,7 +267,6 @@ tr:last-child td{ border-bottom:none; }
   .stats{ grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px; }
   .stat{ padding:12px 14px; }
   .stat .val{ font-size:22px; }
-  .stat .ic{ font-size:20px; }
   .stat .lbl{ font-size:11px; }
 
   /* Panel head stacks on mobile */
@@ -321,31 +321,31 @@ tr:last-child td{ border-bottom:none; }
   <aside class="side">
     <div class="brand"><span class="mark"></span><span class="bwm"><span class="bn"><span class="o">My</span> Health</span><small>Admin</small></span></div>
     <nav>
-      <button class="on" data-tab="dashboard" onclick="go('dashboard')"><span class="ic">📊</span><span>Dashboard</span></button>
-      <button data-tab="products" onclick="go('products')"><span class="ic">📦</span><span>Products</span></button>
-      <button data-tab="orders" onclick="go('orders')"><span class="ic">🧾</span><span>Orders</span></button>
-      <button data-tab="courier" onclick="go('courier')"><span class="ic">🚚</span><span>Courier</span></button>
-      <button data-tab="settings" onclick="go('settings')"><span class="ic">⚙️</span><span>Settings</span></button>
+      <button class="on" data-tab="dashboard" onclick="go('dashboard')"><span>Dashboard</span></button>
+      <button data-tab="products" onclick="go('products')"><span>Products</span></button>
+      <button data-tab="orders" onclick="go('orders')"><span>Orders</span></button>
+      <button data-tab="courier" onclick="go('courier')"><span>Courier</span></button>
+      <button data-tab="settings" onclick="go('settings')"><span>Settings</span></button>
     </nav>
-    <a class="logout" href="index.html" target="_blank"><span class="ic">🛍️</span><span>View store</span></a>
-    <button class="logout" onclick="logout()"><span class="ic">⏏️</span><span>Logout</span></button>
+    <a class="logout" href="index.html" target="_blank"><span>View store</span></a>
+    <button class="logout" onclick="logout()"><span>Logout</span></button>
   </aside>
 
   <main class="main">
-    <div class="topbar"><h1 id="pageTitle">Dashboard</h1><div class="who">👤 <span id="adminEmail">Admin</span></div></div>
+    <div class="topbar"><h1 id="pageTitle">Dashboard</h1><div class="who"><span id="adminEmail">Admin</span></div></div>
     <div class="content" id="content"></div>
   </main>
 </div>
 
 <!-- ===================== MOBILE BOTTOM NAV ===================== -->
 <nav class="mob-nav" id="mobNav">
-  <button class="on" data-tab="dashboard" onclick="go('dashboard')"><span class="mn-ic">📊</span>Dashboard</button>
-  <button data-tab="products" onclick="go('products')"><span class="mn-ic">📦</span>Products</button>
-  <button data-tab="orders" onclick="go('orders')"><span class="mn-ic">🧾</span>Orders</button>
-  <button data-tab="courier" onclick="go('courier')"><span class="mn-ic">🚚</span>Courier</button>
-  <button data-tab="settings" onclick="go('settings')"><span class="mn-ic">⚙️</span>Settings</button>
-  <a href="index.html" target="_blank"><span class="mn-ic">🛍️</span>Store</a>
-  <button onclick="logout()"><span class="mn-ic">⏏️</span>Logout</button>
+  <button class="on" data-tab="dashboard" onclick="go('dashboard')">Dashboard</button>
+  <button data-tab="products" onclick="go('products')">Products</button>
+  <button data-tab="orders" onclick="go('orders')">Orders</button>
+  <button data-tab="courier" onclick="go('courier')">Courier</button>
+  <button data-tab="settings" onclick="go('settings')">Settings</button>
+  <a href="index.html" target="_blank">Store</a>
+  <button onclick="logout()">Logout</button>
 </nav>
 
 <!-- ===================== MODAL ===================== -->
@@ -366,15 +366,49 @@ const API_COURIERS = ['steadfast','pathao','redx'];
 /* Steadfast key admin Settings theke ase, Firebase adminConfig/courierKeys e save thake.
    Key Worker-e hardcode kora NA — client nije Settings e boshay. */
 let COURIER_KEYS = { sfKey:'', sfSecret:'' };
+/* ImgBB image-host API key — Settings theke boshano hoy, Firebase adminConfig/imgbbKey e save thake.
+   Product form-e "Upload" button diye chobi ekhane push kore, return kora URL-i p_img-e boshe. */
+let IMGBB_KEY = '';
+/* NOTE: ei list storefront er CATEGORIES/subs (app.js) er sathe MIL rekhe cholte hobe —
+   ekhane emon category dile ja storefront e nei, oi product category page e khunje pawa jabe na.
+   label e "Parent · Sub" prefix rakha hoyeche jate multi-select dropdown-e kon top category-r
+   under-e ache ta bojha jay (admin.html standalone — app.js load kore na, tai flat list e rakha). */
 const CATS = [
-  {id:"immunity",label:"Immunity",emoji:"🛡️"},{id:"energy",label:"Energy",emoji:"⚡"},
-  {id:"muscle",label:"Muscle",emoji:"💪"},{id:"brain",label:"Brain",emoji:"🧠"},
-  {id:"sleep",label:"Sleep",emoji:"🌙"},{id:"bones",label:"Bones",emoji:"🦴"},
-  {id:"weight",label:"Weight",emoji:"⚖️"},{id:"skin",label:"Skin & Hair",emoji:"✨"},
-  {id:"hair",label:"Hair Care",emoji:"💇"},{id:"makeup",label:"Makeup",emoji:"💄"},
-  {id:"baby",label:"Mother & Baby",emoji:"👶"},{id:"men",label:"Men's Care",emoji:"🧔"},
-  {id:"bodycare",label:"Body Care",emoji:"🧴"},{id:"facecare",label:"Face Care",emoji:"🌿"},
-  {id:"food",label:"Foods",emoji:"☕"},
+  // Vitamins & Supplements
+  {id:"immunity", label:"Supplements · Immunity"},
+  {id:"energy",   label:"Supplements · Energy"},
+  {id:"muscle",   label:"Supplements · Muscle"},
+  {id:"brain",    label:"Supplements · Brain"},
+  {id:"sleep",    label:"Supplements · Sleep"},
+  {id:"bones",    label:"Supplements · Bones"},
+  {id:"weight",   label:"Supplements · Weight"},
+  {id:"skin",     label:"Supplements · Skin & Hair"},
+  // Face Care
+  {id:"cleanser",    label:"Face Care · Cleanser"},
+  {id:"moisturizer", label:"Face Care · Moisturizer"},
+  {id:"sunscreen",   label:"Face Care · Sunscreen"},
+  {id:"serum",       label:"Face Care · Serum"},
+  // Hair Care
+  {id:"shampoo",     label:"Hair Care · Shampoo"},
+  {id:"hairoil",     label:"Hair Care · Hair Oil"},
+  {id:"conditioner", label:"Hair Care · Conditioner"},
+  // Body Care
+  {id:"bodywash",   label:"Body Care · Body Wash"},
+  {id:"bodylotion", label:"Body Care · Body Lotion"},
+  {id:"deodorant",  label:"Body Care · Deodorant"},
+  // Makeup
+  {id:"face-makeup", label:"Makeup · Face"},
+  {id:"lips",        label:"Makeup · Lips"},
+  {id:"eyes",        label:"Makeup · Eyes"},
+  // Mother & Baby
+  {id:"babycare",  label:"Mother & Baby · Baby Care"},
+  {id:"maternity", label:"Mother & Baby · Maternity"},
+  // Men's Care
+  {id:"beardcare", label:"Men's Care · Beard Care"},
+  {id:"shaving",   label:"Men's Care · Shaving"},
+  // Foods
+  {id:"honey",    label:"Foods · Honey"},
+  {id:"drygoods", label:"Foods · Dry Goods"},
 ];
 const TAGS = ["flash","best","new"];
 
@@ -389,7 +423,7 @@ const getCats = p => {
 };
 const catLabels = p => getCats(p).map(id=>{
   const c = CATS.find(x=>x.id===id);
-  return c ? `${c.emoji} ${c.label}` : id;
+  return c ? c.label : id;
 });
 /* legacy alias */
 const goalLabel = id => { const c=CATS.find(x=>x.id===id); return c?c.label:id; };
@@ -437,6 +471,7 @@ function startApp(){
   attachListeners();
   attachCourierListeners();
   loadCourierKeys();
+  loadImgbbKey();
   go('dashboard');
 }
 
@@ -447,6 +482,13 @@ function loadCourierKeys(){
     COURIER_KEYS.sfKey    = d.sfKey    || '';
     COURIER_KEYS.sfSecret = d.sfSecret || '';
   }).catch(e=> console.warn('courierKeys load failed:', e.message));
+}
+
+/* ImgBB key Firebase theke load (admin-only read) */
+function loadImgbbKey(){
+  window.fdb.ref('adminConfig/imgbbKey').once('value').then(snap=>{
+    IMGBB_KEY = snap.val() || '';
+  }).catch(e=> console.warn('imgbbKey load failed:', e.message));
 }
 
 /* ============================ FIREBASE DATA (realtime) ============================ */
@@ -476,11 +518,52 @@ function seedProducts(){
     .then(()=>console.log('Seeded', PRODUCTS.length, 'products to Firebase'))
     .catch(e=>alert('Seed failed: '+e.message));
 }
+/* Firebase-e already product thakle bootProducts/seedProducts আর ট্রিগার হয় না —
+   tai product.js e notun product add korle segula live database-e sathe
+   sathe pouchay na. Ei button diye শুধু "PRODUCTS (js file)-e ache kintu live
+   database-e nei" emon product-gula merge kore dey — existing product ke touch kore na. */
+function addMissingProducts(){
+  const liveIds = new Set(products.map(p=>p.id));
+  const missing = PRODUCTS.filter(p=>!liveIds.has(p.id));
+  if(!missing.length){ alert('product.js-এর সব প্রোডাক্ট ইতিমধ্যে Firebase-এ আছে — নতুন কিছু যোগ করার নেই।'); return; }
+  if(!confirm(`${missing.length}টা নতুন প্রোডাক্ট যোগ করা হবে:\n\n${missing.map(p=>'• '+p.name).join('\n')}\n\nযোগ করব?`)) return;
+  const updates = {};
+  missing.forEach(p=>{ updates[ADMIN.productsKey+'/'+p.id] = p; });
+  window.fdb.ref().update(updates)
+    .then(()=> alert(`${missing.length}টা প্রোডাক্ট যোগ হয়েছে! সাইটে গিয়ে দেখুন।`))
+    .catch(e=> alert('Failed: '+e.message));
+}
+/* পুরো Firebase-কে product.js-এর সাথে EXACTLY মিলিয়ে দেয়:
+   - product.js-এ নেই এমন কোনো product Firebase-এ থাকলে (পুরনো/fictional-brand/demo) সেটা DELETE হয়
+   - product.js-এ আছে কিন্তু Firebase-এ নেই এমন product ADD হয়
+   - দুই জায়গায়ই আছে এমন product-এর ডেটা product.js-এর latest ভার্সন দিয়ে UPDATE হয়
+     (যেমন: পরে img লিংক যোগ করলে, Sync চাপলেই সেটা Firebase-এ পৌঁছে যাবে) */
+function syncWithProductJs(){
+  if(typeof PRODUCTS==='undefined'){ alert('product.js load হয়নি।'); return; }
+  const jsIds = new Set(PRODUCTS.map(p=>p.id));
+  const liveIds = new Set(products.map(p=>p.id));
+  const toDelete = products.filter(p=>!jsIds.has(p.id));
+  const toAdd = PRODUCTS.filter(p=>!liveIds.has(p.id));
+  const toUpdate = PRODUCTS.filter(p=>liveIds.has(p.id));
+  if(!toDelete.length && !toAdd.length && !toUpdate.length){ alert('Firebase আর product.js ইতিমধ্যে সিঙ্ক করা আছে।'); return; }
+  const msg = `${toDelete.length}টা প্রোডাক্ট DELETE হবে:\n${toDelete.map(p=>'• '+p.name).join('\n')||'(কিছু নেই)'}\n\n`
+            + `${toAdd.length}টা প্রোডাক্ট ADD হবে:\n${toAdd.map(p=>'• '+p.name).join('\n')||'(কিছু নেই)'}\n\n`
+            + `${toUpdate.length}টা প্রোডাক্ট UPDATE হবে (product.js-এর latest ডেটা দিয়ে)\n\nএগিয়ে যাব?`;
+  if(!confirm(msg)) return;
+  const updates = {};
+  toDelete.forEach(p=>{ updates[ADMIN.productsKey+'/'+p.id] = null; });
+  toAdd.forEach(p=>{ updates[ADMIN.productsKey+'/'+p.id] = p; });
+  toUpdate.forEach(p=>{ updates[ADMIN.productsKey+'/'+p.id] = p; });
+  window.fdb.ref().update(updates)
+    .then(()=> alert(`Sync সম্পূর্ণ! ${toDelete.length}টা মুছে গেছে, ${toAdd.length}টা যোগ হয়েছে, ${toUpdate.length}টা আপডেট হয়েছে।`))
+    .catch(e=> alert('Failed: '+e.message));
+}
 function renderCurrent(){ ({dashboard:renderDashboard,products:renderProducts,orders:renderOrders,courier:renderCourier,settings:renderSettings}[curTab]||renderDashboard)(); }
 
 function thumb(p){
-  return p.img ? `<img class="t-img" src="${esc(p.img)}" alt="" onerror="this.outerHTML='<div class=\\'t-emoji\\'>${p.emoji||'💊'}</div>'">`
-               : `<div class="t-emoji">${p.emoji||'💊'}</div>`;
+  const initial = esc((p.name||'?').trim().charAt(0).toUpperCase());
+  return p.img ? `<img class="t-img" src="${esc(p.img)}" alt="" onerror="this.outerHTML='<div class=\\'t-emoji\\'>${initial}</div>'">`
+               : `<div class="t-emoji">${initial}</div>`;
 }
 function fmtDate(iso){ try{ const d=new Date(iso); return d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }catch(e){ return '-'; } }
 
@@ -500,10 +583,10 @@ function renderDashboard(){
   const recent = orders.slice(0,6);
   document.getElementById('content').innerHTML = `
     <div class="stats">
-      <div class="stat green"><span class="ic">📦</span><div class="lbl">Products</div><div class="val">${products.length}</div></div>
-      <div class="stat"><span class="ic">🧾</span><div class="lbl">Total Orders</div><div class="val">${orders.length}</div></div>
-      <div class="stat amber"><span class="ic">⏳</span><div class="lbl">Pending</div><div class="val">${pending}</div></div>
-      <div class="stat green"><span class="ic">💰</span><div class="lbl">Revenue</div><div class="val">${money(revenue)}</div></div>
+      <div class="stat green"><div class="lbl">Products</div><div class="val">${products.length}</div></div>
+      <div class="stat"><div class="lbl">Total Orders</div><div class="val">${orders.length}</div></div>
+      <div class="stat amber"><div class="lbl">Pending</div><div class="val">${pending}</div></div>
+      <div class="stat green"><div class="lbl">Revenue</div><div class="val">${money(revenue)}</div></div>
     </div>
     <div class="panel">
       <div class="panel-head"><h2>Recent Orders</h2><button class="b b-ghost b-sm" onclick="go('orders')">View all →</button></div>
@@ -534,7 +617,7 @@ function renderDashboard(){
           </div>
         </div>`).join('')}
       </div>
-      ` : `<div class="empty"><div class="e">🧾</div>No orders yet. Checkout theke order asle ekhane dekhabe.</div>`}
+      ` : `<div class="empty">No orders yet. Checkout theke order asle ekhane dekhabe.</div>`}
     </div>`;
 }
 
@@ -548,16 +631,16 @@ function renderProducts(){
     return matchSearch && matchCat;
   });
   const catOpts = `<option value="all">All Categories</option>`
-    + CATS.map(c=>`<option value="${c.id}" ${catFilter===c.id?'selected':''}>${c.emoji} ${c.label}</option>`).join('');
+    + CATS.map(c=>`<option value="${c.id}" ${catFilter===c.id?'selected':''}>${c.label}</option>`).join('');
   document.getElementById('content').innerHTML = `
     <div class="panel">
       <div class="panel-head">
         <h2>Products (${products.length})</h2>
         <div class="panel-tools">
-          <input placeholder="🔍 Search products…" value="${esc(prodSearch)}" oninput="prodSearch=this.value.toLowerCase();renderProducts()">
+          <input placeholder="Search products…" value="${esc(prodSearch)}" oninput="prodSearch=this.value.toLowerCase();renderProducts()">
           <select onchange="catFilter=this.value;renderProducts()">${catOpts}</select>
-          <button class="b b-ghost b-sm" onclick="exportProducts()">⬇️ Backup .js</button>
-          <button class="b b-green b-sm" onclick="openProduct()">＋ Add Product</button>
+          <button class="b b-ghost b-sm" onclick="exportProducts()">Backup .js</button>
+          <button class="b b-green b-sm" onclick="openProduct()">Add Product</button>
         </div>
       </div>
       ${list.length ? `
@@ -565,7 +648,7 @@ function renderProducts(){
         <table><thead><tr><th>Product</th><th>Categories</th><th>Price</th><th>Stock</th><th>Tags</th><th></th></tr></thead><tbody>
           ${list.map(p=>`<tr>
             <td><div style="display:flex;gap:11px;align-items:center">${thumb(p)}<div><b>${esc(p.name)}</b><div class="tag-mini">${esc(p.brand||'')} ${p.size?'· '+esc(p.size):''}</div></div></div></td>
-            <td><div style="display:flex;flex-wrap:wrap;gap:4px">${getCats(p).map(id=>{const c=CATS.find(x=>x.id===id);return c?`<span class="pill goal">${c.emoji} ${c.label}</span>`:''}).join('')||'<span class="tag-mini">—</span>'}</div></td>
+            <td><div style="display:flex;flex-wrap:wrap;gap:4px">${getCats(p).map(id=>{const c=CATS.find(x=>x.id===id);return c?`<span class="pill goal">${c.label}</span>`:''}).join('')||'<span class="tag-mini">—</span>'}</div></td>
             <td><b>${money(p.price)}</b>${p.oldPrice>p.price?`<div class="tag-mini" style="text-decoration:line-through">${money(p.oldPrice)}</div>`:''}</td>
             <td>${stockCell(p)}</td>
             <td class="tag-mini">${(p.tags||[]).join(', ')||'—'}</td>
@@ -583,7 +666,7 @@ function renderProducts(){
             <div style="flex:1;min-width:0">
               <div style="font-weight:700;font-size:15px">${esc(p.name)}</div>
               <div class="tag-mini">${esc(p.brand||'')}${p.size?' · '+esc(p.size):''}</div>
-              <div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:4px">${getCats(p).map(id=>{const c=CATS.find(x=>x.id===id);return c?`<span class="pill goal">${c.emoji} ${c.label}</span>`:''}).join('')}</div>
+              <div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:4px">${getCats(p).map(id=>{const c=CATS.find(x=>x.id===id);return c?`<span class="pill goal">${c.label}</span>`:''}).join('')}</div>
             </div>
             <div style="text-align:right">
               <div style="font-weight:800;font-size:16px;font-family:var(--display)">${money(p.price)}</div>
@@ -592,14 +675,14 @@ function renderProducts(){
           </div>
           <div style="margin:8px 0 10px">${stockCell(p)}</div>
           <div class="m-card-acts">
-            <button class="b b-ghost b-sm" onclick="openProduct(${p.id})" style="flex:1;justify-content:center">✏️ Edit</button>
-            <button class="b b-rose b-sm" onclick="delProduct(${p.id})" style="flex:1;justify-content:center">🗑️ Delete</button>
+            <button class="b b-ghost b-sm" onclick="openProduct(${p.id})" style="flex:1;justify-content:center">Edit</button>
+            <button class="b b-rose b-sm" onclick="delProduct(${p.id})" style="flex:1;justify-content:center">Delete</button>
           </div>
         </div>`).join('')}
       </div>
-      ` : `<div class="empty"><div class="e">📦</div>No products found.</div>`}
+      ` : `<div class="empty">No products found.</div>`}
     </div>
-    <div class="note-box">☁️ <b>Live:</b> ekhane add/edit/delete korle shoja <b>Firebase</b> e save hoy — website e (sob device) sathe sathe update hobe. Commit/export lagbe na.</div>`;
+    <div class="note-box"><b>Live:</b> ekhane add/edit/delete korle shoja <b>Firebase</b> e save hoy — website e (sob device) sathe sathe update hobe. Commit/export lagbe na.</div>`;
 }
 
 function openProduct(id){
@@ -612,10 +695,7 @@ function openProduct(id){
     <div class="modal-head"><h3>${isEdit?'Edit':'Add'} Product</h3><button onclick="closeModal()">×</button></div>
     <div class="modal-body">
       <div class="fld"><label>Product name *</label><input id="p_name" value="${esc(p?.name||'')}" placeholder="e.g. Whey Protein Isolate 2kg"></div>
-      <div class="g2">
-        <div class="fld"><label>Brand</label><input id="p_brand" value="${esc(p?.brand||'')}" placeholder="e.g. NutriPro"></div>
-        <div class="fld"><label>Emoji</label><input id="p_emoji" value="${esc(p?.emoji||'💊')}" maxlength="4"></div>
-      </div>
+      <div class="fld"><label>Brand</label><input id="p_brand" value="${esc(p?.brand||'')}" placeholder="e.g. NutriPro"></div>
       <div class="fld">
         <label>Categories * <span style="color:var(--muted);font-weight:400;font-size:12px">(একাধিক select করা যাবে)</span></label>
         <div class="msd" id="msd">
@@ -623,7 +703,7 @@ function openProduct(id){
             <span class="msd-placeholder" id="msd-placeholder">Category বেছে নাও…</span>
           </button>
           <div class="msd-menu" id="msd-menu">
-            <div class="msd-search"><input id="msd-search" placeholder="🔍 Search category…" oninput="msdFilter(this.value)" onclick="event.stopPropagation()"></div>
+            <div class="msd-search"><input id="msd-search" placeholder="Search category…" oninput="msdFilter(this.value)" onclick="event.stopPropagation()"></div>
             <div class="msd-list" id="msd-list"></div>
             <div class="msd-footer"><span id="msd-count">0 selected</span><button onclick="msdClear()">Clear all</button></div>
           </div>
@@ -634,7 +714,14 @@ function openProduct(id){
         <div class="fld"><label>Old price (৳)</label><input id="p_old" type="number" value="${p?.oldPrice||''}"></div>
         <div class="fld"><label>Size / pack</label><input id="p_size" value="${esc(p?.size||'')}" placeholder="60 capsules"></div>
       </div>
-      <div class="fld"><label>Image URL</label><input id="p_img" value="${esc(p?.img||'')}" placeholder="images/product.jpg or https://…"></div>
+      <div class="fld"><label>Image URL</label>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input id="p_img" value="${esc(p?.img||'')}" placeholder="images/product.jpg or https://…" style="flex:1;min-width:180px">
+          <input type="file" id="p_img_file" accept="image/*" style="display:none" onchange="uploadProductImage()">
+          <button type="button" class="b b-ghost b-sm" onclick="document.getElementById('p_img_file').click()">Upload</button>
+        </div>
+        <div id="p_img_status" style="font-size:12px;margin-top:6px"></div>
+      </div>
       <div class="g3">
         <div class="fld"><label>Timing</label><select id="p_timing">
           ${['morning','postworkout','night','anytime'].map(t=>`<option value="${t}" ${p?.timing===t?'selected':''}>${t}</option>`).join('')}
@@ -666,7 +753,7 @@ function saveProduct(id){
     goal: selCats[0], /* backward compat for storefront */
     brand: v('p_brand'),
     price, oldPrice: parseInt(v('p_old'),10) || price,
-    emoji: v('p_emoji') || '💊', img: v('p_img'),
+    img: v('p_img'),
     timing: v('p_timing'), rating: parseFloat(v('p_rating'))||4.7, reviews: parseInt(v('p_reviews'),10)||0,
     size: v('p_size'), desc: v('p_desc'),
     benefits: v('p_benefits').split('\n').map(s=>s.trim()).filter(Boolean),
@@ -676,6 +763,42 @@ function saveProduct(id){
   window.fdb.ref(ADMIN.productsKey+'/'+newId).set(data)
     .then(()=>{ closeModal(); })
     .catch(e=>alert('Save failed: '+e.message));
+}
+
+/* Product form-e "Upload" button diye select kora chobi ImgBB-e push kore,
+   return kora URL shorasori p_img input-e boshiye dey. */
+function uploadProductImage(){
+  const file = document.getElementById('p_img_file').files[0];
+  const status = document.getElementById('p_img_status');
+  if(!file) return;
+  if(!IMGBB_KEY){
+    status.style.color = '#c0392b';
+    status.textContent = 'ImgBB API key set kora nei — Settings > Image Upload (ImgBB) e giye key boshao.';
+    return;
+  }
+  status.style.color = 'var(--muted)';
+  status.textContent = 'Uploading…';
+  const reader = new FileReader();
+  reader.onload = () => {
+    const base64 = reader.result.split(',')[1];
+    const form = new FormData();
+    form.append('image', base64);
+    fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(IMGBB_KEY)}`, { method:'POST', body:form })
+      .then(r=>r.json())
+      .then(j=>{
+        if(j.success && j.data && j.data.url){
+          document.getElementById('p_img').value = j.data.url;
+          status.style.color = '#1a7a35';
+          status.textContent = 'Upload হয়ে গেছে ✓';
+        } else {
+          status.style.color = '#c0392b';
+          status.textContent = 'Upload failed: ' + (j.error?.message || 'unknown error');
+        }
+      })
+      .catch(e=>{ status.style.color = '#c0392b'; status.textContent = 'Upload failed: ' + e.message; });
+  };
+  reader.onerror = () => { status.style.color = '#c0392b'; status.textContent = 'File read failed.'; };
+  reader.readAsDataURL(file);
 }
 
 /* ================================================================
@@ -713,12 +836,12 @@ function msdFilter(q){
 function msdRenderList(q){
   const list = document.getElementById('msd-list');
   if(!list) return;
-  const filtered = q ? CATS.filter(c=>c.label.toLowerCase().includes(q)||c.emoji.includes(q)) : CATS;
+  const filtered = q ? CATS.filter(c=>c.label.toLowerCase().includes(q)) : CATS;
   list.innerHTML = filtered.map(c=>{
     const on = _msdSel.includes(c.id);
     return `<div class="msd-item ${on?'on':''}" onclick="msdToggleItem('${c.id}')">
       <div class="msd-cb">${on?'✓':''}</div>
-      <span>${c.emoji} ${c.label}</span>
+      <span>${c.label}</span>
     </div>`;
   }).join('') || `<div style="padding:14px;text-align:center;color:var(--muted);font-size:13px">কিছু পাওয়া গেলো না</div>`;
 }
@@ -742,7 +865,7 @@ function msdRenderTrigger(){
       if(!c) return;
       const pill = document.createElement('span');
       pill.className = 'msd-pill';
-      pill.innerHTML = `${c.emoji} ${c.label}<span class="rm" onclick="event.stopPropagation();msdRemove('${c.id}')">×</span>`;
+      pill.innerHTML = `${c.label}<span class="rm" onclick="event.stopPropagation();msdRemove('${c.id}')">×</span>`;
       trigger.appendChild(pill);
     });
   }
@@ -778,7 +901,7 @@ function delProduct(id){
 function stockCell(p){
   const inStock = p.stock !== false && p.stock != null;
   return `<button class="stock-toggle ${inStock?'in':'out'}" onclick="stockToggle(${p.id})">
-    ${inStock ? '✅ In Stock' : '❌ Out of Stock'}
+    ${inStock ? 'In Stock' : 'Out of Stock'}
   </button>`;
 }
 function stockToggle(id){
@@ -793,11 +916,11 @@ function stockToggle(id){
    Firebase: pickups/{key}   →  {orderId, orderKey, courier, requestedAt, status}
    =========================================================== */
 const COURIERS_DEFAULT = [
-  { id:'pathao',   name:'Pathao Courier',   phone:'16579', area:'Dhaka & nationwide', emoji:'🟠' },
-  { id:'redx',     name:'RedX',             phone:'16556', area:'Dhaka & nationwide', emoji:'🔴' },
-  { id:'steadfast',name:'Steadfast',        phone:'16568', area:'Dhaka & outskirts',  emoji:'🟢' },
-  { id:'paperfly', name:'Paperfly',         phone:'09611-677776', area:'Nationwide',  emoji:'🔵' },
-  { id:'sundarban',name:'Sundarban Courier', phone:'09612-121212', area:'Nationwide', emoji:'🟡' },
+  { id:'pathao',   name:'Pathao Courier',   phone:'16579', area:'Dhaka & nationwide' },
+  { id:'redx',     name:'RedX',             phone:'16556', area:'Dhaka & nationwide' },
+  { id:'steadfast',name:'Steadfast',        phone:'16568', area:'Dhaka & outskirts' },
+  { id:'paperfly', name:'Paperfly',         phone:'09611-677776', area:'Nationwide' },
+  { id:'sundarban',name:'Sundarban Courier', phone:'09612-121212', area:'Nationwide' },
 ];
 
 let couriers = [...COURIERS_DEFAULT];
@@ -823,27 +946,27 @@ function renderCourier(){
   const completed = pickups.filter(p=>p.status!=='pending');
   document.getElementById('content').innerHTML = `
     <div class="stats" style="grid-template-columns:repeat(3,1fr)">
-      <div class="stat"><span class="ic">🚚</span><div class="lbl">Courier Partners</div><div class="val">${couriers.length}</div></div>
-      <div class="stat amber"><span class="ic">⏳</span><div class="lbl">Pending Pickups</div><div class="val">${pending.length}</div></div>
-      <div class="stat green"><span class="ic">✅</span><div class="lbl">Completed</div><div class="val">${completed.length}</div></div>
+      <div class="stat"><div class="lbl">Courier Partners</div><div class="val">${couriers.length}</div></div>
+      <div class="stat amber"><div class="lbl">Pending Pickups</div><div class="val">${pending.length}</div></div>
+      <div class="stat green"><div class="lbl">Completed</div><div class="val">${completed.length}</div></div>
     </div>
 
     <!-- Courier Partners -->
     <div class="panel" style="margin-bottom:20px">
       <div class="panel-head">
-        <h2>🚚 Courier Partners</h2>
-        <button class="b b-green b-sm" onclick="openAddCourier()">＋ Add Courier</button>
+        <h2>Courier Partners</h2>
+        <button class="b b-green b-sm" onclick="openAddCourier()">Add Courier</button>
       </div>
       <div style="padding:14px 16px">
         ${couriers.map(c=>`
         <div class="courier-card">
-          <div class="cc-logo">${c.emoji||'🚚'}</div>
+          <div class="cc-logo">${esc((c.name||'?').trim().charAt(0).toUpperCase())}</div>
           <div class="cc-info">
             <div class="cc-name">${esc(c.name)}</div>
-            <div class="cc-phone">📞 ${esc(c.phone)} &nbsp;·&nbsp; 📍 ${esc(c.area||'')}</div>
+            <div class="cc-phone">${esc(c.phone)} &nbsp;·&nbsp; ${esc(c.area||'')}</div>
           </div>
           <div class="cc-acts">
-            <a href="tel:${esc(c.phone)}" class="call-btn">📞 Call</a>
+            <a href="tel:${esc(c.phone)}" class="call-btn">Call</a>
             <button class="b b-rose b-sm" onclick="delCourier('${esc(c.id)}')">✕</button>
           </div>
         </div>`).join('')}
@@ -852,7 +975,7 @@ function renderCourier(){
 
     <!-- Pending Pickups -->
     <div class="panel">
-      <div class="panel-head"><h2>📋 Pickup Requests</h2></div>
+      <div class="panel-head"><h2>Pickup Requests</h2></div>
       ${pending.length ? `
       <div class="table-wrap">
         <table><thead><tr><th>Order</th><th>Customer</th><th>Courier</th><th>Requested</th><th>Status</th><th></th></tr></thead><tbody>
@@ -864,9 +987,9 @@ function renderCourier(){
               <td>${esc(o.customer?.name||'-')}<div class="tag-mini">${esc(o.customer?.phone||'')}</div></td>
               <td><b>${esc(c.name)}</b>${pk.consignment_id?`<div class="tag-mini">CN# ${esc(String(pk.consignment_id))}${pk.tracking_code?' · '+esc(pk.tracking_code):''}</div>`:''}</td>
               <td class="tag-mini">${fmtDate(pk.requestedAt)}</td>
-              <td><span class="stock-badge low">⏳ Pending</span></td>
+              <td><span class="stock-badge low">Pending</span></td>
               <td><div class="row-acts">
-                <button class="b b-green b-sm" onclick="pickupDone('${esc(pk._key)}')">✅ Done</button>
+                <button class="b b-green b-sm" onclick="pickupDone('${esc(pk._key)}')">Done</button>
                 <button class="b b-rose b-sm" onclick="pickupDel('${esc(pk._key)}')">✕</button>
               </div></td>
             </tr>`;
@@ -881,7 +1004,7 @@ function renderCourier(){
             <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
               <div><div style="font-weight:800;font-size:15px">${esc(pk.orderId||o.id||'-')}</div>
               <div class="tag-mini">${fmtDate(pk.requestedAt)}</div></div>
-              <span class="stock-badge low">⏳ Pending</span>
+              <span class="stock-badge low">Pending</span>
             </div>
             <div class="m-card-body">
               <div class="m-card-row"><span>Customer</span><b>${esc(o.customer?.name||'-')}</b></div>
@@ -889,18 +1012,18 @@ function renderCourier(){
               <div class="m-card-row" style="border:none"><span>Courier</span><b>${esc(c.name)}</b></div>
             </div>
             <div class="m-card-acts">
-              <button class="b b-green b-sm" onclick="pickupDone('${esc(pk._key)}')" style="flex:1;justify-content:center">✅ Done</button>
-              <button class="b b-rose b-sm" onclick="pickupDel('${esc(pk._key)}')" style="flex:1;justify-content:center">🗑️ Cancel</button>
+              <button class="b b-green b-sm" onclick="pickupDone('${esc(pk._key)}')" style="flex:1;justify-content:center">Done</button>
+              <button class="b b-rose b-sm" onclick="pickupDel('${esc(pk._key)}')" style="flex:1;justify-content:center">Cancel</button>
             </div>
           </div>`;
         }).join('')}
       </div>
-      ` : `<div class="empty"><div class="e">📭</div>কোনো pending pickup নেই।</div>`}
+      ` : `<div class="empty">কোনো pending pickup নেই।</div>`}
     </div>
 
     ${completed.length ? `
     <div class="panel" style="margin-top:20px">
-      <div class="panel-head"><h2>✅ Completed Pickups (${completed.length})</h2></div>
+      <div class="panel-head"><h2>Completed Pickups (${completed.length})</h2></div>
       <div class="table-wrap">
         <table><thead><tr><th>Order</th><th>Courier</th><th>Date</th><th></th></tr></thead><tbody>
           ${completed.slice(0,20).map(pk=>{
@@ -920,13 +1043,10 @@ function renderCourier(){
 /* ---- ADD COURIER ---- */
 function openAddCourier(){
   document.getElementById('modal').innerHTML = `
-    <div class="modal-head"><h3>🚚 নতুন Courier যোগ করো</h3><button onclick="closeModal()">×</button></div>
+    <div class="modal-head"><h3>নতুন Courier যোগ করো</h3><button onclick="closeModal()">×</button></div>
     <div class="modal-body">
       <div class="fld"><label>Courier এর নাম *</label><input id="cr_name" placeholder="e.g. Steadfast Courier"></div>
-      <div class="g2">
-        <div class="fld"><label>Phone / Hotline *</label><input id="cr_phone" type="tel" placeholder="e.g. 16568"></div>
-        <div class="fld"><label>Emoji</label><input id="cr_emoji" value="🚚" maxlength="4"></div>
-      </div>
+      <div class="fld"><label>Phone / Hotline *</label><input id="cr_phone" type="tel" placeholder="e.g. 16568"></div>
       <div class="fld"><label>এলাকা / Coverage</label><input id="cr_area" placeholder="e.g. Dhaka & nationwide"></div>
     </div>
     <div class="modal-foot">
@@ -940,7 +1060,7 @@ function saveCourier(){
   const phone = document.getElementById('cr_phone').value.trim();
   if(!name||!phone){ alert('নাম আর Phone দিতে হবে।'); return; }
   const id = 'cr_'+Date.now();
-  const data = { id, name, phone, emoji: document.getElementById('cr_emoji').value||'🚚', area: document.getElementById('cr_area').value.trim() };
+  const data = { id, name, phone, area: document.getElementById('cr_area').value.trim() };
   window.fdb.ref('couriers/'+id).set(data)
     .then(()=>closeModal())
     .catch(e=>alert('Save failed: '+e.message));
@@ -953,9 +1073,9 @@ function delCourier(id){
 /* ---- PICKUP REQUEST (Orders page থেকে) ---- */
 function openPickupModal(orderKey){
   const o = orders.find(x=>x._key===orderKey); if(!o) return;
-  const opts = couriers.map(c=>`<option value="${esc(c.id)}">${c.emoji||'🚚'} ${esc(c.name)} — ${esc(c.phone)}</option>`).join('');
+  const opts = couriers.map(c=>`<option value="${esc(c.id)}">${esc(c.name)} — ${esc(c.phone)}</option>`).join('');
   document.getElementById('modal').innerHTML = `
-    <div class="modal-head"><h3>🚚 Pickup Request — ${esc(o.id)}</h3><button onclick="closeModal()">×</button></div>
+    <div class="modal-head"><h3>Pickup Request — ${esc(o.id)}</h3><button onclick="closeModal()">×</button></div>
     <div class="modal-body">
       <div style="background:#f6faf5;border-radius:12px;padding:14px 16px;margin-bottom:16px">
         <div class="od-row"><span style="color:var(--muted)">Customer</span><b>${esc(o.customer?.name||'-')}</b></div>
@@ -972,7 +1092,7 @@ function openPickupModal(orderKey){
     </div>
     <div class="modal-foot">
       <button class="b b-ghost" onclick="closeModal()">Cancel</button>
-      <button class="b b-green" onclick="submitPickup('${esc(orderKey)}','${esc(o.id||'')}')">🚚 Pickup Request দাও</button>
+      <button class="b b-green" onclick="submitPickup('${esc(orderKey)}','${esc(o.id||'')}')">Pickup Request দাও</button>
     </div>`;
   openModal();
 }
@@ -981,7 +1101,7 @@ async function submitPickup(orderKey, orderId){
   const note      = document.getElementById('pu_note').value.trim();
   const o = orders.find(x=>x._key===orderKey);
   const btn = document.querySelector('.modal-foot .b-green');
-  const reset = ()=>{ if(btn){ btn.disabled=false; btn.textContent='🚚 Pickup Request দাও'; } };
+  const reset = ()=>{ if(btn){ btn.disabled=false; btn.textContent='Pickup Request দাও'; } };
   if(btn){ btn.disabled=true; btn.textContent='পাঠানো হচ্ছে…'; }
 
   let consignment_id=null, tracking_code=null, courierStatus='manual';
@@ -992,7 +1112,7 @@ async function submitPickup(orderKey, orderId){
     // Steadfast hole key thakte hobe (Settings e boshano)
     if(courierId === 'steadfast' && (!COURIER_KEYS.sfKey || !COURIER_KEYS.sfSecret)){
       reset();
-      return alert('⚠️ Steadfast Api-Key/Secret-Key boshano nei.\nSettings → Courier API te key boshiye Save koro, tarpor abar try koro.');
+      return alert('Steadfast Api-Key/Secret-Key boshano nei.\nSettings → Courier API te key boshiye Save koro, tarpor abar try koro.');
     }
     try {
       const addr = [o.customer?.address, o.customer?.district, o.customer?.division].filter(Boolean).join(', ');
@@ -1019,13 +1139,13 @@ async function submitPickup(orderKey, orderId){
         courierStatus  = data.status || 'sent';
       } else {
         reset();
-        return alert('❌ '+courierId+' এ parcel পাঠাতে পারলাম না:\n'
+        return alert(courierId+' এ parcel পাঠাতে পারলাম না:\n'
           + (data.error || data.message || 'Unknown error')
           + '\n\n(Internet / Worker-er API key check করো, নাহলে courier app এ manually add করো।)');
       }
     } catch(err){
       reset();
-      return alert('❌ Worker call fail হলো: ' + err.message + '\nInternet check করো।');
+      return alert('Worker call fail হলো: ' + err.message + '\nInternet check করো।');
     }
   }
 
@@ -1041,8 +1161,8 @@ async function submitPickup(orderKey, orderId){
     await window.fdb.ref(ADMIN.ordersKey+'/'+orderKey).update(upd);
     closeModal();
     alert(consignment_id
-      ? `✅ Steadfast এ parcel create হলো!\nConsignment: ${consignment_id}\nTracking: ${tracking_code||'-'}`
-      : '✅ Pickup request saved! Courier tab এ দেখো।');
+      ? `Steadfast এ parcel create হলো!\nConsignment: ${consignment_id}\nTracking: ${tracking_code||'-'}`
+      : 'Pickup request saved! Courier tab এ দেখো।');
   } catch(e){
     reset();
     alert('Firebase save failed: ' + e.message);
@@ -1072,7 +1192,7 @@ function renderOrders(){
             <option value="delivered" ${orderFilter==='delivered'?'selected':''}>Delivered</option>
             <option value="cancelled" ${orderFilter==='cancelled'?'selected':''}>Cancelled</option>
           </select>
-          <button class="b b-ghost b-sm" onclick="exportOrders()">⬇️ Export CSV</button>
+          <button class="b b-ghost b-sm" onclick="exportOrders()">Export CSV</button>
         </div>
       </div>
       ${list.length ? `
@@ -1089,7 +1209,7 @@ function renderOrders(){
             </select></td>
             <td><div class="row-acts">
               <button class="b b-ghost b-sm" onclick="viewOrder('${esc(o._key)}')">View</button>
-              <button class="b b-green b-sm" onclick="openPickupModal('${esc(o._key)}')">🚚</button>
+              <button class="b b-green b-sm" onclick="openPickupModal('${esc(o._key)}')">Pickup</button>
               <button class="b b-rose b-sm" onclick="delOrder('${esc(o._key)}')">✕</button>
             </div></td>
           </tr>`).join('')}
@@ -1119,13 +1239,13 @@ function renderOrders(){
             </div>
           </div>
           <div class="m-card-acts">
-            <button class="b b-ghost b-sm" onclick="viewOrder('${esc(o._key)}')">👁️ View</button>
-            <button class="b b-green b-sm" onclick="openPickupModal('${esc(o._key)}')">🚚 Pickup</button>
-            <button class="b b-rose b-sm" onclick="delOrder('${esc(o._key)}')">🗑️ Delete</button>
+            <button class="b b-ghost b-sm" onclick="viewOrder('${esc(o._key)}')">View</button>
+            <button class="b b-green b-sm" onclick="openPickupModal('${esc(o._key)}')">Pickup</button>
+            <button class="b b-rose b-sm" onclick="delOrder('${esc(o._key)}')">Delete</button>
           </div>
         </div>`).join('')}
       </div>
-      ` : `<div class="empty"><div class="e">🧾</div>No orders ${orderFilter!=='all'?'with status "'+orderFilter+'"':'yet'}.</div>`}
+      ` : `<div class="empty">No orders ${orderFilter!=='all'?'with status "'+orderFilter+'"':'yet'}.</div>`}
     </div>`;
 }
 function setStatus(key, status){ window.fdb.ref(ADMIN.ordersKey+'/'+key+'/status').set(status).catch(e=>alert(e.message)); }
@@ -1153,8 +1273,8 @@ function viewOrder(key){
       <div class="od-row"><span style="color:var(--muted)">Payment</span><b>${esc((o.payment||'').toUpperCase())}</b></div>
     </div>
     <div class="modal-foot">
-      <button class="b b-ghost" onclick="window.print()">🖨️ Print</button>
-      <button class="b b-green" style="background:#1a7a35" onclick="closeModal();openPickupModal('${esc(o._key)}')">🚚 Pickup Request</button>
+      <button class="b b-ghost" onclick="window.print()">Print</button>
+      <button class="b b-green" style="background:#1a7a35" onclick="closeModal();openPickupModal('${esc(o._key)}')">Pickup Request</button>
       <button class="b b-green" onclick="closeModal()">Close</button>
     </div>`;
   openModal();
@@ -1169,13 +1289,13 @@ function renderSettings(){
         <div class="od-row"><span style="color:var(--muted)">Logged in as</span><b>${esc(window.ADMIN_EMAIL||'')}</b></div>
         <p style="color:var(--muted);font-size:13px;margin:10px 0 16px">Password change korte Firebase Console → Authentication → Users theke koro, ba "Forgot password" reset email use koro.</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <a class="b b-ghost" href="index.html" target="_blank" rel="noopener">🛍️ View store</a>
-          <button class="b" style="background:var(--rose);color:#fff" onclick="logout()">⏏️ Logout</button>
+          <a class="b b-ghost" href="index.html" target="_blank" rel="noopener">View store</a>
+          <button class="b" style="background:var(--rose);color:#fff" onclick="logout()">Logout</button>
         </div>
       </div>
     </div>
     <div class="panel" style="max-width:560px">
-      <div class="panel-head"><h2>🚚 Courier API (Steadfast)</h2></div>
+      <div class="panel-head"><h2>Courier API (Steadfast)</h2></div>
       <div style="padding:20px">
         <p style="color:var(--muted);font-size:13px;margin:0 0 14px">
           Steadfast merchant panel → <b>Settings → API</b> theke Api-Key ar Secret-Key niye ekhane boshao.
@@ -1186,20 +1306,52 @@ function renderSettings(){
         <div class="fld"><label>Steadfast Secret-Key</label>
           <input id="sfApiSecret" placeholder="${COURIER_KEYS.sfSecret ? '•••••••• (saved · '+esc(COURIER_KEYS.sfSecret.slice(-4))+')' : 'Secret-Key paste koro'}" autocomplete="off"></div>
         <div id="sfKeyMsg" style="display:none;font-size:13px;margin:6px 0 12px"></div>
-        <button class="b b-green" onclick="saveCourierKeys()">💾 Save Keys</button>
+        <button class="b b-green" onclick="saveCourierKeys()">Save Keys</button>
         <p style="color:var(--muted);font-size:12px;margin-top:12px">
-          🔒 Key gulo Firebase e admin-only kore rakha thake — public na. Khali rakhle purono key thakbe (overwrite hobe na).
+          Key gulo Firebase e admin-only kore rakha thake — public na. Khali rakhle purono key thakbe (overwrite hobe na).
+        </p>
+      </div>
+    </div>
+    <div class="panel" style="max-width:560px">
+      <div class="panel-head"><h2>Image Upload (ImgBB)</h2></div>
+      <div style="padding:20px">
+        <p style="color:var(--muted);font-size:13px;margin:0 0 14px">
+          <a href="https://api.imgbb.com/" target="_blank" rel="noopener">api.imgbb.com</a> theke free account
+          banie <b>API Key</b> niye ekhane boshao. Save korle Product form-e "Upload" button diye
+          shorasori chobi upload kora jabe — link boshate hobe na, URL nije-e bosbe.
+        </p>
+        <div class="fld"><label>ImgBB API Key</label>
+          <input id="imgbbApiKey" placeholder="${IMGBB_KEY ? '•••••••• (saved · '+esc(IMGBB_KEY.slice(-4))+')' : 'API key paste koro'}" autocomplete="off"></div>
+        <div id="imgbbKeyMsg" style="display:none;font-size:13px;margin:6px 0 12px"></div>
+        <button class="b b-green" onclick="saveImgbbKey()">Save Key</button>
+        <p style="color:var(--muted);font-size:12px;margin-top:12px">
+          Key Firebase e admin-only kore rakha thake — public na. Khali rakhle purono key thakbe (overwrite hobe na).
         </p>
       </div>
     </div>
     <div class="panel" style="max-width:560px">
       <div class="panel-head"><h2>Data</h2></div>
       <div style="padding:20px;display:flex;gap:10px;flex-wrap:wrap">
-        <button class="b b-ghost" onclick="exportProducts()">⬇️ Backup product.js</button>
-        <button class="b b-ghost" onclick="exportOrders()">⬇️ Export orders CSV</button>
+        <button class="b b-ghost" onclick="exportProducts()">Backup product.js</button>
+        <button class="b b-ghost" onclick="exportOrders()">Export orders CSV</button>
+        <button class="b b-ghost" onclick="downloadSitemap()">sitemap.xml ডাউনলোড</button>
+        <button class="b b-green" onclick="addMissingProducts()">product.js থেকে নতুন প্রোডাক্ট মার্জ করো</button>
+        <button class="b b-rose" onclick="syncWithProductJs()">Firebase-কে product.js এর সাথে Sync করো (পুরনো delete + নতুন add)</button>
       </div>
+      <p style="color:var(--muted);font-size:12px;padding:0 20px 16px;margin:0">
+        product.js ফাইলে নতুন প্রোডাক্ট যোগ করা থাকলে কিন্তু সেগুলো এখনো Firebase-এ পাঠানো হয়নি —
+        এই বাটনে ক্লিক করলে শুধু সেই নতুন প্রোডাক্টগুলো Firebase-এ merge হয়ে যাবে। যেগুলো ইতিমধ্যে আছে সেগুলো ছোঁবে না।
+      </p>
+      <p style="color:var(--muted);font-size:12px;padding:0 20px 16px;margin:0">
+        <b>Sync</b> বাটনটা আরো strong — Firebase-এ যা product.js-এ নেই (যেমন পুরনো fictional-brand বা demo product)
+        সেগুলো <b>delete</b> করে দেবে, আর product.js-এ যা নতুন আছে সেগুলো add করবে। শেষে Firebase আর product.js হুবহু একরকম হয়ে যাবে।
+      </p>
+      <p style="color:var(--muted);font-size:12px;padding:0 20px 16px;margin:0">
+        sitemap.xml — Google-এর জন্য সব প্রোডাক্ট লিংকসহ sitemap বানিয়ে দেয়। নতুন প্রোডাক্ট যোগ করার পর
+        মাসে একবার ডাউনলোড করে হোস্টিংয়ের root-এ আপলোড করলেই যথেষ্ট।
+      </p>
     </div>
-    <div class="note-box" style="max-width:560px">☁️ Product + order sob <b>Firebase</b> e live ase. Sob device theke ek-i data dekhabe.</div>`;
+    <div class="note-box" style="max-width:560px">Product + order sob <b>Firebase</b> e live ase. Sob device theke ek-i data dekhabe.</div>`;
 }
 
 /* client je key boshay seta Firebase adminConfig e save (admin-only).
@@ -1220,12 +1372,48 @@ async function saveCourierKeys(){
     if(s) COURIER_KEYS.sfSecret = s;
     document.getElementById('sfApiKey').value = '';
     document.getElementById('sfApiSecret').value = '';
-    show('✅ Keys save hoyeche! Ekhon Pickup request direct Steadfast e jabe.', true);
+    show('Keys save hoyeche! Ekhon Pickup request direct Steadfast e jabe.', true);
     renderSettings(); // placeholder e masked value dekhabe
-  }catch(e){ show('❌ Save failed: '+e.message, false); }
+  }catch(e){ show('Save failed: '+e.message, false); }
+}
+
+/* ImgBB key save — same pattern as Steadfast courier keys */
+async function saveImgbbKey(){
+  const k = (document.getElementById('imgbbApiKey').value||'').trim();
+  const msg = document.getElementById('imgbbKeyMsg');
+  const show = (t,ok)=>{ msg.style.display='block'; msg.style.color=ok?'#1a7a35':'#c0392b'; msg.textContent=t; };
+  if(!k){ show('Kichu boshale tobe save hobe.', false); return; }
+  try{
+    await window.fdb.ref('adminConfig/imgbbKey').set(k);
+    IMGBB_KEY = k;
+    document.getElementById('imgbbApiKey').value = '';
+    show('Key save hoyeche! Ekhon Product form-e Upload button use kora jabe.', true);
+    renderSettings();
+  }catch(e){ show('Save failed: '+e.message, false); }
 }
 
 /* ============================ EXPORTS ============================ */
+/* ⚠️ DOMAIN PLACEHOLDER — site je thikanay host korba, seta ekhane boshao (sese / CHARA).
+   app.js er CONFIG.siteUrl, sitemap.xml ar robots.txt eo same domain boshate hobe. */
+const SITE_BASE_URL = 'https://YOUR-DOMAIN.com';
+function downloadSitemap(){
+  const today = new Date().toISOString().slice(0,10);
+  const staticPages = ['', 'index.html', 'category.html?goal=all', 'track.html', 'account.html',
+    'page.html?p=about', 'page.html?p=contact', 'page.html?p=delivery',
+    'page.html?p=return', 'page.html?p=privacy', 'page.html?p=terms', 'page.html?p=faq'];
+  /* top-level category id -- ei list app.js er CATEGORIES er sathe MIL rekhe cholte hobe */
+  const topCatIds = ['supplements','facecare','haircare','bodycare','makeup','motherbaby','menscare','foods'];
+  const goalIds = CATS.map(c=>c.id);
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+  staticPages.forEach(p=>{ xml += `  <url><loc>${SITE_BASE_URL}/${p}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq></url>\n`; });
+  topCatIds.forEach(c=>{ xml += `  <url><loc>${SITE_BASE_URL}/category.html?goal=${c}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq></url>\n`; });
+  goalIds.forEach(g=>{ xml += `  <url><loc>${SITE_BASE_URL}/category.html?goal=${g}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq></url>\n`; });
+  products.forEach(p=>{ xml += `  <url><loc>${SITE_BASE_URL}/product.html?id=${p.id}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq></url>\n`; });
+  xml += '</urlset>\n';
+  download('sitemap.xml', xml, 'application/xml;charset=utf-8');
+  alert(`sitemap.xml ডাউনলোড হচ্ছে (${products.length}টি প্রোডাক্ট)।\nএবার ফাইলটা হোস্টিংয়ের root ফোল্ডারে আপলোড করো।`
+    + (SITE_BASE_URL.includes('YOUR-DOMAIN') ? '\n\nমনে রেখো: admin.html এ SITE_BASE_URL এখনো placeholder — ডোমেইন কেনার পর বদলাতে হবে!' : ''));
+}
 function download(name, text, type){
   const blob = new Blob([text], {type:type||'text/plain'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click();

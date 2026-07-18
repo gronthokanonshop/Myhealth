@@ -4,6 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
 <title>Checkout — My Health</title>
+<meta name="description" content="Secure checkout — order authentic supplements with bKash, Nagad, card or cash on delivery anywhere in Bangladesh." />
+<meta name="robots" content="noindex" />
 <meta name="theme-color" content="#0F5132" />
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -23,7 +25,7 @@
     <div>
       <div class="co-card">
         <h3><span class="num">1</span> Contact &amp; Delivery</h3>
-        <p class="sub">Ekhane order ta kothay pathabo bolun.</p>
+        <p class="sub">Tell us where to send your order.</p>
         <div class="field"><label>Full name *</label><input id="fName" placeholder="Your name" /></div>
         <div class="f2">
           <div class="field"><label>Phone number *</label><input id="fPhone" inputmode="numeric" placeholder="01XXXXXXXXX" /></div>
@@ -39,12 +41,12 @@
 
       <div class="co-card">
         <h3><span class="num">2</span> Payment Method</h3>
-        <p class="sub">Apnar pochonder payment select korun.</p>
+        <p class="sub">Choose your preferred payment method.</p>
         <div class="pay-opts" id="payOpts">
-          <label class="pay-opt sel"><input type="radio" name="pay" value="cod" checked onchange="selPay(this)"><span class="pi">💵</span><div><b>Cash on Delivery</b><small>Product hatay peye taka din</small></div></label>
-          <label class="pay-opt"><input type="radio" name="pay" value="bkash" onchange="selPay(this)"><span class="pi">📱</span><div><b>bKash</b><small>Send Money / Payment</small></div></label>
-          <label class="pay-opt"><input type="radio" name="pay" value="nagad" onchange="selPay(this)"><span class="pi">📲</span><div><b>Nagad</b><small>Mobile payment</small></div></label>
-          <label class="pay-opt"><input type="radio" name="pay" value="card" onchange="selPay(this)"><span class="pi">💳</span><div><b>Card</b><small>Visa / Mastercard</small></div></label>
+          <label class="pay-opt sel"><input type="radio" name="pay" value="cod" checked onchange="selPay(this)"><div><b>Cash on Delivery</b><small>Pay cash when you receive it</small></div></label>
+          <label class="pay-opt"><input type="radio" name="pay" value="bkash" onchange="selPay(this)"><div><b>bKash</b><small>Send Money / Payment</small></div></label>
+          <label class="pay-opt"><input type="radio" name="pay" value="nagad" onchange="selPay(this)"><div><b>Nagad</b><small>Mobile payment</small></div></label>
+          <label class="pay-opt"><input type="radio" name="pay" value="card" onchange="selPay(this)"><div><b>Card</b><small>Visa / Mastercard</small></div></label>
         </div>
       </div>
     </div>
@@ -62,7 +64,7 @@
       <div class="sumline"><span>Delivery</span><span id="sDel">৳0</span></div>
       <div class="sumline total"><span>Total</span><span id="sTotal">৳0</span></div>
       <button class="place-order" id="placeBtn" onclick="placeOrder()">Place Order</button>
-      <div class="pay-note">🔒 Your information is secure</div>
+      <div class="pay-note">Your information is secure</div>
     </aside>
   </div>
 </main>
@@ -71,6 +73,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="product.js"></script>
 <script src="app.js"></script>
@@ -87,13 +90,14 @@ const BD = {
   "Mymensingh": ["Mymensingh","Jamalpur","Netrokona","Sherpur"]
 };
 let couponPct = 0, couponName = "";
+/* checkout form live re-render e reset hoye jeto — tai ei page e off */
+window.NO_LIVE_RERENDER = true;
 
 function initPage(){
   // empty cart guard
   if(cartTotals().count === 0){
     document.getElementById('coWrap').innerHTML = `
       <div class="success">
-        <div class="ok" style="background:#fff4f4; color:var(--rose)">🛒</div>
         <h1>Your cart is empty</h1>
         <p>Add some supplements before checking out.</p>
         <a class="btn btn-green" style="margin-top:18px" href="category.html?goal=all">Browse products</a>
@@ -103,7 +107,28 @@ function initPage(){
   // divisions
   const dv = document.getElementById('fDivision');
   Object.keys(BD).forEach(d=> dv.insertAdjacentHTML('beforeend', `<option value="${d}">${d}</option>`));
+  // cart drawer e coupon apply kora thakle ekhane o auto-apply
+  const saved = getCoupon();
+  if(saved){
+    couponPct = CONFIG.coupons[saved]; couponName = saved;
+    document.getElementById('couponCode').value = saved;
+  }
+  // logged-in customer hole shob shomoy e save kora naam/phone/thikana bosiye dei
+  if(window.fauth){
+    window.fauth.onAuthStateChanged(user=>{ if(user) prefillFromProfile(user); });
+  }
   renderSummary();
+}
+
+function prefillFromProfile(user){
+  window.fdb.ref('users/'+user.uid).once('value').then(snap=>{
+    const p = snap.val(); if(!p) return;
+    const setIfEmpty = (id, v) => { const el = document.getElementById(id); if(el && !el.value && v) el.value = v; };
+    setIfEmpty('fName', p.name);
+    setIfEmpty('fPhone', p.phone);
+    setIfEmpty('fAddress', p.address);
+    setIfEmpty('fEmail', user.email);
+  }).catch(()=>{});
 }
 
 function loadDistricts(){
@@ -155,9 +180,9 @@ function renderSummary(){
 
 function applyCoupon(){
   const code = (document.getElementById('couponCode').value||'').trim().toUpperCase();
-  if(CONFIG.coupons[code]){ couponPct = CONFIG.coupons[code]; couponName = code;
+  if(CONFIG.coupons[code]){ couponPct = CONFIG.coupons[code]; couponName = code; setCoupon(code);
     toast(`Coupon ${code} applied · ${couponPct}% off ✓`); }
-  else { couponPct=0; couponName=''; toast("Invalid coupon code"); }
+  else { couponPct=0; couponName=''; setCoupon(''); toast("Invalid coupon code"); }
   renderSummary();
 }
 
@@ -171,6 +196,7 @@ function placeOrder(){
   const {sub} = cartTotals();
   const del = deliveryFee();
   const discount = Math.round(sub*couponPct/100);
+  const uid = (window.fauth && window.fauth.currentUser) ? window.fauth.currentUser.uid : null;
   const order = {
     id: "MH" + Date.now().toString().slice(-8),
     items: Object.keys(cart).map(id=>{
@@ -181,6 +207,7 @@ function placeOrder(){
     payment: pay, subtotal:sub, discount, coupon:couponName, delivery:del, total: sub-discount+del,
     status: "pending", placedAt: new Date().toISOString()
   };
+  if(uid) order.uid = uid; /* logged-in customer hole order-e uid rakhi -> account.html "Order History"-te dekhabe */
 
   /* ===========================================================
      Order Firebase e push hocche -> admin panel e (sob device) dekha jabe.
@@ -190,16 +217,22 @@ function placeOrder(){
   if(placeBtn){ placeBtn.disabled = true; placeBtn.textContent = 'Placing order…'; }
 
   function done(){
-    cart = {}; saveCart(); updateCartUI();
+    cart = {}; saveCart(); setCoupon(''); updateCartUI();
     showOrderSuccess(order, name, div, dist, pay);
   }
 
   if(window.fdb){
-    window.fdb.ref('orders').push(order)
-      .then(done)
+    /* order.id (MH...) key hisebe use kori — Track Order page ei id diye khoje pay */
+    window.fdb.ref('orders/'+order.id).set(order)
+      .then(()=>{
+        /* logged-in hole account.html "Order History"-r jonno ekta lightweight reference o rakhi.
+           Ei write fail hole o order age-i shophol hoyeche — tai eta guest checkout ke block kore na. */
+        if(uid) window.fdb.ref('users/'+uid+'/orders/'+order.id).set(Date.now()).catch(()=>{});
+        done();
+      })
       .catch(err=>{
         if(placeBtn){ placeBtn.disabled = false; placeBtn.textContent = 'Place Order'; }
-        alert('Order save failed: ' + err.message + '\nInternet check kore abar try korun.');
+        alert('Order save failed: ' + err.message + '\nPlease check your internet and try again.');
       });
   } else {
     try {
@@ -212,17 +245,64 @@ function placeOrder(){
 }
 
 function showOrderSuccess(order, name, div, dist, pay){
+  // WhatsApp confirmation message (dokan number thakle button dekhabe)
+  const waMsg = `Hi! I've just placed an order.\nOrder ID: ${order.id}\nName: ${name}\nTotal: ${money(order.total)}\nPlease confirm it. Thank you!`;
+  const waBtn = (CONFIG.whatsapp && !CONFIG.whatsapp.includes('X'))
+    ? `<a class="btn btn-wa" style="margin-top:10px" target="_blank" rel="noopener" href="${waLink(waMsg)}">Confirm on WhatsApp</a>` : '';
+
   document.getElementById('coWrap').innerHTML = `
     <div class="success">
       <div class="ok">✓</div>
       <h1>Order placed successfully!</h1>
-      <p>Dhonnobad, ${name}! Amra shiggiri apnar sathe confirm korar jonno call korbo.</p>
+      <p>Thank you, ${name}! We'll call you shortly to confirm your order.</p>
       <div class="oid">Order ID: ${order.id}</div>
       <p style="font-size:14px">Payment: <b>${payLabel(pay)}</b> · Total: <b>${money(order.total)}</b></p>
       <p style="font-size:14px">Delivery to: ${dist}, ${div}</p>
-      <a class="btn btn-green" style="margin-top:20px" href="index.html">Continue shopping</a>
+      <div class="success-acts">
+        <a class="btn btn-green" href="track.html?id=${encodeURIComponent(order.id)}">Track order</a>
+        <a class="btn btn-ghost-green" href="index.html">Continue shopping</a>
+      </div>
+      ${waBtn}
     </div>`;
   window.scrollTo({top:0, behavior:'smooth'});
+  launchConfetti();
+}
+
+/* ---- Confetti — order shofol hole celebration (brand colors) 🎊 ---- */
+function launchConfetti(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const c = document.createElement('canvas');
+  c.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:100000;';
+  document.body.appendChild(c);
+  const ctx = c.getContext('2d');
+  c.width = innerWidth; c.height = innerHeight;
+  const colors = ['#EA7317','#FFC368','#F59E0B','#7A380D','#E11D48','#ffffff'];
+  const P = [];
+  for(let i=0;i<140;i++){
+    P.push({
+      x: Math.random()*c.width,
+      y: -20 - Math.random()*c.height*0.6,
+      w: 6+Math.random()*6, h: 8+Math.random()*8,
+      vy: 2.2+Math.random()*3.5,
+      vx: -1.5+Math.random()*3,
+      rot: Math.random()*Math.PI,
+      vr: -0.12+Math.random()*0.24,
+      col: colors[i%colors.length]
+    });
+  }
+  let frame = 0;
+  (function tick(){
+    frame++;
+    ctx.clearRect(0,0,c.width,c.height);
+    P.forEach(p=>{
+      p.y += p.vy; p.x += p.vx; p.rot += p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle = p.col; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+    });
+    if(frame < 260) requestAnimationFrame(tick);
+    else c.remove();
+  })();
 }
 
 const val = id => (document.getElementById(id)?.value || '').trim();

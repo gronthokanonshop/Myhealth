@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+<title>Track Order — My Health</title>
+<meta name="description" content="Track your My Health order status with your order ID and phone number." />
+<meta name="theme-color" content="#0F5132" />
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="wrap">
+  <div class="crumb"><a href="index.html">Home</a><span>›</span><span>Track Order</span></div>
+
+  <div class="track-wrap">
+    <div class="info-hero"><h1>Track Your Order</h1></div>
+    <p class="track-sub">Enter your Order ID and the phone number used on the order to see its real-time status.</p>
+
+    <div class="track-form">
+      <div class="field"><label>Order ID *</label><input id="tOrderId" placeholder="e.g. MH12345678" /></div>
+      <div class="field"><label>Phone number *</label><input id="tPhone" inputmode="numeric" placeholder="01XXXXXXXXX"
+        onkeydown="if(event.key==='Enter') trackOrder()" /></div>
+      <button class="btn btn-green" onclick="trackOrder()" id="tBtn">Track Order</button>
+    </div>
+
+    <div id="trackResult"></div>
+  </div>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="product.js"></script>
+<script src="app.js"></script>
+<script>
+window.NO_LIVE_RERENDER = true;
+
+const STATUS_STEPS = [
+  { key:'pending',   label:'Order Placed' },
+  { key:'confirmed', label:'Confirmed' },
+  { key:'delivered', label:'Delivered' },
+];
+
+function initPage(){
+  // URL e ?id= thakle auto-fill (checkout success theke link kora jay)
+  const pre = param('id');
+  if(pre){ document.getElementById('tOrderId').value = pre; }
+}
+
+function trackOrder(){
+  const id    = (document.getElementById('tOrderId').value||'').trim();
+  const phone = (document.getElementById('tPhone').value||'').trim();
+  const box   = document.getElementById('trackResult');
+  if(!id || !phone){ box.innerHTML = msg('Please enter both your Order ID and phone number.'); return; }
+  if(!window.fdb){ box.innerHTML = msg('Unable to reach the server. Please check your internet connection.'); return; }
+
+  const btn = document.getElementById('tBtn');
+  btn.disabled = true; btn.textContent = 'Searching…';
+
+  window.fdb.ref('orders/'+id).once('value').then(snap=>{
+    btn.disabled = false; btn.textContent = 'Track Order';
+    const o = snap.val();
+    if(!o){ box.innerHTML = msg('No order found for this Order ID. Please check that it is correct.'); return; }
+    // phone match — verify it's the customer's own order
+    if((o.customer?.phone||'') !== phone){
+      box.innerHTML = msg('This phone number does not match the order.'); return; }
+    renderTracking(o);
+  }).catch(e=>{
+    btn.disabled = false; btn.textContent = 'Track Order';
+    box.innerHTML = msg('Something went wrong: '+e.message);
+  });
+}
+
+function msg(text){
+  return `<div class="track-msg"><p>${text}</p></div>`;
+}
+
+function renderTracking(o){
+  const cancelled = o.status === 'cancelled';
+  const curIdx = STATUS_STEPS.findIndex(s=>s.key===o.status);
+  const items = (o.items||[]).map(i=>`<div class="tr-item"><span>${i.name} × ${i.qty}</span><b>${money(i.price*i.qty)}</b></div>`).join('');
+
+  const steps = cancelled
+    ? `<div class="track-cancelled">This order has been cancelled. Please contact us for details.</div>`
+    : `<div class="track-steps">${STATUS_STEPS.map((s,i)=>`
+        <div class="tr-step ${i<=curIdx?'done':''} ${i===curIdx?'current':''}">
+          <div class="tr-dot">${i<=curIdx?'✓':i+1}</div>
+          <div class="tr-label">${s.label}</div>
+        </div>`).join('<div class="tr-line"></div>')}</div>`;
+
+  document.getElementById('trackResult').innerHTML = `
+    <div class="track-card">
+      <div class="track-card-head">
+        <div><div class="tag-mini">Order ID</div><div class="tr-oid">${o.id}</div></div>
+        <span class="tr-status s-${o.status}">${(o.status||'pending').toUpperCase()}</span>
+      </div>
+      ${steps}
+      <div class="tr-block">
+        <h4>Items</h4>
+        ${items}
+        <div class="tr-item total"><span>Total</span><b>${money(o.total)}</b></div>
+      </div>
+      <div class="tr-block">
+        <h4>Delivery to</h4>
+        <p>${o.customer?.name||''}<br>${o.customer?.address||''}, ${o.customer?.district||''}, ${o.customer?.division||''}</p>
+        <p class="tag-mini">Payment: ${(o.payment||'').toUpperCase()}</p>
+      </div>
+    </div>`;
+}
+</script>
+</body>
+</html>

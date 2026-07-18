@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
-<title>Shop Supplements — My Health</title>
-<meta name="description" content="Browse all supplements by health goal — immunity, energy, muscle, brain, sleep and more." />
+<title>Shop All Products — My Health</title>
+<meta name="description" content="Browse supplements, face care, hair care, body care, makeup, mother & baby and more — 100% authentic products delivered across Bangladesh." />
 <meta name="theme-color" content="#0F5132" />
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -21,20 +21,19 @@
   <div class="cat-hero">
     <h1 id="catTitle">All Supplements</h1>
     <p id="catDesc">Browse our full range of authentic supplements and nutrition.</p>
-    <span class="emoji" id="catEmoji">🛒</span>
   </div>
 
   <div class="cat-layout">
     <!-- Sidebar filters -->
     <aside class="filters">
-      <h4>Health Goal</h4>
-      <div class="fgoal" id="goalFilters"></div>
+      <h4>Category</h4>
+      <div class="fcat" id="goalFilters"></div>
       <h4>Quick filters</h4>
       <div class="fgoal" id="tagFilters">
         <button onclick="setTag('all')" class="on" data-tag="all">All products</button>
-        <button onclick="setTag('flash')" data-tag="flash">⚡ On sale</button>
-        <button onclick="setTag('best')" data-tag="best">⭐ Best sellers</button>
-        <button onclick="setTag('new')" data-tag="new">🆕 New arrivals</button>
+        <button onclick="setTag('flash')" data-tag="flash">On sale</button>
+        <button onclick="setTag('best')" data-tag="best">Best sellers</button>
+        <button onclick="setTag('new')" data-tag="new">New arrivals</button>
       </div>
     </aside>
 
@@ -63,6 +62,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="product.js"></script>
 <script src="app.js"></script>
@@ -71,18 +71,37 @@ let activeGoal = param('goal') || 'all';
 let activeTag  = 'all';
 let searchQ    = (param('q') || '').toLowerCase().trim();
 
+/* activeGoal ekhon EITHER ekta subcategory id (jemon "immunity")
+   OR ekta top-level category id (jemon "facecare") hote pare. */
+function productMatchesGoal(p, filterId){
+  if(filterId === 'all') return true;
+  if(p.goal === filterId) return true;
+  const cat = categoryObj(filterId);
+  return !!cat && cat.subs.some(s=>s.id===p.goal);
+}
+
 function initPage(){
-  // sidebar goal list with counts
+  // sidebar: category accordion, each with its subcategories + counts
   const counts = {};
   PRODUCTS.forEach(p=> counts[p.goal] = (counts[p.goal]||0)+1 );
+  const catCount = c => c.subs.reduce((s,sub)=> s+(counts[sub.id]||0), 0);
   const gf = document.getElementById('goalFilters');
   gf.innerHTML =
-    `<button onclick="setGoal('all')" data-goal="all"><span>All goals</span><span class="c">${PRODUCTS.length}</span></button>` +
-    GOALS.map(g=>`<button onclick="setGoal('${g.id}')" data-goal="${g.id}"><span>${g.emoji} ${g.label}</span><span class="c">${counts[g.id]||0}</span></button>`).join('');
-  // mobile chips
+    `<button class="fcat-all" onclick="setGoal('all')" data-goal="all"><span>All Products</span><span class="c">${PRODUCTS.length}</span></button>` +
+    CATEGORIES.map(c=>`
+      <details class="fcat-group" data-cat="${c.id}">
+        <summary onclick="event.preventDefault(); setGoal('${c.id}');" data-goal="${c.id}">
+          <span>${c.label}</span><span class="c">${catCount(c)}</span>
+        </summary>
+        <div class="fcat-subs">
+          ${c.subs.map(s=>`<button onclick="setGoal('${s.id}')" data-goal="${s.id}"><span>${s.label}</span><span class="c">${counts[s.id]||0}</span></button>`).join('')}
+        </div>
+      </details>`).join('');
+
+  // mobile chips — flat list of all subcategories (simpler on small screens)
   document.getElementById('chips').innerHTML =
     `<button onclick="setGoal('all')" data-chip="all">All</button>` +
-    GOALS.map(g=>`<button onclick="setGoal('${g.id}')" data-chip="${g.id}">${g.emoji} ${g.label}</button>`).join('');
+    GOALS.map(g=>`<button onclick="setGoal('${g.id}')" data-chip="${g.id}">${g.label}</button>`).join('');
 
   // if arrived via search, show it in the global search box
   if(searchQ){ const s=document.getElementById('globalSearch'); if(s) s.value = searchQ; }
@@ -95,23 +114,26 @@ function setGoal(id){ activeGoal=id; searchQ=''; applyHero(); render(); }
 function setTag(t){ activeTag=t; render(); }
 
 function applyHero(){
-  const g = goalObj(activeGoal);
-  const title = searchQ ? `Results for “${searchQ}”` : (g ? g.label + " Supplements" : "All Supplements");
+  const sub = goalObj(activeGoal);          // subcategory match
+  const cat = categoryObj(activeGoal);      // top-level category match
+  const label = sub ? sub.label : (cat ? cat.label : null);
+  const title = searchQ ? `Results for “${searchQ}”` : (label ? label : "All Products");
   document.getElementById('catTitle').textContent = title;
   document.getElementById('crumbCat').textContent = title;
-  document.getElementById('catEmoji').textContent = g ? g.emoji : "🛒";
-  document.getElementById('catDesc').textContent = g
-    ? `Curated ${g.label.toLowerCase()} supplements — ${g.note}.`
-    : "Browse our full range of authentic supplements and nutrition.";
-  // mark active buttons
+  document.getElementById('catDesc').textContent = sub
+    ? `Curated ${sub.label.toLowerCase()} picks — ${sub.note}.`
+    : (cat ? `Browse all ${cat.label.toLowerCase()} products.` : "Browse our full range of authentic products.");
+  // mark active buttons/accordion
   document.querySelectorAll('[data-goal]').forEach(b=> b.classList.toggle('on', b.dataset.goal===activeGoal));
   document.querySelectorAll('[data-chip]').forEach(b=> b.classList.toggle('on', b.dataset.chip===activeGoal));
+  const openGroup = sub ? document.querySelector(`.fcat-group[data-cat="${categoryOf(sub.id)?.id}"]`) : document.querySelector(`.fcat-group[data-cat="${activeGoal}"]`);
+  document.querySelectorAll('.fcat-group').forEach(d=> d.open = (d===openGroup));
 }
 
 function render(){
   let list = PRODUCTS.filter(p=>{
-    const mg = activeGoal==='all' || p.goal===activeGoal;
-    const mt = activeTag==='all'  || p.tags.includes(activeTag);
+    const mg = productMatchesGoal(p, activeGoal);
+    const mt = activeTag==='all'  || (p.tags||[]).includes(activeTag);
     const mq = !searchQ || p.name.toLowerCase().includes(searchQ) ||
                goalLabel(p.goal).toLowerCase().includes(searchQ) || (p.brand||'').toLowerCase().includes(searchQ);
     return mg && mt && mq;
@@ -128,7 +150,7 @@ function render(){
   document.getElementById('catGrid').innerHTML = list.length
     ? list.map(productCard).join('')
     : `<div style="grid-column:1/-1; text-align:center; padding:60px; color:var(--muted)">
-         <div style="font-size:48px">🔍</div>No products match. Try another goal or search.</div>`;
+         No products match. Try another category or search.</div>`;
   document.querySelectorAll('[data-tag]').forEach(b=> b.classList.toggle('on', b.dataset.tag===activeTag));
 }
 </script>
