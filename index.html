@@ -533,17 +533,15 @@ article.card .qv-btn {
   }
 }
 
-/* ─── TOP HERO BANNER — responsive, image visible & uncropped at every size ───
-   Real bug (confirmed in style.css): @media(max-width:900px){ .hero-banner-img{
-   display:none } } was hiding the banner photo completely on any tablet/phone.
-   Fix: keep the image visible always, and use aspect-ratio (instead of the
-   fixed min-height:420px) so it scales cleanly — and stays fully visible,
-   never cropped out of frame — at every width. */
+/* ─── TOP HERO BANNER — the image itself has the headline baked in, so
+   there's no overlay text to protect anymore. Simplify: no forced
+   aspect-ratio, no object-fit:cover — just show the picture at its own
+   natural shape, full width, nothing ever cropped, at every screen size. */
 .hero-banner {
   min-height: 0 !important;
   height: auto !important;
   width: 100% !important;
-  aspect-ratio: 2.8 / 1 !important;
+  aspect-ratio: unset !important;
   border-radius: var(--r-lg) !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
@@ -551,20 +549,15 @@ article.card .qv-btn {
 
 .hero-banner-img {
   display: block !important;
-  position: absolute !important;
-  inset: 0 !important;
+  position: static !important;
+  inset: auto !important;
   width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  object-position: center !important;
+  height: auto !important;
+  object-fit: contain !important;
 }
 
 .hero-main {
-  /* restore the readability scrim behind the text that style.css's
-     900px query was stripping out along with the image */
-  background: linear-gradient(100deg, var(--cream) 0%, var(--cream) 55%, transparent 100%) !important;
-  max-width: 580px !important;
-  box-sizing: border-box !important;
+  display: none !important;
 }
 
 /* ─── BOTTOM PROMO BANNERS — 2-in-a-row becomes a 1-at-a-time slider ───
@@ -656,77 +649,25 @@ article.card .qv-btn {
 }
 
 /* ─── MOBILE tweaks for hero + promo ───
-   Corrected per feedback: text should sit in the photo's empty LEFT-side
-   space (overlay, like desktop) — not stacked below it. The stacked
-   version's problem was a very tall box (aspect-ratio 16/10) forcing
-   object-fit:cover to crop hard into both sides of the photo to fill that
-   shape, which is what cut off the right side (the products). Fix: keep
-   the box close to the photo's own wide/short natural shape (so cover
-   barely has to crop anything), and confine the text block + scrim to
-   roughly the left half — matching where the photo's blank space actually
-   is — instead of letting it span the full width. */
+   Per request: drop the text block on mobile entirely — just show the
+   banner photo, sized so it fits/displays properly (no cropping, no
+   overlay text to fight with). */
 @media (max-width: 640px) {
   .hero-banner {
-    aspect-ratio: 2 / 1 !important;
+    aspect-ratio: unset !important;
     height: auto !important;
     min-height: 0 !important;
-    display: flex !important;
-    align-items: center !important;
+    display: block !important;
     border-radius: 14px !important;
   }
 
   .hero-banner-img {
-    position: absolute !important;
-    inset: 0 !important;
+    position: static !important;
+    inset: auto !important;
+    display: block !important;
     width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    object-position: center !important;
-  }
-
-  .hero-main {
-    position: relative !important;
-    max-width: 58% !important;
-    padding: 14px 10px 14px 14px !important;
-    background: linear-gradient(100deg, var(--cream) 0%, var(--cream) 78%, transparent 100%) !important;
-  }
-
-  .hero-eyebrow {
-    font-size: 10px !important;
-    padding: 5px 10px 5px 8px !important;
-  }
-
-  .hero-eyebrow svg {
-    width: 13px !important;
-    height: 13px !important;
-  }
-
-  .hero h1 {
-    font-size: clamp(.95rem, 5vw, 1.25rem) !important;
-    margin: 6px 0 6px !important;
-    line-height: 1.15 !important;
-  }
-
-  .hero p {
-    font-size: .68rem !important;
-    margin: 0 0 10px !important;
-    line-height: 1.4 !important;
-  }
-
-  .hero-cta {
-    flex-direction: column !important;
-    gap: 6px !important;
-    width: 100% !important;
-  }
-
-  .hero-cta .btn,
-  .hero-cta a {
-    width: 100% !important;
-    box-sizing: border-box !important;
-    text-align: center !important;
-    justify-content: center !important;
-    padding: 8px 10px !important;
-    font-size: .72rem !important;
+    height: auto !important;
+    object-fit: contain !important;
   }
 
   .promo-slider {
