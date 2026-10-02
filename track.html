@@ -6,6 +6,7 @@
 <title>Track Order — My Health</title>
 <meta name="description" content="Track your My Health order status with your order ID and phone number." />
 <meta name="theme-color" content="#0F5132" />
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
@@ -23,8 +24,8 @@
     <p class="track-sub">Enter your Order ID and the phone number used on the order to see its real-time status.</p>
 
     <div class="track-form">
-      <div class="field"><label>Order ID *</label><input id="tOrderId" placeholder="e.g. MH12345678" /></div>
-      <div class="field"><label>Phone number *</label><input id="tPhone" inputmode="numeric" placeholder="01XXXXXXXXX"
+      <div class="field"><label for="tOrderId">Order ID *</label><input id="tOrderId" placeholder="e.g. MH8K2PQ4ZT7A" autocomplete="off" style="text-transform:uppercase" /></div>
+      <div class="field"><label for="tPhone">Phone number *</label><input id="tPhone" type="tel" inputmode="tel" placeholder="01XXXXXXXXX"
         onkeydown="if(event.key==='Enter') trackOrder()" /></div>
       <button class="btn btn-green" onclick="trackOrder()" id="tBtn">Track Order</button>
     </div>
@@ -41,24 +42,34 @@
 <script src="firebase-config.js"></script>
 <script src="product.js"></script>
 <script src="app.js"></script>
+<script src="ai.js"></script>
 <script>
 window.NO_LIVE_RERENDER = true;
 
 const STATUS_STEPS = [
   { key:'pending',   label:'Order Placed' },
   { key:'confirmed', label:'Confirmed' },
+  { key:'shipped',   label:'Shipped' },
   { key:'delivered', label:'Delivered' },
 ];
+const STATUS_MSG = {
+  pending:   "We've received your order and will call you shortly to confirm it.",
+  confirmed: "Your order is confirmed and being packed.",
+  shipped:   "Your order is on the way with our courier partner.",
+  delivered: "Your order has been delivered. Thank you for shopping with us!",
+};
 
 function initPage(){
-  // URL e ?id= thakle auto-fill (checkout success theke link kora jay)
   const pre = param('id');
   if(pre){ document.getElementById('tOrderId').value = pre; }
+  // ei device e last checkout er phone thakle auto-fill
+  try{ const g = JSON.parse(localStorage.getItem('myhealth_checkout_info')||'null'); if(g && g.phone) document.getElementById('tPhone').value = g.phone; }catch(e){}
+  if(pre && document.getElementById('tPhone').value) trackOrder();
 }
 
 function trackOrder(){
-  const id    = (document.getElementById('tOrderId').value||'').trim();
-  const phone = (document.getElementById('tPhone').value||'').trim();
+  const id    = (document.getElementById('tOrderId').value||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  const phone = normalizePhone(document.getElementById('tPhone').value);
   const box   = document.getElementById('trackResult');
   if(!id || !phone){ box.innerHTML = msg('Please enter both your Order ID and phone number.'); return; }
   if(!window.fdb){ box.innerHTML = msg('Unable to reach the server. Please check your internet connection.'); return; }
@@ -70,50 +81,72 @@ function trackOrder(){
     btn.disabled = false; btn.textContent = 'Track Order';
     const o = snap.val();
     if(!o){ box.innerHTML = msg('No order found for this Order ID. Please check that it is correct.'); return; }
-    // phone match — verify it's the customer's own order
-    if((o.customer?.phone||'') !== phone){
+    if(normalizePhone(o.customer?.phone) !== phone){
       box.innerHTML = msg('This phone number does not match the order.'); return; }
     renderTracking(o);
-  }).catch(e=>{
+  }).catch(()=>{
     btn.disabled = false; btn.textContent = 'Track Order';
-    box.innerHTML = msg('Something went wrong: '+e.message);
+    box.innerHTML = msg('No order found for this Order ID. Please check that it is correct.');
   });
 }
 
 function msg(text){
-  return `<div class="track-msg"><p>${text}</p></div>`;
+  return `<div class="track-msg"><p>${esc(text)}</p></div>`;
+}
+function fmtWhen(v){
+  if(!v) return '';
+  const d = new Date(v); if(isNaN(d)) return '';
+  return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) + ', ' + d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
 }
 
 function renderTracking(o){
-  const cancelled = o.status === 'cancelled';
-  const curIdx = STATUS_STEPS.findIndex(s=>s.key===o.status);
-  const items = (o.items||[]).map(i=>`<div class="tr-item"><span>${i.name} × ${i.qty}</span><b>${money(i.price*i.qty)}</b></div>`).join('');
+  const status = o.status || 'pending';
+  const cancelled = status === 'cancelled' || status === 'returned';
+  const curIdx = STATUS_STEPS.findIndex(s=>s.key===status);
+  const hist = o.statusHistory || {};
+  const items = (o.items||[]).map(i=>`<div class="tr-item"><span>${esc(i.name)} × ${Number(i.qty)||0}</span><b>${money((Number(i.price)||0)*(Number(i.qty)||0))}</b></div>`).join('');
+  const c = o.customer || {};
 
   const steps = cancelled
-    ? `<div class="track-cancelled">This order has been cancelled. Please contact us for details.</div>`
-    : `<div class="track-steps">${STATUS_STEPS.map((s,i)=>`
-        <div class="tr-step ${i<=curIdx?'done':''} ${i===curIdx?'current':''}">
+    ? `<div class="track-cancelled">This order has been ${status}. Please contact us for details.</div>`
+    : `<div class="track-steps">${STATUS_STEPS.map((s,i)=>{
+        const when = s.key==='pending' ? o.placedAt : hist[s.key];
+        return `<div class="tr-step ${i<=curIdx?'done':''} ${i===curIdx?'current':''}">
           <div class="tr-dot">${i<=curIdx?'✓':i+1}</div>
           <div class="tr-label">${s.label}</div>
-        </div>`).join('<div class="tr-line"></div>')}</div>`;
+          ${i<=curIdx && when ? `<div class="tr-time">${fmtWhen(when)}</div>` : ''}
+        </div>`;
+      }).join('<div class="tr-line"></div>')}</div>
+      <p style="text-align:center;color:var(--muted);font-size:14px;margin:-10px 0 6px">${STATUS_MSG[status]||''}</p>`;
+
+  const courier = o.tracking_code ? `
+    <div class="tr-block">
+      <h4>Courier</h4>
+      <div class="tr-courier">Tracking code: <b>${esc(o.tracking_code)}</b>
+        ${!o.courier || o.courier==='steadfast' ? `— <a href="https://steadfast.com.bd/t/${encodeURIComponent(o.tracking_code)}" target="_blank" rel="noopener">Track with Steadfast →</a>` : ''}</div>
+    </div>` : '';
 
   document.getElementById('trackResult').innerHTML = `
     <div class="track-card">
       <div class="track-card-head">
-        <div><div class="tag-mini">Order ID</div><div class="tr-oid">${o.id}</div></div>
-        <span class="tr-status s-${o.status}">${(o.status||'pending').toUpperCase()}</span>
+        <div><div class="tag-mini">Order ID</div><div class="tr-oid">${esc(o.id)}</div><div class="tag-mini">Placed ${fmtWhen(o.placedAt)}</div></div>
+        <span class="tr-status s-${esc(status)}">${esc(status.toUpperCase())}</span>
       </div>
       ${steps}
+      ${courier}
       <div class="tr-block">
         <h4>Items</h4>
         ${items}
+        ${o.discount ? `<div class="tr-item"><span>Discount${o.coupon?' ('+esc(o.coupon)+')':''}</span><b>-${money(o.discount)}</b></div>` : ''}
+        <div class="tr-item"><span>Delivery</span><b>${o.delivery ? money(o.delivery) : 'FREE'}</b></div>
         <div class="tr-item total"><span>Total</span><b>${money(o.total)}</b></div>
       </div>
       <div class="tr-block">
         <h4>Delivery to</h4>
-        <p>${o.customer?.name||''}<br>${o.customer?.address||''}, ${o.customer?.district||''}, ${o.customer?.division||''}</p>
-        <p class="tag-mini">Payment: ${(o.payment||'').toUpperCase()}</p>
+        <p>${esc(c.name||'')}<br>${esc(c.address||'')}, ${esc(c.district||'')}, ${esc(c.division||'')}</p>
+        <p class="tag-mini">Payment: ${esc(({cod:'Cash on Delivery',bkash:'bKash',nagad:'Nagad',card:'Card'})[o.payment] || o.payment || '')}${o.paymentStatus==='paid' ? ' · <b style="color:#1a7a35">PAID</b>' : ''}</p>
       </div>
+      ${CONFIG.hotline || waNumber() ? `<div class="tr-block"><p>Need help with this order? ${CONFIG.hotline ? `Call <a href="tel:${esc(CONFIG.hotline)}" style="color:var(--leaf);font-weight:700">${esc(CONFIG.hotline)}</a>` : ''}${waNumber() ? ` ${CONFIG.hotline?'or ':''}<a href="${waLink('Hi! I need help with order '+o.id)}" target="_blank" rel="noopener" style="color:var(--leaf);font-weight:700">WhatsApp us</a>` : ''}</p></div>` : ''}
     </div>`;
 }
 </script>

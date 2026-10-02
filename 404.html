@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+<title>Page not found — My Health</title>
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#0F5132" />
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- 404 page jekono folder path theke load hote pare, tai root-relative (/) path -->
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="wrap">
+  <div class="nf">
+    <div class="big">404</div>
+    <h1>Page not found</h1>
+    <p>Sorry, the page you're looking for doesn't exist or has been moved.</p>
+    <div class="success-acts">
+      <a class="btn btn-green" href="/index.html">Go to homepage</a>
+      <a class="btn btn-ghost-green" href="/category.html?goal=all">Browse products</a>
+    </div>
+  </div>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="/firebase-config.js"></script>
+<script src="/product.js"></script>
+<script src="/app.js"></script>
+<script src="/ai.js"></script>
+<script>window.NO_LIVE_RERENDER = true;</script>
+</body>
+</html>

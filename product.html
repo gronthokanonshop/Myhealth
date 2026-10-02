@@ -4,8 +4,12 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
 <title>Product — My Health</title>
-<meta name="description" content="View product details, benefits, dosage and price — 100% authentic supplements from My Health, delivered across Bangladesh." />
+<meta name="description" content="View product details, benefits, usage and price — 100% authentic products from My Health, delivered across Bangladesh." />
 <meta name="theme-color" content="#0F5132" />
+<meta property="og:type" content="product" />
+<meta property="og:title" content="My Health" />
+<meta property="og:description" content="100% authentic health, beauty & wellness products delivered across Bangladesh." />
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
@@ -17,6 +21,7 @@
 
 <main class="wrap" id="pdWrap">
   <!-- JS renders product detail here -->
+  <div style="text-align:center; padding:80px 20px; color:var(--muted)">Loading product…</div>
 </main>
 
 <section class="wrap section" id="reviewSection" style="display:none">
@@ -37,10 +42,17 @@
   </div>
 </section>
 
-<section class="wrap section">
+<section class="wrap section" id="relSection" style="display:none">
   <div class="sec-head"><div><div class="eyebrow">You may also like</div><h2 id="relTitle">Related products</h2></div></div>
   <div class="carousel" id="relRow"></div>
 </section>
+
+<section class="wrap section" id="recentSection" style="display:none">
+  <div class="sec-head"><div><div class="eyebrow">Your history</div><h2>Recently viewed</h2></div></div>
+  <div class="carousel" id="recentRow"></div>
+</section>
+
+<div class="sticky-buy" id="stickyBuy"></div>
 
 <footer id="site-footer"></footer>
 
@@ -50,42 +62,54 @@
 <script src="firebase-config.js"></script>
 <script src="product.js"></script>
 <script src="app.js"></script>
+<script src="ai.js"></script>
 <script>
 let pdQty = 1;
 let pdProduct = null;
+let viewTracked = false;
 
 function initPage(){
   pdProduct = findP(param('id'));
   const wrap = document.getElementById('pdWrap');
 
   if(!pdProduct){
-    wrap.innerHTML = `<div style="text-align:center; padding:80px 20px; color:var(--muted)">
-      <h2 style="margin:14px 0">Product not found</h2>
-      <a class="btn btn-green" href="category.html?goal=all">Browse all products</a></div>`;
-    document.querySelector('section.section').style.display='none';
+    wrap.innerHTML = `<div class="nf">
+      <div class="big">404</div>
+      <h1>Product not found</h1>
+      <p>This product may have been removed or the link is incorrect.</p>
+      <a class="btn btn-green" style="margin-top:16px" href="category.html?goal=all">Browse all products</a></div>`;
+    ['reviewSection','relSection'].forEach(id=> document.getElementById(id).style.display='none');
+    document.getElementById('stickyBuy').classList.remove('show');
     return;
   }
 
   const p = pdProduct;
-  document.title = p.name + " — My Health";
-  const off = Math.round((1 - p.price/p.oldPrice) * 100);
+  const cats = getCats(p);
+  const mainCat = cats[0];
+  const parent = categoryOf(mainCat);
+  document.title = p.name + " — " + CONFIG.brand;
+  const off = discountPct(p);
   const save = p.oldPrice - p.price;
-  const img = imgHTML(p, p.name);
   const oos = !inStock(p);
+  const images = [p.img, ...(Array.isArray(p.imgs) ? p.imgs : [])].filter(Boolean);
+  const wa = waNumber();
+  const pageUrl = location.href.split('#')[0];
 
   wrap.innerHTML = `
   <div class="crumb"><a href="index.html">Home</a><span>›</span>
-    <a href="category.html?goal=${p.goal}">${goalLabel(p.goal)}</a><span>›</span><span>${p.name}</span></div>
+    ${parent && parent.id!==mainCat ? `<a href="category.html?goal=${encodeURIComponent(parent.id)}">${esc(parent.label)}</a><span>›</span>` : ''}
+    <a href="category.html?goal=${encodeURIComponent(mainCat||'all')}">${esc(goalLabel(mainCat))}</a><span>›</span><span>${esc(p.name)}</span></div>
 
   <div class="pd">
     <div class="pd-media">
-      <div class="pd-img">${off>0?`<span class="disc">${off}% OFF</span>`:''}${img}</div>
+      <div class="pd-img" id="pdMainImg">${off>0?`<span class="disc">${off}% OFF</span>`:''}${imgHTML(p, p.name)}</div>
+      ${images.length > 1 ? `<div class="pd-thumbs">${images.map((src,i)=>`<button class="${i===0?'on':''}" onclick="showImg(${i})" aria-label="Image ${i+1}"><img src="${esc(src)}" alt="" loading="lazy"></button>`).join('')}</div>` : ''}
     </div>
 
     <div class="pd-detail">
-      <div class="pd-goal">${goalLabel(p.goal)} · ${p.brand||''}</div>
-      <h1>${p.name}</h1>
-      <div class="pd-rating"><span class="stars">${stars(p.rating)}</span> <b>${p.rating}</b> · ${p.reviews} reviews · ${oos
+      <div class="pd-goal">${esc(goalLabel(mainCat))}${p.brand ? ' · '+esc(p.brand) : ''}</div>
+      <h1>${esc(p.name)}</h1>
+      <div class="pd-rating"><span id="pdRating"><span class="stars">${stars(p.rating)}</span> <b>${p.rating||'-'}</b> · ${p.reviews||0} reviews</span> · ${oos
         ? `<b style="display:inline-block;background:#ffe4e4;color:#c0392b;padding:3px 12px;border-radius:999px;font-weight:800">● Out of stock</b>`
         : `<b style="display:inline-block;background:#e6f5e9;color:#1a7a35;padding:3px 12px;border-radius:999px;font-weight:800">● In stock</b>`}</div>
 
@@ -95,48 +119,114 @@ function initPage(){
       </div>
 
       <div class="pd-badges">
-        <span>${p.size||'Standard pack'}</span>
+        <span>${esc(p.size||'Standard pack')}</span>
         <span>${TIMING[p.timing]||TIMING.anytime}</span>
         <span>100% Authentic</span>
         <span>Delivery 12–48 hrs</span>
       </div>
 
-      <p style="color:var(--muted); font-size:15px;">${p.desc||''}</p>
+      <p style="color:var(--muted); font-size:15px;">${esc(p.desc||'').replace(/\n/g,'<br>')}</p>
 
       <div class="pd-buy">
         <div class="qtybox">
-          <button onclick="setPdQty(-1)">−</button><span id="pdQty">1</span><button onclick="setPdQty(1)">＋</button>
+          <button onclick="setPdQty(-1)" aria-label="Decrease">−</button><span id="pdQty">1</span><button onclick="setPdQty(1)" aria-label="Increase">＋</button>
         </div>
-        <button class="btn btn-green" ${oos?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="${oos?'':`addToCart(${p.id}, pdQty); toast('Added '+pdQty+' to cart');`}">${oos?'Out of stock':'Add to Cart'}</button>
-        <button class="btn btn-lime" ${oos?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="${oos?'':`addToCart(${p.id}, pdQty); location.href='checkout.html';`}">Buy Now</button>
+        <button class="btn btn-green" ${oos?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="${oos?'':`addToCart(${p.id}, pdQty)`}">${oos?'Out of stock':'Add to Cart'}</button>
+        <button class="btn btn-lime" ${oos?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="${oos?'':'buyNow()'}">Buy Now</button>
+      </div>
+      ${wa && !oos ? `<a class="btn btn-wa-order" target="_blank" rel="noopener" href="${waLink(`Hi! I want to order:\n${p.name}\nPrice: ${money(p.price)}\n${pageUrl}`)}">${WA_ICON} Order on WhatsApp</a>` : ''}
+
+      <div class="pd-perks">
+        <div><b>${freeDeliveryOn() ? 'Free delivery' : 'Fast delivery'}</b>${freeDeliveryOn() ? `On orders over ${money(CONFIG.freeDeliveryOver)}` : 'Across all 64 districts'}</div>
+        <div><b>Cash on Delivery</b>Pay when you receive it</div>
+        <div><b>Easy returns</b><a href="page.html?p=return" style="text-decoration:underline">Return policy</a></div>
+      </div>
+
+      <div class="pd-share">Share:
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}" target="_blank" rel="noopener" aria-label="Share on Facebook">${SOCIAL_ICONS.facebook}</a>
+        <a href="https://wa.me/?text=${encodeURIComponent(p.name+' — '+pageUrl)}" target="_blank" rel="noopener" aria-label="Share on WhatsApp">${WA_ICON}</a>
+        <button onclick="copyLink()" aria-label="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></button>
       </div>
 
       <div class="pd-info">
-        <h3>Key Benefits</h3>
-        <ul>${(p.benefits||[]).map(b=>`<li>${b}</li>`).join('')}</ul>
+        ${(p.benefits||[]).length ? `<h3>Key Benefits</h3>
+        <ul>${p.benefits.map(b=>`<li>${esc(b)}</li>`).join('')}</ul>` : ''}
 
-        <h3>How to use</h3>
+        ${p.use && (p.use.dose || p.use.when || p.use.duration) ? `<h3>How to use</h3>
         <div class="howto">
-          <div><b>Dosage</b><small>${p.use?.dose||'-'}</small></div>
-          <div><b>Best time</b><small>${p.use?.when||'-'}</small></div>
-          <div><b>Duration</b><small>${p.use?.duration||'-'}</small></div>
-        </div>
+          <div><b>Dosage</b><small>${esc(p.use.dose||'-')}</small></div>
+          <div><b>Best time</b><small>${esc(p.use.when||'-')}</small></div>
+          <div><b>Duration</b><small>${esc(p.use.duration||'-')}</small></div>
+        </div>` : ''}
 
-        <p style="font-size:13px; color:var(--muted); background:var(--cream); padding:12px 14px; border-radius:12px;">
+        ${parent && parent.id==='supplements' ? `<p style="font-size:13px; color:var(--muted); background:var(--cream); padding:12px 14px; border-radius:12px;">
           <b>Note:</b> Supplements are not a substitute for a balanced diet. Consult a doctor if pregnant, nursing, or on medication.
-        </p>
+        </p>` : ''}
       </div>
     </div>
   </div>`;
+  pdImages = images;
 
-  // related products: same goal, exclude current
-  const related = PRODUCTS.filter(x=>x.goal===p.goal && x.id!==p.id).slice(0,8);
-  const relRow = document.getElementById('relRow');
-  if(related.length){ relRow.innerHTML = related.map(productCard).join(''); document.querySelector('section.section').style.display=''; }
-  else { document.querySelector('section.section').style.display='none'; }
+  // related products: kono category mile, current bade
+  const related = PRODUCTS.filter(x=> x.id!==p.id && getCats(x).some(c=>cats.includes(c)))
+    .sort(stockFirst).slice(0,10);
+  const relSec = document.getElementById('relSection');
+  if(related.length){ document.getElementById('relRow').innerHTML = related.map(productCard).join(''); relSec.style.display=''; }
+  else relSec.style.display='none';
 
+  // recently viewed (current bade) — tarpor current ke list e add
+  const recent = getRecent().filter(id=>id!==p.id).map(findP).filter(Boolean);
+  const recSec = document.getElementById('recentSection');
+  if(recent.length){ document.getElementById('recentRow').innerHTML = recent.map(productCard).join(''); recSec.style.display=''; }
+  else recSec.style.display='none';
+  pushRecent(p.id);
+
+  // mobile sticky buy bar
+  const sb = document.getElementById('stickyBuy');
+  sb.innerHTML = `<div class="sb-info"><div class="sb-name">${esc(p.name)}</div><div class="sb-price">${money(p.price)}</div></div>
+    ${oos ? `<button class="btn btn-green" disabled style="opacity:.45">Out of stock</button>`
+          : `<button class="btn btn-green" onclick="addToCart(${p.id}, pdQty)">Add to cart</button><button class="btn btn-lime" onclick="buyNow()">Buy</button>`}`;
+  sb.classList.add('show');
+  document.body.classList.add('has-sticky-buy');
+
+  setMeta(p);
   injectProductJsonLd(p, oos);
   initReviews(p);
+  if(!viewTracked){ viewTracked = true; trackEvent('ViewContent', { content_ids:[p.id], content_type:'product', content_name:p.name, value:p.price }); }
+}
+
+let pdImages = [];
+function showImg(i){
+  const box = document.getElementById('pdMainImg');
+  const img = box.querySelector('img');
+  if(img) img.src = pdImages[i];
+  else { box.querySelector('.img-ph, .img-emoji')?.remove(); box.insertAdjacentHTML('beforeend', `<img src="${esc(pdImages[i])}" alt="">`); }
+  document.querySelectorAll('.pd-thumbs button').forEach((b,j)=> b.classList.toggle('on', i===j));
+}
+function buyNow(){
+  if(!pdProduct || !inStock(pdProduct)) return;
+  cart[pdProduct.id] = Math.max(cart[pdProduct.id]||0, pdQty);
+  saveCart();
+  location.href = 'checkout.html';
+}
+function copyLink(){
+  const url = location.href.split('#')[0];
+  (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject())
+    .then(()=> toast('Link copied ✓'))
+    .catch(()=> prompt('Copy this link:', url));
+}
+
+/* SEO / social share meta — product onujayi update */
+function setMeta(p){
+  const setM = (sel, attr, val) => { let m = document.head.querySelector(sel); if(!m){ m = document.createElement('meta'); const [k,v] = attr; m.setAttribute(k,v); document.head.appendChild(m); } m.setAttribute('content', val); };
+  const desc = (p.desc || `${p.name} — buy authentic at ${CONFIG.brand}.`).slice(0,160);
+  setM('meta[name="description"]', ['name','description'], desc);
+  setM('meta[property="og:title"]', ['property','og:title'], p.name + ' — ' + CONFIG.brand);
+  setM('meta[property="og:description"]', ['property','og:description'], desc);
+  if(p.img) setM('meta[property="og:image"]', ['property','og:image'], p.img);
+  let c = document.head.querySelector('link[rel=canonical]');
+  if(!c){ c = document.createElement('link'); c.rel = 'canonical'; document.head.appendChild(c); }
+  c.href = CONFIG.siteUrl + '/product.html?id=' + p.id;
 }
 
 /* =========================== PRODUCT REVIEWS =========================== */
@@ -144,10 +234,8 @@ let rvPick = 5;
 function initReviews(p){
   const sec = document.getElementById('reviewSection');
   sec.style.display = '';
-  // star picker
   document.getElementById('revStarPick').innerHTML =
     [1,2,3,4,5].map(n=>`<button type="button" class="rsp ${n<=rvPick?'on':''}" data-n="${n}" onclick="setRvStar(${n})" aria-label="${n} star">★</button>`).join('');
-  // load + render
   document.getElementById('revList').innerHTML = `<div class="rev-loading">Loading reviews…</div>`;
   loadReviews(p.id, list=> renderReviews(p, list));
 }
@@ -166,17 +254,20 @@ function renderReviews(p, list){
         <div class="stars" style="font-size:20px">${stars(avg)}</div>
         <div class="tag-mini" style="margin-top:4px">${list.length} customer review${list.length!==1?'s':''}</div>
       </div>`;
+    /* asol review thakle upore-r rating o asol review theke dekhai */
+    const pr = document.getElementById('pdRating');
+    if(pr) pr.innerHTML = `<span class="stars">${stars(avg)}</span> <b>${avg.toFixed(1)}</b> · <a href="#reviewSection" style="text-decoration:underline">${list.length} review${list.length!==1?'s':''}</a>`;
   } else {
     sum.innerHTML = `<div class="rev-none">No reviews yet — <b>be the first</b> to review this product!</div>`;
   }
   document.getElementById('revList').innerHTML = list.length
     ? list.map(r=>`<div class="rev-item">
         <div class="rev-item-head">
-          <span class="rev-avatar">${(r.name||'?').trim().charAt(0).toUpperCase()}</span>
-          <div><b>${escapeHtml(r.name||'Anonymous')}</b><div class="stars" style="font-size:13px">${stars(r.rating)}</div></div>
+          <span class="rev-avatar">${esc((r.name||'?').trim().charAt(0).toUpperCase())}</span>
+          <div><b>${esc(r.name||'Anonymous')}</b><div class="stars" style="font-size:13px">${stars(r.rating)}</div></div>
           <span class="tag-mini" style="margin-left:auto">${fmtDay(r.ts)}</span>
         </div>
-        <p>${escapeHtml(r.text||'')}</p>
+        <p>${esc(r.text||'')}</p>
       </div>`).join('')
     : '';
 }
@@ -184,7 +275,11 @@ function postReview(){
   const name = (document.getElementById('rvName').value||'').trim();
   const text = (document.getElementById('rvText').value||'').trim();
   if(!name || !text){ toast('Please enter your name and review'); return; }
+  if(text.length < 5){ toast('Please write a little more about the product'); return; }
   if(!window.fdb){ toast('Server offline — review could not be sent'); return; }
+  /* ek product e ek browser theke ekta review (spam kom) */
+  const doneKey = 'myhealth_reviewed_' + pdProduct.id;
+  try{ if(localStorage.getItem(doneKey)){ toast('You have already reviewed this product — thank you!'); return; } }catch(e){}
   const btn = document.getElementById('rvSubmit');
   btn.disabled = true; btn.textContent = 'Submitting…';
   submitReview(pdProduct.id, {name, rating: rvPick, text})
@@ -192,16 +287,15 @@ function postReview(){
       btn.disabled = false; btn.textContent = 'Submit review';
       document.getElementById('rvName').value = '';
       document.getElementById('rvText').value = '';
+      try{ localStorage.setItem(doneKey, '1'); }catch(e){}
       toast('Thank you! Your review has been added ✓');
       loadReviews(pdProduct.id, list=> renderReviews(pdProduct, list));
     })
     .catch(e=>{ btn.disabled = false; btn.textContent = 'Submit review'; toast('Review save failed'); console.warn(e); });
 }
-const escapeHtml = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function fmtDay(ts){ try{ return new Date(ts).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return ''; } }
 
-/* SEO: Product structured data (JSON-LD) — Google e rich result er jonno.
-   CONFIG.siteUrl e placeholder ase; domain kenar por app.js e bodlalei ekhaneo thik hoye jabe. */
+/* SEO: Product structured data (JSON-LD) — Google rich result */
 function injectProductJsonLd(p, oos){
   document.getElementById('pdJsonLd')?.remove();
   const ld = {
@@ -209,8 +303,9 @@ function injectProductJsonLd(p, oos){
     "@type": "Product",
     "name": p.name,
     "description": p.desc || '',
-    "image": p.img || (CONFIG.siteUrl + "/logo.svg"),
+    "image": [p.img, ...(p.imgs||[])].filter(Boolean).length ? [p.img, ...(p.imgs||[])].filter(Boolean) : (CONFIG.siteUrl + "/logo.svg"),
     "brand": { "@type": "Brand", "name": p.brand || CONFIG.brand },
+    "sku": String(p.id),
     "url": CONFIG.siteUrl + "/product.html?id=" + p.id,
     "offers": {
       "@type": "Offer",
@@ -230,7 +325,7 @@ function injectProductJsonLd(p, oos){
 }
 
 function setPdQty(d){
-  pdQty = Math.max(1, pdQty + d);
+  pdQty = Math.max(1, Math.min(99, pdQty + d));
   document.getElementById('pdQty').textContent = pdQty;
 }
 </script>

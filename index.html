@@ -6,6 +6,7 @@
 <title>My Health — Authentic Health, Beauty & Wellness in Bangladesh</title>
 <meta name="description" content="Shop genuine vitamins & supplements, face care, hair care, body care, makeup, mother & baby and men's care. 100% authentic, fast delivery, bKash & Nagad." />
 <meta name="theme-color" content="#0F5132" />
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
@@ -537,7 +538,14 @@ article.card .qv-btn {
    there's no overlay text to protect anymore. Simplify: no forced
    aspect-ratio, no object-fit:cover — just show the picture at its own
    natural shape, full width, nothing ever cropped, at every screen size. */
-.hero-banner {
+/* ⚠️ FIX: age ei 3ta rule unconditionally .hero-banner/.hero-banner-img/.hero-main
+   e lagto — image upload na thakle (fresh install, ba admin "Remove" korle)
+   .hero-banner height:auto + kono image na thaka + .hero-main display:none
+   mile pura hero section 0px hoye ADRISHYO hoye jeto (kono gradient/text/button
+   kichu e dekha jeto na). Ekhon shudhu .has-img thakle e (mane real chobi
+   load hoyeche) ei "no-overlay-text, picture as-is" mode e jay — nahole
+   style.css-er original gradient+text hero fallback hisebe dekhay. */
+.hero-banner.has-img {
   min-height: 0 !important;
   height: auto !important;
   width: 100% !important;
@@ -547,7 +555,7 @@ article.card .qv-btn {
   box-sizing: border-box !important;
 }
 
-.hero-banner-img {
+.hero-banner.has-img .hero-banner-img {
   display: block !important;
   position: static !important;
   inset: auto !important;
@@ -556,7 +564,7 @@ article.card .qv-btn {
   object-fit: contain !important;
 }
 
-.hero-main {
+.hero-banner.has-img .hero-main {
   display: none !important;
 }
 
@@ -653,7 +661,9 @@ article.card .qv-btn {
    banner photo, sized so it fits/displays properly (no cropping, no
    overlay text to fight with). */
 @media (max-width: 640px) {
-  .hero-banner {
+  /* ⚠️ ei duita-o .has-img scope-e — na hole choto screen-e o image
+     upload na thakle hero section adrishyo hoye jay (dekho upore-r comment) */
+  .hero-banner.has-img {
     aspect-ratio: unset !important;
     height: auto !important;
     min-height: 0 !important;
@@ -661,7 +671,7 @@ article.card .qv-btn {
     border-radius: 14px !important;
   }
 
-  .hero-banner-img {
+  .hero-banner.has-img .hero-banner-img {
     position: static !important;
     inset: auto !important;
     display: block !important;
@@ -697,7 +707,7 @@ article.card .qv-btn {
   "url": "https://YOUR-DOMAIN.com/",
   "logo": "https://YOUR-DOMAIN.com/logo.svg",
   "areaServed": "BD",
-  "paymentAccepted": "bKash, Nagad, Card, Cash on Delivery",
+  "paymentAccepted": "Cash on Delivery, bKash, Nagad",
   "currenciesAccepted": "BDT"
 }
 </script>
@@ -789,19 +799,32 @@ article.card .qv-btn {
     <div class="carousel" id="bestRow"></div>
   </section>
 
-  <section class="section">
-    <div class="stack">
-      <div>
-        <h2>Build your own <em>supplement stack</em></h2>
-        <p>Tell us your goal and we'll combine the right products into one bundle — at a better price than buying separately.</p>
-        <div class="stack-steps"><span>1 · Pick a goal</span><span>2 · Add essentials</span><span>3 · Save up to 20%</span></div>
+  <!-- AI Health Assistant — ai.js render kore, admin > AI Assistant theke control -->
+  <section class="section" id="aiSection">
+    <div class="ai-hero">
+      <div class="ai-intro">
+        <span class="ai-eyebrow"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9L12 2z"/></svg> AI Health Assistant</span>
+        <h2 id="aiTitle">Tell us your problem — <em>get the right products</em></h2>
+        <p id="aiSub">Describe what's bothering you in Bangla or English. Our assistant suggests suitable products and simple tips in seconds.</p>
+        <ul class="ai-points">
+          <li>Write in Bangla, English or Banglish — or just speak</li>
+          <li>Suggests only genuine products that are in stock</li>
+          <li>Free, private, no login needed</li>
+        </ul>
+        <div class="ai-try-label">Try asking about</div>
+        <div class="ai-try" id="aiTry"></div>
       </div>
-      <div class="stack-visual"></div>
+      <div class="ai-panel" id="aiInline"></div>
     </div>
   </section>
 
   <!-- Each category gets its own colored banner + product row (JS-filled, see initPage) -->
   <div id="categoryRows"></div>
+
+  <section class="section" id="recentSec" style="display:none">
+    <div class="sec-head"><div><div class="eyebrow">Pick up where you left off</div><h2>Recently Viewed</h2></div></div>
+    <div class="carousel" id="recentRow"></div>
+  </section>
 
   <section class="section" id="reviews">
     <div class="sec-head"><div><div class="eyebrow">Happy customers</div><h2>What our customers say</h2></div></div>
@@ -814,8 +837,8 @@ article.card .qv-btn {
   <section class="section">
     <div class="news">
       <div><h2>Get health tips &amp; offers</h2><p>Join our newsletter for supplement guides and members-only discounts.</p></div>
-      <form onsubmit="event.preventDefault(); this.reset(); toast('Subscribed ✓');">
-        <input type="email" placeholder="Your email address" required />
+      <form onsubmit="event.preventDefault(); subscribeNewsletter(this);">
+        <input type="email" placeholder="Your email address" aria-label="Email address" maxlength="100" required />
         <button class="btn btn-lime" type="submit">Subscribe</button>
       </form>
     </div>
@@ -831,6 +854,7 @@ article.card .qv-btn {
 <script src="firebase-config.js"></script>
 <script src="product.js"></script>
 <script src="app.js"></script>
+<script src="ai.js"></script>
 <script>
 /* Hero-r pichoner ekta fixed background image — admin panel > Banners >
    "Hero Banner Image" theke upload kora hoy (rotating na, EKTAI fixed chobi).
@@ -987,9 +1011,9 @@ function renderCategoryChips(images){
   const box = document.getElementById('catIconsRow');
   if(!box) return;
   box.innerHTML = CATEGORIES.map(c=>`
-    <a class="cat-chip" href="category.html?goal=${c.id}">
-      <span class="cc-img">${images && images[c.id] ? `<img src="${images[c.id]}" alt="">` : `<span class="cc-initial">${c.label.charAt(0)}</span>`}</span>
-      <span>${c.label}</span>
+    <a class="cat-chip" href="category.html?goal=${encodeURIComponent(c.id)}">
+      <span class="cc-img">${images && images[c.id] ? `<img src="${esc(images[c.id])}" alt="" loading="lazy">` : `<span class="cc-initial">${esc(c.label.charAt(0))}</span>`}</span>
+      <span>${esc(c.label)}</span>
     </a>`).join('');
 }
 function loadCategoryChips(){
@@ -1019,28 +1043,36 @@ function initPage(){
 
   let best = PRODUCTS.filter(p => has(p,'best'));
   if(best.length < 4) best = [...PRODUCTS].sort((a,b)=> (b.rating-a.rating) || (b.reviews-a.reviews));
+  best.sort(stockFirst);
   document.getElementById('bestRow').innerHTML =
     best.slice(0,12).map(productCard).join('') ||
     `<p style="color:var(--muted); padding:14px">No products yet — add some from the admin panel.</p>`;
 
   /* protita category-r nijer color banner + product row — jei category-te
-     kono product nei, oita ekhon skip hoy (khali banner dekhabe na) */
+     kono product nei, oita skip hoy. Multi-category product sob row-e dekhay. */
   const rows = document.getElementById('categoryRows');
   rows.innerHTML = CATEGORIES.map(c=>{
-    const subIds = c.subs.map(s=>s.id);
-    const list = PRODUCTS.filter(p => subIds.includes(p.goal))
-      .sort((a,b)=> (has(b,'best')-has(a,'best')) || (b.rating-a.rating));
+    const list = PRODUCTS.filter(p => productInCat(p, c.id))
+      .sort((a,b)=> stockFirst(a,b) || (has(b,'best')-has(a,'best')) || (b.rating-a.rating));
     if(!list.length) return '';
     return `
     <section class="section cat-row">
-      <a class="cat-band" href="category.html?goal=${c.id}">
+      <a class="cat-band" href="category.html?goal=${encodeURIComponent(c.id)}">
         <span class="cat-band-spacer"></span>
-        <h2>${c.label}</h2>
+        <h2>${esc(c.label)}</h2>
         <span class="cat-band-see">See all →</span>
       </a>
       <div class="carousel">${list.slice(0,12).map(productCard).join('')}</div>
     </section>`;
   }).join('');
+
+  /* recently viewed (product page dekhle localStorage-e jome) */
+  const recent = getRecent().map(findP).filter(Boolean);
+  const recentSec = document.getElementById('recentSec');
+  if(recentSec){
+    recentSec.style.display = recent.length ? '' : 'none';
+    document.getElementById('recentRow').innerHTML = recent.map(productCard).join('');
+  }
 
   initReviewSlider();
 }

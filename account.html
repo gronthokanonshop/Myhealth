@@ -7,6 +7,7 @@
 <meta name="description" content="Sign in to your My Health account to view your order history and manage your profile." />
 <meta name="robots" content="noindex" />
 <meta name="theme-color" content="#0F5132" />
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
@@ -29,6 +30,7 @@
 <script src="firebase-config.js"></script>
 <script src="product.js"></script>
 <script src="app.js"></script>
+<script src="ai.js"></script>
 <script>
 window.NO_LIVE_RERENDER = true;
 
@@ -161,22 +163,33 @@ function loadMyOrders(uid){
       box.innerHTML = `<div class="cart-empty">No orders yet.<br><small>Orders you place will show up here.</small></div>`;
       return;
     }
-    Promise.all(ids.map(id=> window.fdb.ref('orders/'+id).once('value').then(s=>s.val())))
+    Promise.all(ids.map(id=> window.fdb.ref('orders/'+id).once('value').then(s=>s.val(), ()=>null)))
       .then(orders=>{
         box.innerHTML = orders.filter(Boolean).map(o=>`
           <div class="acct-order">
             <div class="ao-head">
-              <div><b>${o.id}</b><div class="tag-mini">${fmtDay(o.placedAt)}</div></div>
-              <span class="tr-status s-${o.status||'pending'}">${(o.status||'pending').toUpperCase()}</span>
+              <div><b>${escapeHtml(o.id)}</b><div class="tag-mini">${fmtDay(o.placedAt)}</div></div>
+              <span class="tr-status s-${escapeHtml(o.status||'pending')}">${escapeHtml((o.status||'pending').toUpperCase())}</span>
             </div>
-            <div class="ao-items">${(o.items||[]).map(i=>`${i.name} × ${i.qty}`).join(', ')}</div>
+            <div class="ao-items">${(o.items||[]).map(i=>`${escapeHtml(i.name)} × ${Number(i.qty)||0}`).join(', ')}</div>
             <div class="ao-foot">
               <b>${money(o.total)}</b>
-              <a class="ao-track" href="track.html?id=${encodeURIComponent(o.id)}">Track order →</a>
+              <span style="display:flex;gap:14px">
+                <button class="ao-track" onclick='reorder(${JSON.stringify((o.items||[]).map(i=>[Number(i.id),Number(i.qty)||1]))})'>Buy again</button>
+                <a class="ao-track" href="track.html?id=${encodeURIComponent(o.id)}">Track order →</a>
+              </span>
             </div>
           </div>`).join('') || `<div class="cart-empty">No orders yet.</div>`;
       });
-  });
+  }).catch(()=>{ box.innerHTML = `<div class="cart-empty">Could not load your orders right now. Please reload the page.</div>`; });
+}
+/* ager order er product gula abar cart-e (stock e thaka gulo) */
+function reorder(items){
+  let added = 0;
+  items.forEach(([id,qty])=>{ const p = findP(id); if(p && inStock(p)){ cart[id] = Math.min(99,(cart[id]||0)+qty); added++; } });
+  saveCart(); updateCartUI();
+  if(added){ toast(`${added} item${added>1?'s':''} added to cart ✓`); openCart(); }
+  else toast('Sorry, these items are no longer available');
 }
 
 const val = id => (document.getElementById(id)?.value || '').trim();

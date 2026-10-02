@@ -297,6 +297,71 @@ tr:last-child td{ border-bottom:none; }
   /* Note box */
   .note-box{ font-size:12px; }
 }
+
+/* ===================== v2 ADMIN ADDITIONS ===================== */
+.topbar-acts{ display:flex; align-items:center; gap:10px; }
+.bell{ height:34px; padding:0 12px; border-radius:999px; border:1.5px solid var(--line); font-size:12px; font-weight:700; color:var(--muted); background:#fff; white-space:nowrap; }
+.bell.on{ border-color:#b2dfb8; color:#1a7a35; background:#e6f5e9; }
+.stat .sub{ font-size:12px; color:var(--muted); margin-top:3px; }
+.stat .val small{ font-size:14px; font-weight:700; color:var(--muted); }
+.dash-grid{ display:grid; grid-template-columns:1.6fr 1fr; gap:20px; }
+.dash-grid .panel{ margin-bottom:0; }
+@media (max-width:980px){ .dash-grid{ grid-template-columns:1fr; } }
+.chart{ position:relative; padding:12px 14px 6px; }
+.chart svg{ display:block; width:100%; overflow:visible; }
+.chart .grid-l{ stroke:#eee5d8; stroke-width:1; }
+.chart .ax{ font-size:11px; fill:var(--muted); font-family:var(--body); }
+.chart .bar{ fill:var(--leaf); transition:fill .12s; }
+.chart .hit{ fill:transparent; cursor:pointer; }
+.chart .hit:hover + .bar, .chart .bar.hl{ fill:var(--leaf-d); }
+.chart .vlab{ font-size:11px; font-weight:700; fill:var(--ink); font-family:var(--body); }
+.chart-tip{ position:absolute; pointer-events:none; background:var(--ink); color:#fff; font-size:12px; padding:7px 10px; border-radius:8px;
+  white-space:nowrap; transform:translate(-50%,-100%); margin-top:-8px; opacity:0; transition:opacity .1s; z-index:3; }
+.chart-tip b{ display:block; font-size:13px; }
+.chart-sum{ display:flex; gap:18px; padding:0 18px 14px; font-size:12.5px; color:var(--muted); flex-wrap:wrap; }
+.chart-sum b{ color:var(--ink); font-family:var(--display); }
+.top-list{ padding:6px 18px 14px; }
+.top-row{ display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); font-size:13.5px; }
+.top-row:last-child{ border-bottom:none; }
+.top-row .rk{ width:22px; height:22px; border-radius:50%; background:var(--cream); display:grid; place-items:center; font-size:11px; font-weight:800; flex:0 0 auto; }
+.top-row .nm{ flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600; }
+.top-row .q{ color:var(--muted); font-size:12px; white-space:nowrap; }
+.pill.s-pending{ background:#fff8ee; color:var(--amber); } .pill.s-confirmed{ background:#eff5ff; color:#2563EB; }
+.pill.s-shipped{ background:#f3eefe; color:#7c3aed; } .pill.s-delivered{ background:#e6f5e9; color:#1a7a35; }
+.pill.s-cancelled, .pill.s-returned{ background:#fff5f6; color:var(--rose); }
+.status[data-s="shipped"]{ color:#7c3aed; border-color:#ddd0fb; background:#f7f3ff; }
+.status[data-s="returned"]{ color:var(--rose); border-color:#f3c6cf; background:#fff5f6; }
+.pay-tag{ display:inline-block; font-size:10.5px; font-weight:800; padding:2px 7px; border-radius:6px; margin-top:3px; }
+.pay-tag.paid{ background:#e6f5e9; color:#1a7a35; } .pay-tag.unpaid{ background:#fff8ee; color:var(--amber); }
+.perm-warn{ background:#fff8ee; border:1px solid #f6dcae; border-radius:12px; padding:12px 16px; font-size:13px; color:#8a6d2f; margin-bottom:16px; }
+.od-sec{ font-size:15px; margin:18px 0 6px; }
+.od-acts{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.atoast{ position:fixed; top:16px; left:50%; transform:translate(-50%,-20px); background:var(--ink); color:#fff; padding:12px 20px; border-radius:999px;
+  font-size:14px; font-weight:700; opacity:0; visibility:hidden; transition:.25s; z-index:300; box-shadow:var(--shadow-h); cursor:pointer; }
+.atoast.show{ opacity:1; visibility:visible; transform:translate(-50%,0); }
+.cat-card{ background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:14px 16px; margin-bottom:12px; }
+.cat-card-head{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.cat-card-head h3{ font-size:16px; flex:1; min-width:140px; }
+.cat-card-head .tag-mini{ font-family:monospace; }
+.sub-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.sub-chip{ display:inline-flex; align-items:center; gap:6px; background:#f6f9f5; border:1px solid var(--line); border-radius:999px; padding:5px 6px 5px 12px; font-size:13px; font-weight:600; }
+.sub-chip .n{ font-size:11px; color:var(--muted); font-weight:600; }
+.sub-chip button{ width:22px; height:22px; border-radius:50%; font-size:12px; color:var(--muted); }
+.sub-chip button:hover{ background:var(--line); color:var(--ink); }
+.sub-chip button.x:hover{ background:var(--rose); color:#fff; }
+.rv-adm{ padding:12px 18px; border-bottom:1px solid var(--line); display:flex; gap:12px; align-items:flex-start; }
+.rv-adm:last-child{ border-bottom:none; }
+.rv-adm .stars{ color:var(--amber); font-size:13px; letter-spacing:1px; }
+.rv-adm p{ margin:4px 0 0; font-size:14px; }
+.img-prev{ display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+.img-prev img{ width:54px; height:54px; border-radius:8px; object-fit:cover; border:1px solid var(--line); background:#f5ece2; }
+.sec-note{ color:var(--muted); font-size:13px; padding:14px 18px 0; margin:0; }
+.fld .hint{ font-size:12px; color:var(--muted); margin-top:4px; }
+.form-sec{ font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin:18px 0 10px; padding-top:14px; border-top:1px solid var(--line); }
+.form-sec:first-child{ margin-top:0; padding-top:0; border-top:none; }
+.chk{ display:inline-flex; gap:8px; align-items:center; font-weight:500; font-size:14px; }
+.chk input{ width:17px; height:17px; accent-color:var(--leaf); }
+.login .forgot{ display:block; margin:12px auto 0; font-size:13px; font-weight:600; color:var(--leaf); }
 </style>
 </head>
 <body>
@@ -304,54 +369,45 @@ tr:last-child td{ border-bottom:none; }
 <!-- ===================== LOGIN ===================== -->
 <div class="login-bg" id="loginScreen">
   <div class="login">
-    <div class="lg"><span class="mark"></span><span class="bn"><span class="o">My</span> Health</span></div>
-    <p>Admin Panel — sign in to manage products &amp; orders.</p>
-    <label>Email</label>
-    <input id="loginEmail" type="email" placeholder="admin email" value="mijanu443@gmail.com" />
-    <label style="margin-top:12px">Password</label>
-    <input id="loginPass" type="password" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()" />
-    <button class="b b-green" onclick="doLogin()">Sign in</button>
+    <div class="lg"><span class="mark"></span><span class="bn" id="loginBrand"><span class="o">My</span> Health</span></div>
+    <p>Admin Panel — sign in to manage your store.</p>
+    <label for="loginEmail">Email</label>
+    <input id="loginEmail" type="email" placeholder="Admin email" autocomplete="username" />
+    <label for="loginPass" style="margin-top:12px">Password</label>
+    <input id="loginPass" type="password" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" />
+    <button class="b b-green" onclick="doLogin()" id="loginBtn">Sign in</button>
+    <button class="forgot" onclick="forgotPassword()">Forgot password?</button>
     <div class="err" id="loginErr"></div>
-    <div class="hint">Firebase Auth diye login · password tomar Firebase account er</div>
   </div>
 </div>
 
 <!-- ===================== APP ===================== -->
 <div class="admin-wrap" id="adminApp" style="display:none">
   <aside class="side">
-    <div class="brand"><span class="mark"></span><span class="bwm"><span class="bn"><span class="o">My</span> Health</span><small>Admin</small></span></div>
-    <nav>
-      <button class="on" data-tab="dashboard" onclick="go('dashboard')"><span>Dashboard</span></button>
-      <button data-tab="products" onclick="go('products')"><span>Products</span></button>
-      <button data-tab="banners" onclick="go('banners')"><span>Banners</span></button>
-      <button data-tab="orders" onclick="go('orders')"><span>Orders</span></button>
-      <button data-tab="courier" onclick="go('courier')"><span>Courier</span></button>
-      <button data-tab="settings" onclick="go('settings')"><span>Settings</span></button>
-    </nav>
+    <div class="brand"><span class="mark"></span><span class="bwm"><span class="bn" id="sideBrand"><span class="o">My</span> Health</span><small>Admin</small></span></div>
+    <nav id="sideNav"></nav>
     <a class="logout" href="index.html" target="_blank"><span>View store</span></a>
     <button class="logout" onclick="logout()"><span>Logout</span></button>
   </aside>
 
   <main class="main">
-    <div class="topbar"><h1 id="pageTitle">Dashboard</h1><div class="who"><span id="adminEmail">Admin</span></div></div>
+    <div class="topbar">
+      <h1 id="pageTitle">Dashboard</h1>
+      <div class="topbar-acts">
+        <button class="bell" id="bellBtn" onclick="toggleAlerts()" title="Sound + notification when a new order arrives">🔔 Alerts off</button>
+        <div class="who"><span id="adminEmail">Admin</span></div>
+      </div>
+    </div>
     <div class="content" id="content"></div>
   </main>
 </div>
 
 <!-- ===================== MOBILE BOTTOM NAV ===================== -->
-<nav class="mob-nav" id="mobNav">
-  <button class="on" data-tab="dashboard" onclick="go('dashboard')">Dashboard</button>
-  <button data-tab="products" onclick="go('products')">Products</button>
-  <button data-tab="banners" onclick="go('banners')">Banners</button>
-  <button data-tab="orders" onclick="go('orders')">Orders</button>
-  <button data-tab="courier" onclick="go('courier')">Courier</button>
-  <button data-tab="settings" onclick="go('settings')">Settings</button>
-  <a href="index.html" target="_blank">Store</a>
-  <button onclick="logout()">Logout</button>
-</nav>
+<nav class="mob-nav" id="mobNav" style="visibility:hidden"></nav>
 
-<!-- ===================== MODAL ===================== -->
+<!-- ===================== MODAL + TOAST ===================== -->
 <div class="modal-bg" id="modalBg"><div class="modal" id="modal"></div></div>
+<div class="atoast" id="atoast" onclick="go('orders');this.classList.remove('show')"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
@@ -359,111 +415,139 @@ tr:last-child td{ border-bottom:none; }
 <script src="firebase-config.js"></script>
 <script src="product.js"></script>
 <script>
-/* ============================ FIREBASE AUTH ============================ */
+/* ============================ CONFIG ============================ */
 const ADMIN = { productsKey:'products', ordersKey:'orders' };
 /* Cloudflare Worker — courier proxy (Steadfast direct parcel) */
 const COURIER_WORKER = "https://myhealthcourier.mijanu443.workers.dev/";
 /* ei courier id gula Worker API support kore (key boshale live hobe) */
 const API_COURIERS = ['steadfast','pathao','redx'];
-/* Steadfast key admin Settings theke ase, Firebase adminConfig/courierKeys e save thake.
-   Key Worker-e hardcode kora NA — client nije Settings e boshay. */
+/* Steadfast key — Settings theke, Firebase adminConfig/courierKeys e save thake */
 let COURIER_KEYS = { sfKey:'', sfSecret:'' };
-/* ImgBB image-host API key — Settings theke boshano hoy, Firebase adminConfig/imgbbKey e save thake.
-   Product form-e "Upload" button diye chobi ekhane push kore, return kora URL-i p_img-e boshe. */
+/* ImgBB image-host API key — Settings theke, Firebase adminConfig/imgbbKey e save thake */
 let IMGBB_KEY = '';
-/* NOTE: ei list storefront er CATEGORIES/subs (app.js) er sathe MIL rekhe cholte hobe —
-   ekhane emon category dile ja storefront e nei, oi product category page e khunje pawa jabe na.
-   label e "Parent · Sub" prefix rakha hoyeche jate multi-select dropdown-e kon top category-r
-   under-e ache ta bojha jay (admin.html standalone — app.js load kore na, tai flat list e rakha). */
-const CATS = [
-  // Vitamins & Supplements
-  {id:"immunity", label:"Supplements · Immunity"},
-  {id:"energy",   label:"Supplements · Energy"},
-  {id:"muscle",   label:"Supplements · Muscle"},
-  {id:"brain",    label:"Supplements · Brain"},
-  {id:"sleep",    label:"Supplements · Sleep"},
-  {id:"bones",    label:"Supplements · Bones"},
-  {id:"weight",   label:"Supplements · Weight"},
-  {id:"skin",     label:"Supplements · Skin & Hair"},
-  // Face Care
-  {id:"cleanser",    label:"Face Care · Cleanser"},
-  {id:"moisturizer", label:"Face Care · Moisturizer"},
-  {id:"sunscreen",   label:"Face Care · Sunscreen"},
-  {id:"serum",       label:"Face Care · Serum"},
-  // Hair Care
-  {id:"shampoo",     label:"Hair Care · Shampoo"},
-  {id:"hairoil",     label:"Hair Care · Hair Oil"},
-  {id:"conditioner", label:"Hair Care · Conditioner"},
-  // Body Care
-  {id:"bodywash",   label:"Body Care · Body Wash"},
-  {id:"bodylotion", label:"Body Care · Body Lotion"},
-  {id:"deodorant",  label:"Body Care · Deodorant"},
-  // Makeup
-  {id:"face-makeup", label:"Makeup · Face"},
-  {id:"lips",        label:"Makeup · Lips"},
-  {id:"eyes",        label:"Makeup · Eyes"},
-  // Mother & Baby
-  {id:"babycare",  label:"Mother & Baby · Baby Care"},
-  {id:"maternity", label:"Mother & Baby · Maternity"},
-  // Men's Care
-  {id:"beardcare", label:"Men's Care · Beard Care"},
-  {id:"shaving",   label:"Men's Care · Shaving"},
-  // Foods
-  {id:"honey",    label:"Foods · Honey"},
-  {id:"drygoods", label:"Foods · Dry Goods"},
-];
-/* Top-level 8 category (storefront homepage-e "Shop by Category" chip row-e
-   dekhay) — ei list o app.js-er CATEGORIES-er top-level id/label-er sathe
-   MIL rekhe cholte hobe. */
-const TOP_CATEGORIES = [
-  {id:"supplements", label:"Vitamins & Supplements"},
-  {id:"facecare",     label:"Face Care"},
-  {id:"haircare",     label:"Hair Care"},
-  {id:"bodycare",     label:"Body Care"},
-  {id:"makeup",        label:"Makeup"},
-  {id:"motherbaby",   label:"Mother & Baby"},
-  {id:"menscare",     label:"Men's Care"},
-  {id:"foods",          label:"Foods"},
-];
-const TAGS = ["flash","best","new"];
+/* ⚠️ fallback domain — admin > Settings > Store Settings > "Website URL" e boshale oita-i use hoy */
+const SITE_BASE_URL = 'https://YOUR-DOMAIN.com';
 
-const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const money = n => '৳' + Number(n||0).toLocaleString('en-IN');
-
-/* backward compat: purana product e goal string thakle cats array e convert */
-const getCats = p => {
-  if(Array.isArray(p.cats) && p.cats.length) return p.cats;
-  if(p.goal) return [p.goal];
-  return [];
+/* Default category tree — app.js er CATEGORIES er sathe mil. Admin > Categories
+   e edit korle Firebase 'categories' node e save hoy, storefront oita-i pore. */
+const DEFAULT_CATEGORIES = [
+  { id:"supplements", label:"Vitamins & Supplements", subs:[
+      { id:"immunity", label:"Immunity", note:"Vit C · Zinc" }, { id:"energy", label:"Energy", note:"B-Complex" },
+      { id:"muscle", label:"Muscle", note:"Whey · BCAA" }, { id:"brain", label:"Brain", note:"Omega-3" },
+      { id:"sleep", label:"Sleep", note:"Magnesium" }, { id:"bones", label:"Bones", note:"Calcium · D3" },
+      { id:"weight", label:"Weight", note:"Fat burner" }, { id:"skin", label:"Skin & Hair", note:"Biotin" } ]},
+  { id:"facecare", label:"Face Care", subs:[
+      { id:"cleanser", label:"Cleanser", note:"Face wash" }, { id:"moisturizer", label:"Moisturizer", note:"Cream · Lotion" },
+      { id:"sunscreen", label:"Sunscreen", note:"SPF protection" }, { id:"serum", label:"Serum", note:"Targeted care" } ]},
+  { id:"haircare", label:"Hair Care", subs:[
+      { id:"shampoo", label:"Shampoo", note:"Cleanse & nourish" }, { id:"hairoil", label:"Hair Oil", note:"Growth · Shine" },
+      { id:"conditioner", label:"Conditioner", note:"Smooth & soft" } ]},
+  { id:"bodycare", label:"Body Care", subs:[
+      { id:"bodywash", label:"Body Wash", note:"Cleanse" }, { id:"bodylotion", label:"Body Lotion", note:"Moisturize" },
+      { id:"deodorant", label:"Deodorant", note:"Fresh all day" } ]},
+  { id:"makeup", label:"Makeup", subs:[
+      { id:"face-makeup", label:"Face", note:"Foundation · Powder" }, { id:"lips", label:"Lips", note:"Lipstick · Gloss" },
+      { id:"eyes", label:"Eyes", note:"Mascara · Liner" } ]},
+  { id:"motherbaby", label:"Mother & Baby", subs:[
+      { id:"babycare", label:"Baby Care", note:"Gentle & safe" }, { id:"maternity", label:"Maternity", note:"Pre & post natal" } ]},
+  { id:"menscare", label:"Men's Care", subs:[
+      { id:"beardcare", label:"Beard Care", note:"Oil · Wax" }, { id:"shaving", label:"Shaving", note:"Razor · Foam" } ]},
+  { id:"foods", label:"Foods", subs:[
+      { id:"honey", label:"Honey", note:"Natural sweetener" }, { id:"drygoods", label:"Dry Goods", note:"Nuts · Seeds" } ]},
+];
+/* Store settings default — app.js er CONFIG er sathe mil */
+const DEFAULT_SETTINGS = {
+  brand:'My Health', tagline:'Health, Beauty & Wellness', siteUrl:'https://YOUR-DOMAIN.com',
+  hotline:'16XXX', whatsapp:'8801XXXXXXXXX', email:'support@YOUR-DOMAIN.com', address:'Dhaka, Bangladesh', tradeLicense:'',
+  announcement:'', footerAbout:"Bangladesh's trusted store for authentic health, beauty & wellness products. Delivered to all 64 districts.",
+  bkash:'', bkashType:'Personal', nagad:'', nagadType:'Personal',
+  facebook:'', instagram:'', youtube:'', tiktok:'', gaId:'', fbPixel:'',
+  deliveryFee:60, deliveryFeeOuter:120, freeDeliveryOver:1500
 };
-const catLabels = p => getCats(p).map(id=>{
-  const c = CATS.find(x=>x.id===id);
-  return c ? c.label : id;
-});
-/* legacy alias */
-const goalLabel = id => { const c=CATS.find(x=>x.id===id); return c?c.label:id; };
+const TAGS = ["flash","best","new"];
+const STATUSES = ['pending','confirmed','shipped','delivered','cancelled','returned'];
+const TABS = [
+  ['dashboard','Dashboard'], ['orders','Orders'], ['products','Products'], ['categories','Categories'],
+  ['banners','Banners'], ['coupons','Coupons'], ['customers','Customers'], ['reviews','Reviews'],
+  ['ai','AI Assistant'], ['courier','Courier'], ['settings','Settings']
+];
+/* AI assistant default — ai.js er AI_DEFAULTS er sathe mil */
+const AI_DEFAULTS = {
+  enabled: true, mode: 'basic', workerUrl: '', model: 'claude-opus-5', floatingButton: true,
+  assistantName: 'Health Assistant',
+  title: 'Tell us your problem — get the right products',
+  subtitle: "Describe what's bothering you in Bangla or English. Our assistant suggests suitable products and simple tips in seconds.",
+  welcome: "Hi! 👋 Tell me what's bothering you — for example hair fall, low energy, acne or trouble sleeping. You can write in Bangla or English.",
+  placeholder: 'Describe your problem… e.g. চুল পড়ছে / low energy',
+  disclaimer: 'Suggestions are general wellness guidance, not medical advice. For serious or ongoing symptoms, please see a doctor.',
+  chips: ['Hair fall', 'Low energy', 'ঘুম হয় না', 'Acne / pimples', 'Weak immunity', 'ওজন বাড়াতে চাই'],
+  maxProducts: 4, instructions: '', rules: []
+};
+const AI_MODELS = [
+  ['claude-opus-5',    'Claude Opus 5 — best answers (default)'],
+  ['claude-sonnet-5',  'Claude Sonnet 5 — balanced, ~2.5× cheaper'],
+  ['claude-haiku-4-5', 'Claude Haiku 4.5 — fastest & cheapest (~5×)'],
+];
 
-let products = [];
-let orders = [];
-let banners = [];
-let categoryImages = {};
-let heroImage = '';
+/* ============================ HELPERS ============================ */
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/* onclick="fn(${jsq(x)})" — jekono string ke safe JS string literal banay (order key customer-er deya, tai dorkar) */
+const jsq = s => esc(JSON.stringify(String(s==null?'':s)));
+const num = v => { const n = Number(v); return isFinite(n) ? n : 0; };
+const money = n => '৳' + num(n).toLocaleString('en-IN');
+const moneyShort = n => { n = num(n); return n >= 100000 ? '৳'+(n/100000).toFixed(n>=1000000?0:1)+'L' : n >= 1000 ? '৳'+(n/1000).toFixed(n>=10000?0:1)+'K' : '৳'+n; };
+const itemCount = o => (o.items||[]).reduce((s,i)=> s + num(i.qty), 0);
+const isLive = o => !['cancelled','returned'].includes(o.status);
+const dayKey = d => { const x = new Date(d); return isNaN(x) ? '' : x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); };
+const slugify = s => String(s||'').toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40);
+const normPhone = s => { let d = String(s||'').replace(/\D/g,''); if(d.startsWith('880')) d = d.slice(2); return d; };
+
+let CATEGORY_TREE = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
+let CATS = [], TOP_CATEGORIES = [];
+/* product form-e selectable category: sub thakle "Parent · Sub", na thakle shudhu parent */
+function rebuildCats(){
+  TOP_CATEGORIES = CATEGORY_TREE.map(c=>({ id:c.id, label:c.label }));
+  CATS = CATEGORY_TREE.flatMap(c => (c.subs||[]).length
+    ? c.subs.map(s=>({ id:s.id, label:c.label.replace('Vitamins & ','')+' · '+s.label }))
+    : [{ id:c.id, label:c.label }]);
+}
+rebuildCats();
+
+const getCats = p => (Array.isArray(p.cats) && p.cats.length) ? p.cats : (p.goal ? [p.goal] : []);
+const catLabel = id => { const c = CATS.find(x=>x.id===id); return c ? c.label : id; };
+const inStockP = p => p.stock !== false;   // field na thakle in-stock
+
+let products = [], orders = [], banners = [], coupons = [], subscribers = [], reviewsFlat = null;
+let aiCfg = { ...AI_DEFAULTS }, aiLogs = [];
+let categoryImages = {}, heroImage = '', storeSettings = {...DEFAULT_SETTINGS};
 let curTab = 'dashboard';
 let seeded = false;
+const permIssue = {};   // kon node-e rules permission nai (rules publish hoyni)
 
+/* ============================ AUTH ============================ */
 function doLogin(){
   const email = document.getElementById('loginEmail').value.trim();
   const pass  = document.getElementById('loginPass').value;
   const err   = document.getElementById('loginErr');
-  if(!window.fauth){ err.textContent = 'Firebase load hoyni — internet check koro.'; return; }
-  err.textContent = 'Signing in…';
+  if(!window.fauth){ err.textContent = 'Could not connect to Firebase — check your internet.'; return; }
+  if(!email || !pass){ err.textContent = 'Enter your email and password.'; return; }
+  err.style.color = 'var(--muted)'; err.textContent = 'Signing in…';
   window.fauth.signInWithEmailAndPassword(email, pass)
-    .catch(e=>{ err.textContent = ({
-      'auth/invalid-credential':'Email ba password thik na.',
-      'auth/wrong-password':'Password thik na.',
-      'auth/user-not-found':'Ei email e kono user nai.',
-      'auth/invalid-email':'Email format thik na.',
+    .catch(e=>{ err.style.color = ''; err.textContent = ({
+      'auth/invalid-credential':'Incorrect email or password.',
+      'auth/wrong-password':'Incorrect password.',
+      'auth/user-not-found':'No user with this email.',
+      'auth/invalid-email':'Invalid email address.',
+      'auth/too-many-requests':'Too many attempts — try again in a few minutes.',
     })[e.code] || e.message; });
+}
+function forgotPassword(){
+  const email = document.getElementById('loginEmail').value.trim();
+  const err = document.getElementById('loginErr');
+  if(!email){ err.textContent = 'Type your admin email above first, then tap "Forgot password?".'; return; }
+  window.fauth.sendPasswordResetEmail(email)
+    .then(()=>{ err.style.color = '#1a7a35'; err.textContent = 'Password reset email sent — check your inbox.'; })
+    .catch(e=>{ err.style.color = ''; err.textContent = e.message; });
 }
 function logout(){ if(window.fauth) window.fauth.signOut(); }
 
@@ -471,29 +555,38 @@ function logout(){ if(window.fauth) window.fauth.signOut(); }
 if(window.fauth){
   window.fauth.onAuthStateChanged(user=>{
     if(user && user.email === window.ADMIN_EMAIL){ startApp(); }
-    else if(user){ window.fauth.signOut(); document.getElementById('loginErr').textContent='Ei account admin na.'; }
+    else if(user){ window.fauth.signOut(); document.getElementById('loginErr').textContent='This account does not have admin access.'; }
     else { showLogin(); }
   });
 } else {
-  document.getElementById('loginErr').textContent = 'Firebase load hoyni. Internet/host check koro.';
+  document.getElementById('loginErr').textContent = 'Firebase did not load. Check your internet / hosting.';
 }
 
 function showLogin(){
   document.getElementById('adminApp').style.display='none';
+  document.getElementById('mobNav').style.visibility='hidden';
   document.getElementById('loginScreen').style.display='grid';
 }
+let appStarted = false;
 function startApp(){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('adminApp').style.display='flex';
-  document.getElementById('adminEmail') && (document.getElementById('adminEmail').textContent = window.ADMIN_EMAIL);
+  document.getElementById('mobNav').style.visibility='';
+  document.getElementById('adminEmail').textContent = window.ADMIN_EMAIL;
+  const navBtns = TABS.map(([id,label])=>`<button data-tab="${id}" onclick="go('${id}')"><span>${label}</span></button>`).join('');
+  document.getElementById('sideNav').innerHTML = navBtns;
+  document.getElementById('mobNav').innerHTML = navBtns + `<a href="index.html" target="_blank">Store</a><button onclick="logout()">Logout</button>`;
+  syncBell();
+  if(appStarted) return;
+  appStarted = true;
   attachListeners();
   attachCourierListeners();
   loadCourierKeys();
   loadImgbbKey();
-  go('dashboard');
+  const h = location.hash.slice(1);
+  go(TABS.some(t=>t[0]===h) ? h : 'dashboard');
 }
 
-/* Steadfast key Firebase theke load (admin-only read) */
 function loadCourierKeys(){
   window.fdb.ref('adminConfig/courierKeys').once('value').then(snap=>{
     const d = snap.val() || {};
@@ -501,8 +594,6 @@ function loadCourierKeys(){
     COURIER_KEYS.sfSecret = d.sfSecret || '';
   }).catch(e=> console.warn('courierKeys load failed:', e.message));
 }
-
-/* ImgBB key Firebase theke load (admin-only read) */
 function loadImgbbKey(){
   window.fdb.ref('adminConfig/imgbbKey').once('value').then(snap=>{
     IMGBB_KEY = snap.val() || '';
@@ -510,38 +601,70 @@ function loadImgbbKey(){
 }
 
 /* ============================ FIREBASE DATA (realtime) ============================ */
+function listen(path, onVal, tabs){
+  window.fdb.ref(path).on('value', snap=>{
+    delete permIssue[path];
+    onVal(snap.val());
+    if(!tabs || tabs.includes(curTab)) renderCurrent();
+  }, err=>{
+    console.warn(path+' listener failed:', err.message);
+    permIssue[path] = true;
+    if(!tabs || tabs.includes(curTab)) renderCurrent();
+  });
+}
 function attachListeners(){
-  window.fdb.ref(ADMIN.productsKey).on('value', snap=>{
-    const val = snap.val();
+  listen(ADMIN.productsKey, val=>{
     products = val ? Object.values(val).filter(Boolean) : [];
     products.sort((a,b)=>(b.id||0)-(a.id||0));
-    // first-time seed from product.js if Firebase khali
-    if(!products.length && !seeded && typeof PRODUCTS!=='undefined' && PRODUCTS.length){
-      seeded = true; seedProducts();
-      return;
-    }
-    if(['dashboard','products'].includes(curTab)) renderCurrent();
-  });
-  window.fdb.ref(ADMIN.ordersKey).on('value', snap=>{
-    const val = snap.val();
+    if(!products.length && !seeded && typeof PRODUCTS!=='undefined' && PRODUCTS.length){ seeded = true; seedProducts(); }
+  }, ['dashboard','products','categories']);
+  listen(ADMIN.ordersKey, val=>{
     orders = val ? Object.entries(val).map(([k,v])=>({_key:k, ...v})) : [];
     orders.sort((a,b)=> new Date(b.placedAt||0) - new Date(a.placedAt||0));
-    if(['dashboard','orders'].includes(curTab)) renderCurrent();
-  });
-  window.fdb.ref('banners').on('value', snap=>{
-    const val = snap.val();
+    checkNewOrders();
+  }, ['dashboard','orders','customers','courier']);
+  listen('banners', val=>{
     banners = val ? Object.entries(val).map(([k,v])=>({_key:k, ...v})) : [];
     banners.sort((a,b)=> (a.order||0)-(b.order||0));
-    if(curTab==='banners') renderCurrent();
-  });
-  window.fdb.ref('categoryImages').on('value', snap=>{
-    categoryImages = snap.val() || {};
-    if(curTab==='banners') renderCurrent();
-  });
-  window.fdb.ref('heroImage').on('value', snap=>{
-    heroImage = snap.val() || '';
-    if(curTab==='banners') renderCurrent();
-  });
+  }, ['banners']);
+  listen('categoryImages', val=>{ categoryImages = val || {}; }, ['banners']);
+  listen('heroImage', val=>{ heroImage = val || ''; }, ['banners']);
+  listen('categories', val=>{
+    const list = Array.isArray(val) ? val : (val && typeof val==='object' ? Object.values(val) : null);
+    CATEGORY_TREE = (list && list.length)
+      ? list.filter(c=>c && c.id).map(c=>({ id:c.id, label:c.label||c.id, subs: (Array.isArray(c.subs)?c.subs:Object.values(c.subs||{})).filter(s=>s&&s.id) }))
+      : JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
+    rebuildCats();
+  }, ['categories','products','banners']);
+  listen('settings', val=>{
+    storeSettings = {...DEFAULT_SETTINGS, ...(val||{})};
+    const parts = (storeSettings.brand||'My Health').split(' ');
+    const bn = `<span class="o">${esc(parts[0])}</span>${parts.length>1?' '+esc(parts.slice(1).join(' ')):''}`;
+    document.getElementById('sideBrand').innerHTML = bn;
+    document.title = (storeSettings.brand||'My Health') + ' — Admin Panel';
+  }, ['settings']);
+  listen('coupons', val=>{
+    coupons = val ? Object.entries(val).map(([k,v])=>({ _key:k, ...v })) : [];
+    coupons.sort((a,b)=> (b.createdAt||0)-(a.createdAt||0));
+  }, ['coupons']);
+  listen('subscribers', val=>{
+    subscribers = val ? Object.entries(val).map(([k,v])=>({ _key:k, ...v })) : [];
+    subscribers.sort((a,b)=> (b.ts||0)-(a.ts||0));
+  }, ['customers']);
+  listen('aiConfig', val=>{
+    const arr = v => Array.isArray(v) ? v : (v && typeof v==='object' ? Object.values(v) : []);
+    aiCfg = { ...AI_DEFAULTS, ...(val||{}) };
+    aiCfg.chips = arr(aiCfg.chips);
+    aiCfg.rules = arr(aiCfg.rules).filter(Boolean).map(r=>({ ...r, products: arr(r.products).map(Number) }));
+  }, ['ai']);
+  /* shudhu shesh 500 ta prosno (purono gulo Firebase-e thake, export e ase na) */
+  window.fdb.ref('aiLogs').limitToLast(500).on('value', snap=>{
+    delete permIssue.aiLogs;
+    const val = snap.val();
+    aiLogs = val ? Object.entries(val).map(([k,v])=>({ _key:k, ...v })) : [];
+    aiLogs.sort((a,b)=> num(b.ts)-num(a.ts));
+    if(curTab==='ai') renderCurrent();
+  }, err=>{ permIssue.aiLogs = true; if(curTab==='ai') renderCurrent(); });
 }
 function seedProducts(){
   const obj = {};
@@ -550,10 +673,7 @@ function seedProducts(){
     .then(()=>console.log('Seeded', PRODUCTS.length, 'products to Firebase'))
     .catch(e=>alert('Seed failed: '+e.message));
 }
-/* Firebase-e already product thakle bootProducts/seedProducts আর ট্রিগার হয় না —
-   tai product.js e notun product add korle segula live database-e sathe
-   sathe pouchay na. Ei button diye শুধু "PRODUCTS (js file)-e ache kintu live
-   database-e nei" emon product-gula merge kore dey — existing product ke touch kore na. */
+/* product.js e ache kintu Firebase-e nei — shudhu oigula add kore (existing touch kore na) */
 function addMissingProducts(){
   const liveIds = new Set(products.map(p=>p.id));
   const missing = PRODUCTS.filter(p=>!liveIds.has(p.id));
@@ -565,11 +685,7 @@ function addMissingProducts(){
     .then(()=> alert(`${missing.length}টা প্রোডাক্ট যোগ হয়েছে! সাইটে গিয়ে দেখুন।`))
     .catch(e=> alert('Failed: '+e.message));
 }
-/* পুরো Firebase-কে product.js-এর সাথে EXACTLY মিলিয়ে দেয়:
-   - product.js-এ নেই এমন কোনো product Firebase-এ থাকলে (পুরনো/fictional-brand/demo) সেটা DELETE হয়
-   - product.js-এ আছে কিন্তু Firebase-এ নেই এমন product ADD হয়
-   - দুই জায়গায়ই আছে এমন product-এর ডেটা product.js-এর latest ভার্সন দিয়ে UPDATE হয়
-     (যেমন: পরে img লিংক যোগ করলে, Sync চাপলেই সেটা Firebase-এ পৌঁছে যাবে) */
+/* Firebase-কে product.js-এর সাথে EXACTLY মিলিয়ে দেয় (delete + add + update) */
 function syncWithProductJs(){
   if(typeof PRODUCTS==='undefined'){ alert('product.js load হয়নি।'); return; }
   const jsIds = new Set(PRODUCTS.map(p=>p.id));
@@ -590,52 +706,160 @@ function syncWithProductJs(){
     .then(()=> alert(`Sync সম্পূর্ণ! ${toDelete.length}টা মুছে গেছে, ${toAdd.length}টা যোগ হয়েছে, ${toUpdate.length}টা আপডেট হয়েছে।`))
     .catch(e=> alert('Failed: '+e.message));
 }
-function renderCurrent(){ ({dashboard:renderDashboard,products:renderProducts,banners:renderBanners,orders:renderOrders,courier:renderCourier,settings:renderSettings}[curTab]||renderDashboard)(); }
 
 function thumb(p){
   const initial = esc((p.name||'?').trim().charAt(0).toUpperCase());
-  return p.img ? `<img class="t-img" src="${esc(p.img)}" alt="" onerror="this.outerHTML='<div class=\\'t-emoji\\'>${initial}</div>'">`
+  return p.img ? `<img class="t-img" src="${esc(p.img)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\\'t-emoji\\'>${initial}</div>'">`
                : `<div class="t-emoji">${initial}</div>`;
 }
-function fmtDate(iso){ try{ const d=new Date(iso); return d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }catch(e){ return '-'; } }
+function fmtDate(iso){ const d = new Date(iso); if(isNaN(d)) return '-'; return d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
+function permWarn(path){
+  return permIssue[path] ? `<div class="perm-warn">⚠️ <b>Firebase rules update দরকার।</b> এই ফিচারটা চালু করতে নতুন <code>firebase-rules.json</code> Firebase Console → Realtime Database → Rules-এ বসিয়ে Publish করুন (SETUP-GUIDE.md দেখুন)।</div>` : '';
+}
+function statusPill(s){ s = s || 'pending'; return `<span class="pill s-${esc(s)}">${esc(s)}</span>`; }
+function payTag(o){
+  if(o.payment === 'cod' || !o.payment) return '';
+  return o.paymentStatus === 'paid' ? `<span class="pay-tag paid">PAID</span>` : `<span class="pay-tag unpaid">VERIFY</span>`;
+}
 
 /* ============================ ROUTER ============================ */
+function renderCurrent(){
+  ({dashboard:renderDashboard, orders:renderOrders, products:renderProducts, categories:renderCategories, banners:renderBanners,
+    coupons:renderCoupons, customers:renderCustomers, reviews:renderReviews, ai:renderAI, courier:renderCourier, settings:renderSettings}[curTab] || renderDashboard)();
+}
 function go(tab){
   curTab = tab;
-  document.querySelectorAll('.side nav button').forEach(b=>b.classList.toggle('on', b.dataset.tab===tab));
-  document.querySelectorAll('.mob-nav button').forEach(b=>b.classList.toggle('on', b.dataset.tab===tab));
-  document.getElementById('pageTitle').textContent = ({dashboard:'Dashboard',products:'Products',banners:'Banners',orders:'Orders',courier:'Courier',settings:'Settings'})[tab];
+  document.querySelectorAll('.side nav button, .mob-nav button').forEach(b=>b.classList.toggle('on', b.dataset.tab===tab));
+  document.getElementById('pageTitle').textContent = (TABS.find(t=>t[0]===tab)||[])[1] || 'Dashboard';
+  if(location.hash.slice(1) !== tab) history.replaceState(null,'','#'+tab);
+  window.scrollTo(0,0);
   renderCurrent();
+  if(tab==='reviews' && reviewsFlat===null) loadAllReviews();   // prothom bar khulle load
+}
+
+/* ============================ NEW ORDER ALERTS ============================ */
+let knownOrderKeys = null;
+let alertsOn = (()=>{ try{ return localStorage.getItem('mh_admin_alerts')==='1'; }catch(e){ return false; } })();
+function syncBell(){
+  const b = document.getElementById('bellBtn');
+  b.classList.toggle('on', alertsOn);
+  b.textContent = alertsOn ? '🔔 Alerts on' : '🔕 Alerts off';
+}
+function toggleAlerts(){
+  alertsOn = !alertsOn;
+  try{ localStorage.setItem('mh_admin_alerts', alertsOn?'1':'0'); }catch(e){}
+  if(alertsOn && 'Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+  if(alertsOn) beep();
+  syncBell();
+}
+function beep(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [0, .18].forEach((t,i)=>{
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = i ? 1046 : 784;
+      g.gain.setValueAtTime(.0001, ctx.currentTime+t);
+      g.gain.exponentialRampToValueAtTime(.25, ctx.currentTime+t+.02);
+      g.gain.exponentialRampToValueAtTime(.0001, ctx.currentTime+t+.16);
+      o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime+t); o.stop(ctx.currentTime+t+.18);
+    });
+  }catch(e){}
+}
+function atoast(msg){
+  const t = document.getElementById('atoast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(atoast._t); atoast._t = setTimeout(()=>t.classList.remove('show'), 6000);
+}
+function checkNewOrders(){
+  const pending = orders.filter(o=>o.status==='pending').length;
+  document.title = (pending ? `(${pending}) ` : '') + (storeSettings.brand||'My Health') + ' — Admin Panel';
+  if(knownOrderKeys){
+    const fresh = orders.filter(o=>!knownOrderKeys.has(o._key));
+    if(fresh.length){
+      const o = fresh[0];
+      atoast(`🛒 New order${fresh.length>1?'s':''}: ${fresh.length>1 ? fresh.length+' orders' : (o.customer?.name||'')+' · '+money(o.total)} — tap to view`);
+      if(alertsOn){
+        beep();
+        if('Notification' in window && Notification.permission === 'granted'){
+          try{ new Notification('New order — '+money(o.total), { body: (o.customer?.name||'') + ' · ' + (o.customer?.district||''), tag:'mh-order' }); }catch(e){}
+        }
+      }
+    }
+  }
+  knownOrderKeys = new Set(orders.map(o=>o._key));
 }
 
 /* ============================ DASHBOARD ============================ */
 function renderDashboard(){
+  const now = new Date();
+  const todayK = dayKey(now);
+  const monthK = todayK.slice(0,7);
+  const live = orders.filter(isLive);
+  const today = live.filter(o=>dayKey(o.placedAt)===todayK);
+  const month = live.filter(o=>dayKey(o.placedAt).slice(0,7)===monthK);
+  const sum = list => list.reduce((s,o)=>s+num(o.total),0);
   const pending = orders.filter(o=>o.status==='pending').length;
-  const revenue = orders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+(o.total||0),0);
-  const recent = orders.slice(0,6);
+  const d30 = Date.now() - 30*864e5;
+  const last30 = live.filter(o=> new Date(o.placedAt).getTime() >= d30);
+  const aov = last30.length ? Math.round(sum(last30)/last30.length) : 0;
+  const oos = products.filter(p=>!inStockP(p));
+  const customers = new Set(orders.map(o=>normPhone(o.customer?.phone)).filter(Boolean)).size;
+
+  // top products (30 din)
+  const agg = {};
+  last30.forEach(o=> (o.items||[]).forEach(i=>{
+    const k = String(i.id||i.name);
+    agg[k] = agg[k] || { name:i.name, qty:0, rev:0 };
+    agg[k].qty += num(i.qty); agg[k].rev += num(i.qty)*num(i.price);
+  }));
+  const top = Object.values(agg).sort((a,b)=>b.qty-a.qty).slice(0,6);
+  const recent = orders.slice(0,8);
+
   document.getElementById('content').innerHTML = `
     <div class="stats">
-      <div class="stat green"><div class="lbl">Products</div><div class="val">${products.length}</div></div>
-      <div class="stat"><div class="lbl">Total Orders</div><div class="val">${orders.length}</div></div>
-      <div class="stat amber"><div class="lbl">Pending</div><div class="val">${pending}</div></div>
-      <div class="stat green"><div class="lbl">Revenue</div><div class="val">${money(revenue)}</div></div>
+      <div class="stat green"><div class="lbl">Today's sales</div><div class="val">${money(sum(today))}</div><div class="sub">${today.length} order${today.length!==1?'s':''} today</div></div>
+      <div class="stat"><div class="lbl">This month</div><div class="val">${money(sum(month))}</div><div class="sub">${month.length} orders</div></div>
+      <div class="stat amber"><div class="lbl">Pending orders</div><div class="val">${pending}</div><div class="sub">${pending ? '<a href="#orders" onclick="orderFilter=\'pending\';go(\'orders\');return false" style="color:var(--amber);font-weight:700">Confirm now →</a>' : 'All caught up'}</div></div>
+      <div class="stat"><div class="lbl">Avg. order value</div><div class="val">${money(aov)}</div><div class="sub">last 30 days</div></div>
     </div>
+
+    <div class="dash-grid">
+      <div class="panel">
+        <div class="panel-head"><h2>Daily sales — last 14 days</h2><span class="tag-mini">excludes cancelled / returned</span></div>
+        <div class="chart" id="salesChart"></div>
+        <div class="chart-sum" id="chartSum"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Top products (30 days)</h2></div>
+        ${top.length ? `<div class="top-list">${top.map((t,i)=>`
+          <div class="top-row"><span class="rk">${i+1}</span><span class="nm">${esc(t.name)}</span><span class="q">${t.qty} sold · ${money(t.rev)}</span></div>`).join('')}</div>`
+          : `<div class="empty">No sales in the last 30 days yet.</div>`}
+      </div>
+    </div>
+
+    <div class="stats" style="margin-top:20px">
+      <div class="stat"><div class="lbl">Total orders</div><div class="val">${orders.length}</div><div class="sub">${orders.filter(o=>o.status==='delivered').length} delivered</div></div>
+      <div class="stat"><div class="lbl">Customers</div><div class="val">${customers}</div><div class="sub">unique phone numbers</div></div>
+      <div class="stat green"><div class="lbl">Products</div><div class="val">${products.length}</div><div class="sub">${products.length - oos.length} in stock</div></div>
+      <div class="stat rose"><div class="lbl">Out of stock</div><div class="val">${oos.length}</div><div class="sub">${oos.length ? '<a href="#products" onclick="stockFilter=\'out\';go(\'products\');return false" style="color:var(--rose);font-weight:700">View →</a>' : 'Everything available'}</div></div>
+    </div>
+
     <div class="panel">
-      <div class="panel-head"><h2>Recent Orders</h2><button class="b b-ghost b-sm" onclick="go('orders')">View all →</button></div>
+      <div class="panel-head"><h2>Recent orders</h2><button class="b b-ghost b-sm" onclick="go('orders')">View all →</button></div>
       ${recent.length ? `
       <div class="table-wrap">
         <table><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th></tr></thead><tbody>
-          ${recent.map(o=>`<tr>
+          ${recent.map(o=>`<tr style="cursor:pointer" onclick="viewOrder(${jsq(o._key)})">
             <td><b>${esc(o.id)}</b></td>
             <td>${esc(o.customer?.name||'-')}<div class="tag-mini">${esc(o.customer?.phone||'')}</div></td>
-            <td><b>${money(o.total)}</b></td>
-            <td><span class="pill" style="background:#f5ece2">${esc(o.status||'pending')}</span></td>
+            <td><b>${money(o.total)}</b><div>${payTag(o)}</div></td>
+            <td>${statusPill(o.status)}</td>
             <td class="tag-mini">${fmtDate(o.placedAt)}</td>
           </tr>`).join('')}
         </tbody></table>
       </div>
       <div class="m-card-list">
-        ${recent.map(o=>`<div class="m-card">
+        ${recent.map(o=>`<div class="m-card" onclick="viewOrder(${jsq(o._key)})">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
               <div style="font-weight:800;font-size:14px;font-family:var(--display)">${esc(o.id)}</div>
@@ -644,48 +868,113 @@ function renderDashboard(){
             </div>
             <div style="text-align:right">
               <div style="font-weight:800;font-size:16px;font-family:var(--display)">${money(o.total)}</div>
-              <span class="pill" style="background:#f5ece2;margin-top:4px;display:inline-block">${esc(o.status||'pending')}</span>
+              ${statusPill(o.status)}
             </div>
           </div>
         </div>`).join('')}
       </div>
-      ` : `<div class="empty">No orders yet. Checkout theke order asle ekhane dekhabe.</div>`}
+      ` : `<div class="empty">No orders yet. Orders from checkout will appear here.</div>`}
     </div>`;
+  drawSalesChart();
 }
 
+/* single-series column chart — hover tooltip, rounded data-end, hairline grid */
+function drawSalesChart(){
+  const box = document.getElementById('salesChart'); if(!box) return;
+  const days = [];
+  for(let i=13;i>=0;i--){
+    const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-i);
+    days.push({ key:dayKey(d), label:d.toLocaleDateString('en-GB',{day:'numeric',month:'short'}), total:0, count:0 });
+  }
+  const idx = Object.fromEntries(days.map((d,i)=>[d.key,i]));
+  orders.filter(isLive).forEach(o=>{ const i = idx[dayKey(o.placedAt)]; if(i!=null){ days[i].total += num(o.total); days[i].count++; } });
+
+  const W = Math.max(280, box.clientWidth - 28), H = 210, padL = 46, padR = 6, padT = 20, padB = 24;
+  const max = Math.max(...days.map(d=>d.total));
+  const niceMax = (()=>{ if(!max) return 1000; const m = Math.pow(10, Math.floor(Math.log10(max))); return [1,2,2.5,5,10].map(s=>s*m).find(v=>v>=max); })();
+  const plotW = W-padL-padR, plotH = H-padT-padB;
+  const slot = plotW/days.length, bw = Math.min(24, slot-6);
+  const y = v => padT + plotH - (v/niceMax)*plotH;
+  const ticks = [0, .25, .5, .75, 1].map(f=>f*niceMax);
+  const maxI = max ? days.findIndex(d=>d.total===max) : -1;
+  const step = slot < 34 ? 2 : 1;
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="Daily sales for the last 14 days">`;
+  ticks.forEach(t=>{ svg += `<line class="grid-l" x1="${padL}" x2="${W-padR}" y1="${y(t)}" y2="${y(t)}"/><text class="ax" x="${padL-8}" y="${y(t)+4}" text-anchor="end">${moneyShort(t)}</text>`; });
+  days.forEach((d,i)=>{
+    const x = padL + i*slot + (slot-bw)/2;
+    const h = (d.total/niceMax)*plotH, top = padT + plotH - h, r = Math.min(4, h, bw/2);
+    svg += `<rect class="hit" x="${padL+i*slot}" y="${padT}" width="${slot}" height="${plotH}" data-i="${i}"/>`;
+    svg += h > 0
+      ? `<path class="bar" data-b="${i}" d="M${x},${padT+plotH} V${top+r} Q${x},${top} ${x+r},${top} H${x+bw-r} Q${x+bw},${top} ${x+bw},${top+r} V${padT+plotH} Z"/>`
+      : `<rect class="bar" data-b="${i}" x="${x}" y="${padT+plotH-1}" width="${bw}" height="1" style="opacity:.35"/>`;
+    if(i===maxI) svg += `<text class="vlab" x="${x+bw/2}" y="${top-6}" text-anchor="middle">${moneyShort(d.total)}</text>`;
+    if((days.length-1-i) % step === 0) svg += `<text class="ax" x="${x+bw/2}" y="${H-6}" text-anchor="middle">${esc(d.label)}</text>`;
+  });
+  svg += `</svg><div class="chart-tip" id="chartTip"></div>`;
+  box.innerHTML = svg;
+
+  const tip = document.getElementById('chartTip');
+  box.querySelectorAll('.hit').forEach(el=>{
+    const show = ()=>{
+      const i = Number(el.dataset.i), d = days[i];
+      box.querySelectorAll('.bar').forEach(b=>b.classList.toggle('hl', b.dataset.b==el.dataset.i));
+      tip.innerHTML = `<b>${money(d.total)}</b>${esc(d.label)} · ${d.count} order${d.count!==1?'s':''}`;
+      const scale = box.querySelector('svg').getBoundingClientRect().width / W;
+      tip.style.left = (14 + (padL + i*slot + slot/2)*scale) + 'px';
+      tip.style.top = (12 + Math.max(padT, y(d.total))*scale) + 'px';
+      tip.style.opacity = 1;
+    };
+    el.addEventListener('mouseenter', show); el.addEventListener('click', show);
+    el.addEventListener('mouseleave', ()=>{ tip.style.opacity = 0; box.querySelectorAll('.bar').forEach(b=>b.classList.remove('hl')); });
+  });
+  const tot = days.reduce((s,d)=>s+d.total,0), cnt = days.reduce((s,d)=>s+d.count,0);
+  document.getElementById('chartSum').innerHTML = `<span>14-day sales <b>${money(tot)}</b></span><span>Orders <b>${cnt}</b></span><span>Best day <b>${max ? esc(days[maxI].label)+' · '+money(max) : '—'}</b></span>`;
+}
+let chartResizeT;
+window.addEventListener('resize', ()=>{ clearTimeout(chartResizeT); chartResizeT = setTimeout(()=>{ if(curTab==='dashboard') drawSalesChart(); }, 200); });
+
 /* ============================ PRODUCTS ============================ */
-let prodSearch = '';
-let catFilter = 'all';
+let prodSearch = '', catFilter = 'all', stockFilter = 'all';
 function renderProducts(){
   const list = products.filter(p => {
-    const matchSearch = !prodSearch || (p.name||'').toLowerCase().includes(prodSearch) || catLabels(p).join(' ').toLowerCase().includes(prodSearch);
+    const hay = ((p.name||'')+' '+(p.brand||'')+' '+getCats(p).map(catLabel).join(' ')).toLowerCase();
+    const matchSearch = !prodSearch || hay.includes(prodSearch);
     const matchCat = catFilter==='all' || getCats(p).includes(catFilter);
-    return matchSearch && matchCat;
+    const matchStock = stockFilter==='all' || (stockFilter==='in' ? inStockP(p) : !inStockP(p));
+    return matchSearch && matchCat && matchStock;
   });
-  const catOpts = `<option value="all">All Categories</option>`
-    + CATS.map(c=>`<option value="${c.id}" ${catFilter===c.id?'selected':''}>${c.label}</option>`).join('');
+  const catOpts = `<option value="all">All categories</option>`
+    + CATS.map(c=>`<option value="${esc(c.id)}" ${catFilter===c.id?'selected':''}>${esc(c.label)}</option>`).join('');
+  const catPills = p => getCats(p).map(id=>`<span class="pill goal">${esc(catLabel(id))}</span>`).join('') || '<span class="tag-mini">—</span>';
   document.getElementById('content').innerHTML = `
     <div class="panel">
       <div class="panel-head">
-        <h2>Products (${products.length})</h2>
+        <h2>Products (${list.length}${list.length!==products.length?' of '+products.length:''})</h2>
         <div class="panel-tools">
-          <input placeholder="Search products…" value="${esc(prodSearch)}" oninput="prodSearch=this.value.toLowerCase();renderProducts()">
+          <input placeholder="Search name, brand…" value="${esc(prodSearch)}" oninput="prodSearch=this.value.toLowerCase();renderProducts();const i=document.getElementById('prodSearchBox');i.focus();i.setSelectionRange(i.value.length,i.value.length)" id="prodSearchBox">
           <select onchange="catFilter=this.value;renderProducts()">${catOpts}</select>
-          <button class="b b-ghost b-sm" onclick="exportProducts()">Backup .js</button>
-          <button class="b b-green b-sm" onclick="openProduct()">Add Product</button>
+          <select onchange="stockFilter=this.value;renderProducts()">
+            <option value="all">All stock</option>
+            <option value="in" ${stockFilter==='in'?'selected':''}>In stock</option>
+            <option value="out" ${stockFilter==='out'?'selected':''}>Out of stock</option>
+          </select>
+          <button class="b b-green b-sm" onclick="openProduct()">+ Add Product</button>
         </div>
       </div>
       ${list.length ? `
       <div class="table-wrap">
         <table><thead><tr><th>Product</th><th>Categories</th><th>Price</th><th>Stock</th><th>Tags</th><th></th></tr></thead><tbody>
           ${list.map(p=>`<tr>
-            <td><div style="display:flex;gap:11px;align-items:center">${thumb(p)}<div><b>${esc(p.name)}</b><div class="tag-mini">${esc(p.brand||'')} ${p.size?'· '+esc(p.size):''}</div></div></div></td>
-            <td><div style="display:flex;flex-wrap:wrap;gap:4px">${getCats(p).map(id=>{const c=CATS.find(x=>x.id===id);return c?`<span class="pill goal">${c.label}</span>`:''}).join('')||'<span class="tag-mini">—</span>'}</div></td>
+            <td><div style="display:flex;gap:11px;align-items:center">${thumb(p)}<div><b>${esc(p.name)}</b><div class="tag-mini">#${p.id} · ${esc(p.brand||'')} ${p.size?'· '+esc(p.size):''}</div></div></div></td>
+            <td><div style="display:flex;flex-wrap:wrap;gap:4px">${catPills(p)}</div></td>
             <td><b>${money(p.price)}</b>${p.oldPrice>p.price?`<div class="tag-mini" style="text-decoration:line-through">${money(p.oldPrice)}</div>`:''}</td>
             <td>${stockCell(p)}</td>
-            <td class="tag-mini">${(p.tags||[]).join(', ')||'—'}</td>
+            <td class="tag-mini">${esc((p.tags||[]).join(', ')||'—')}</td>
             <td><div class="row-acts">
               <button class="b b-ghost b-sm" onclick="openProduct(${p.id})">Edit</button>
+              <button class="b b-ghost b-sm" onclick="openProduct(null, ${p.id})" title="Duplicate">Copy</button>
+              <a class="b b-ghost b-sm" href="product.html?id=${p.id}" target="_blank" title="View on store">View</a>
               <button class="b b-rose b-sm" onclick="delProduct(${p.id})">Delete</button>
             </div></td>
           </tr>`).join('')}
@@ -697,8 +986,8 @@ function renderProducts(){
             ${thumb(p)}
             <div style="flex:1;min-width:0">
               <div style="font-weight:700;font-size:15px">${esc(p.name)}</div>
-              <div class="tag-mini">${esc(p.brand||'')}${p.size?' · '+esc(p.size):''}</div>
-              <div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:4px">${getCats(p).map(id=>{const c=CATS.find(x=>x.id===id);return c?`<span class="pill goal">${c.label}</span>`:''}).join('')}</div>
+              <div class="tag-mini">#${p.id} · ${esc(p.brand||'')}${p.size?' · '+esc(p.size):''}</div>
+              <div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:4px">${catPills(p)}</div>
             </div>
             <div style="text-align:right">
               <div style="font-weight:800;font-size:16px;font-family:var(--display)">${money(p.price)}</div>
@@ -707,35 +996,373 @@ function renderProducts(){
           </div>
           <div style="margin:8px 0 10px">${stockCell(p)}</div>
           <div class="m-card-acts">
-            <button class="b b-ghost b-sm" onclick="openProduct(${p.id})" style="flex:1;justify-content:center">Edit</button>
-            <button class="b b-rose b-sm" onclick="delProduct(${p.id})" style="flex:1;justify-content:center">Delete</button>
+            <button class="b b-ghost b-sm" onclick="openProduct(${p.id})">Edit</button>
+            <button class="b b-ghost b-sm" onclick="openProduct(null, ${p.id})">Copy</button>
+            <button class="b b-rose b-sm" onclick="delProduct(${p.id})">Delete</button>
           </div>
         </div>`).join('')}
       </div>
       ` : `<div class="empty">No products found.</div>`}
     </div>
-    <div class="note-box"><b>Live:</b> ekhane add/edit/delete korle shoja <b>Firebase</b> e save hoy — website e (sob device) sathe sathe update hobe. Commit/export lagbe na.</div>`;
+    <div class="note-box"><b>Live:</b> add/edit/delete saves straight to <b>Firebase</b> — the website updates instantly on every device.</div>`;
 }
 
-/* ============================ BANNERS ============================
-   Homepage-r hero-side e 2ta banner (promo box) dekhay — ei list theke
-   top 2ta "active" banner (order onujayi) live dekhabe. Bad-e beshi
-   banner rakha thakle o shudhu prothom 2ta dekha jabe (ready-to-use rotate). */
+function openProduct(id, copyFrom){
+  const src = id!=null ? products.find(x=>x.id===id) : (copyFrom!=null ? products.find(x=>x.id===copyFrom) : null);
+  const isEdit = id!=null && !!src;
+  const p = src ? { ...src, name: isEdit ? src.name : src.name + ' (copy)' } : null;
+  const selCats = getCats(p || {});
+  const tagChecks = TAGS.map(t=>`<label class="chk" style="margin-right:16px"><input type="checkbox" id="pt_${t}" ${p&&(p.tags||[]).includes(t)?'checked':''}> ${({flash:'On sale / Flash',best:'Best seller',new:'New arrival'})[t]}</label>`).join('');
+  document.getElementById('modal').innerHTML = `
+    <div class="modal-head"><h3>${isEdit?'Edit':(copyFrom!=null?'Duplicate':'Add')} Product</h3><button onclick="closeModal()">×</button></div>
+    <div class="modal-body">
+      <div class="form-sec">Basic info</div>
+      <div class="fld"><label>Product name *</label><input id="p_name" value="${esc(p?.name||'')}" placeholder="e.g. Whey Protein Isolate 2kg" maxlength="200"></div>
+      <div class="g2">
+        <div class="fld"><label>Brand</label><input id="p_brand" value="${esc(p?.brand||'')}" placeholder="e.g. Optimum Nutrition"></div>
+        <div class="fld"><label>Size / pack</label><input id="p_size" value="${esc(p?.size||'')}" placeholder="e.g. 60 capsules"></div>
+      </div>
+      <div class="fld">
+        <label>Categories * <span style="color:var(--muted);font-weight:400;font-size:12px">(একাধিক select করা যাবে)</span></label>
+        <div class="msd" id="msd">
+          <button type="button" class="msd-trigger" id="msd-trigger" onclick="msdToggle()">
+            <span class="msd-placeholder" id="msd-placeholder">Choose categories…</span>
+          </button>
+          <div class="msd-menu" id="msd-menu">
+            <div class="msd-search"><input id="msd-search" placeholder="Search category…" oninput="msdFilter(this.value)" onclick="event.stopPropagation()"></div>
+            <div class="msd-list" id="msd-list"></div>
+            <div class="msd-footer"><span id="msd-count">0 selected</span><button onclick="msdClear()">Clear all</button></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-sec">Price &amp; stock</div>
+      <div class="g3">
+        <div class="fld"><label>Selling price (৳) *</label><input id="p_price" type="number" min="1" value="${p?.price||''}"></div>
+        <div class="fld"><label>Regular price (৳)</label><input id="p_old" type="number" min="0" value="${p?.oldPrice||''}" placeholder="for "% OFF" badge"></div>
+        <div class="fld"><label>Availability</label><select id="p_stock">
+          <option value="1" ${!p || inStockP(p) ? 'selected':''}>In stock</option>
+          <option value="0" ${p && !inStockP(p) ? 'selected':''}>Out of stock</option>
+        </select></div>
+      </div>
+      <div class="fld"><label>Tags</label><div>${tagChecks}</div></div>
+
+      <div class="form-sec">Images</div>
+      <div class="fld"><label>Main image</label>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input id="p_img" value="${esc(p?.img||'')}" placeholder="https://… (or Upload)" style="flex:1;min-width:180px" oninput="previewImgs()">
+          <input type="file" id="p_img_file" accept="image/*" style="display:none" onchange="uploadInto('p_img_file','p_img','p_img_status')">
+          <button type="button" class="b b-ghost b-sm" onclick="document.getElementById('p_img_file').click()">Upload</button>
+        </div>
+        <div id="p_img_status" style="font-size:12px;margin-top:6px"></div>
+      </div>
+      <div class="fld"><label>Extra gallery images <span style="color:var(--muted);font-weight:400;font-size:12px">(one URL per line)</span></label>
+        <textarea id="p_imgs" placeholder="https://…" oninput="previewImgs()" style="min-height:56px">${esc((p?.imgs||[]).join('\n'))}</textarea>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+          <input type="file" id="p_imgs_file" accept="image/*" style="display:none" onchange="uploadInto('p_imgs_file','p_imgs','p_imgs_status',true)">
+          <button type="button" class="b b-ghost b-sm" onclick="document.getElementById('p_imgs_file').click()">Upload gallery image</button>
+          <span id="p_imgs_status" style="font-size:12px"></span>
+        </div>
+        <div class="img-prev" id="imgPrev"></div>
+      </div>
+
+      <div class="form-sec">Details</div>
+      <div class="fld"><label>Description</label><textarea id="p_desc" placeholder="Short product description…">${esc(p?.desc||'')}</textarea></div>
+      <div class="fld"><label>Key benefits (one per line)</label><textarea id="p_benefits" placeholder="Boosts immunity">${esc((p?.benefits||[]).join('\n'))}</textarea></div>
+      <div class="g3">
+        <div class="fld"><label>How to use — dosage</label><input id="p_dose" value="${esc(p?.use?.dose||'')}" placeholder="1 capsule daily"></div>
+        <div class="fld"><label>Best time</label><input id="p_when" value="${esc(p?.use?.when||'')}" placeholder="After breakfast"></div>
+        <div class="fld"><label>Duration</label><input id="p_duration" value="${esc(p?.use?.duration||'')}" placeholder="8–12 weeks"></div>
+      </div>
+      <div class="g3">
+        <div class="fld"><label>Timing badge</label><select id="p_timing">
+          ${[['morning','Morning'],['postworkout','Post-workout'],['night','Before bed'],['anytime','Anytime']].map(([t,l])=>`<option value="${t}" ${(p?.timing||'anytime')===t?'selected':''}>${l}</option>`).join('')}
+        </select></div>
+        <div class="fld"><label>Rating (0–5)</label><input id="p_rating" type="number" step="0.1" min="0" max="5" value="${p?.rating ?? 4.7}"></div>
+        <div class="fld"><label>Review count</label><input id="p_reviews" type="number" min="0" value="${p?.reviews||0}"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="b b-ghost" onclick="closeModal()">Cancel</button>
+      <button class="b b-green" id="saveProdBtn" onclick="saveProduct(${isEdit?p.id:'null'}, ${copyFrom!=null && !isEdit ? copyFrom : 'null'})">${isEdit?'Save changes':'Add product'}</button>
+    </div>`;
+  openModal();
+  msdInit(selCats);
+  previewImgs();
+}
+function previewImgs(){
+  const box = document.getElementById('imgPrev'); if(!box) return;
+  const urls = [document.getElementById('p_img').value.trim(), ...document.getElementById('p_imgs').value.split('\n').map(s=>s.trim())].filter(Boolean);
+  box.innerHTML = urls.map(u=>`<img src="${esc(u)}" alt="" onerror="this.style.opacity=.3">`).join('');
+}
+function saveProduct(id, copyFrom){
+  const v = i => document.getElementById(i).value.trim();
+  const name = v('p_name'), price = parseInt(v('p_price'),10);
+  if(!name || !(price > 0)){ alert('Name আর Price দিতে হবে।'); return; }
+  const selCats = msdGetSelected();
+  if(!selCats.length){ alert('অন্তত একটা Category select করতে হবে।'); return; }
+  const rating = parseFloat(v('p_rating'));
+  /* existing product-er sob field rakhi (stock, onno custom field) — shudhu form-er field update */
+  const existing = id!=null ? products.find(x=>x.id===id) : (copyFrom!=null ? products.find(x=>x.id===copyFrom) : null);
+  const newId = id!=null ? id : (products.reduce((m,p)=>Math.max(m,num(p.id)),0)+1);
+  const data = {
+    ...(existing||{}),
+    id: newId, name, cats: selCats,
+    goal: selCats[0], /* backward compat */
+    brand: v('p_brand'),
+    price, oldPrice: Math.max(parseInt(v('p_old'),10) || price, price),
+    img: v('p_img'),
+    imgs: v('p_imgs').split('\n').map(s=>s.trim()).filter(Boolean),
+    stock: v('p_stock') === '1',
+    timing: v('p_timing'),
+    rating: isFinite(rating) ? Math.max(0, Math.min(5, rating)) : 4.7,
+    reviews: Math.max(0, parseInt(v('p_reviews'),10)||0),
+    size: v('p_size'), desc: v('p_desc'),
+    benefits: v('p_benefits').split('\n').map(s=>s.trim()).filter(Boolean),
+    tags: TAGS.filter(t=>document.getElementById('pt_'+t).checked),
+    use: { dose: v('p_dose'), when: v('p_when'), duration: v('p_duration') }
+  };
+  const btn = document.getElementById('saveProdBtn'); btn.disabled = true; btn.textContent = 'Saving…';
+  window.fdb.ref(ADMIN.productsKey+'/'+newId).set(data)
+    .then(()=>{ closeModal(); })
+    .catch(e=>{ btn.disabled = false; btn.textContent = 'Save'; alert('Save failed: '+e.message); });
+}
+
+/* ImgBB upload — sob jaygay ekta-i function (product / gallery / banner / hero / category) */
+function imgbbUpload(file, statusEl){
+  const set = (t,c)=>{ if(statusEl){ statusEl.style.color = c; statusEl.textContent = t; } };
+  if(!file) return Promise.reject(new Error('No file'));
+  if(!IMGBB_KEY){
+    set('ImgBB API key set kora nei — Settings > Image Upload (ImgBB) e key boshao.', '#c0392b');
+    return Promise.reject(new Error('no key'));
+  }
+  if(file.size > 16*1024*1024){ set('File too large (max 16 MB).', '#c0392b'); return Promise.reject(new Error('too large')); }
+  set('Uploading…', 'var(--muted)');
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => {
+      const form = new FormData();
+      form.append('image', reader.result.split(',')[1]);
+      fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(IMGBB_KEY)}`, { method:'POST', body:form })
+        .then(r=>r.json())
+        .then(j=>{
+          if(j.success && j.data && j.data.url){ set('Uploaded ✓', '#1a7a35'); resolve(j.data.url); }
+          else { set('Upload failed: ' + (j.error?.message || 'unknown error'), '#c0392b'); reject(new Error('upload failed')); }
+        })
+        .catch(e=>{ set('Upload failed: ' + e.message, '#c0392b'); reject(e); });
+    };
+    reader.onerror = () => { set('File read failed.', '#c0392b'); reject(new Error('read failed')); };
+    reader.readAsDataURL(file);
+  });
+}
+function uploadInto(fileId, inputId, statusId, append){
+  const fileEl = document.getElementById(fileId);
+  imgbbUpload(fileEl.files[0], document.getElementById(statusId)).then(url=>{
+    const inp = document.getElementById(inputId);
+    inp.value = append && inp.value.trim() ? inp.value.trim() + '\n' + url : url;
+    previewImgs();
+  }).catch(()=>{}).finally(()=>{ fileEl.value = ''; });
+}
+
+/* ================================================================
+   MSD — Multi-Select Dropdown engine
+   ================================================================ */
+let _msdSel = [];
+function msdInit(initSel = []) {
+  _msdSel = [...initSel];
+  msdRenderList('');
+  msdRenderTrigger();
+  setTimeout(()=>{ document.addEventListener('click', msdOutside); }, 50);
+}
+function msdOutside(e){
+  const msd = document.getElementById('msd');
+  if(msd && !msd.contains(e.target)) msdClose();
+}
+function msdToggle(){
+  const msd = document.getElementById('msd');
+  if(!msd) return;
+  if(msd.classList.contains('open')){ msdClose(); }
+  else {
+    msd.classList.add('open');
+    setTimeout(()=>document.getElementById('msd-search')?.focus(), 60);
+  }
+}
+function msdClose(){ document.getElementById('msd')?.classList.remove('open'); }
+function msdFilter(q){ msdRenderList(q.toLowerCase()); }
+function msdRenderList(q){
+  const list = document.getElementById('msd-list');
+  if(!list) return;
+  const filtered = q ? CATS.filter(c=>c.label.toLowerCase().includes(q)) : CATS;
+  list.innerHTML = filtered.map(c=>{
+    const on = _msdSel.includes(c.id);
+    return `<div class="msd-item ${on?'on':''}" onclick="msdToggleItem(${jsq(c.id)})">
+      <div class="msd-cb">${on?'✓':''}</div>
+      <span>${esc(c.label)}</span>
+    </div>`;
+  }).join('') || `<div style="padding:14px;text-align:center;color:var(--muted);font-size:13px">Nothing found</div>`;
+}
+function msdToggleItem(id){
+  if(_msdSel.includes(id)) _msdSel = _msdSel.filter(x=>x!==id);
+  else _msdSel.push(id);
+  const q = document.getElementById('msd-search')?.value || '';
+  msdRenderList(q.toLowerCase());
+  msdRenderTrigger();
+}
+function msdRenderTrigger(){
+  const trigger = document.getElementById('msd-trigger');
+  const count   = document.getElementById('msd-count');
+  if(!trigger) return;
+  trigger.innerHTML = '';
+  if(_msdSel.length === 0){
+    trigger.innerHTML = `<span class="msd-placeholder">Choose categories…</span>`;
+  } else {
+    _msdSel.forEach(id=>{
+      const pill = document.createElement('span');
+      pill.className = 'msd-pill';
+      pill.innerHTML = `${esc(catLabel(id))}<span class="rm" onclick="event.stopPropagation();msdRemove(${jsq(id)})">×</span>`;
+      trigger.appendChild(pill);
+    });
+  }
+  if(count) count.textContent = `${_msdSel.length} selected`;
+}
+function msdRemove(id){
+  _msdSel = _msdSel.filter(x=>x!==id);
+  msdRenderTrigger();
+  msdRenderList((document.getElementById('msd-search')?.value || '').toLowerCase());
+}
+function msdClear(){
+  _msdSel = [];
+  msdRenderTrigger();
+  msdRenderList((document.getElementById('msd-search')?.value || '').toLowerCase());
+}
+function msdGetSelected(){ return [..._msdSel]; }
+function delProduct(id){
+  const p = products.find(x=>x.id===id);
+  if(!confirm(`Delete "${p?.name}"?\nThis cannot be undone.`)) return;
+  window.fdb.ref(ADMIN.productsKey+'/'+id).remove().catch(e=>alert('Delete failed: '+e.message));
+}
+
+/* ========================= STOCK (stock:false = out, na thakle in) ========================= */
+function stockCell(p){
+  const ins = inStockP(p);
+  return `<button class="stock-toggle ${ins?'in':'out'}" onclick="stockToggle(${p.id})" title="Click to toggle">${ins ? 'In Stock' : 'Out of Stock'}</button>`;
+}
+function stockToggle(id){
+  const p = products.find(x=>x.id===id); if(!p) return;
+  window.fdb.ref(ADMIN.productsKey+'/'+id+'/stock').set(!inStockP(p))
+    .catch(e=>alert('Stock update failed: '+e.message));
+}
+
+/* ============================ CATEGORIES ============================ */
+function productsInCat(id){ return products.filter(p=>getCats(p).includes(id)).length; }
+function allCatIds(){ return new Set(CATEGORY_TREE.flatMap(c=>[c.id, ...(c.subs||[]).map(s=>s.id)])); }
+function uniqueId(label){
+  const ids = allCatIds();
+  let base = slugify(label) || 'cat', id = base, n = 2;
+  while(ids.has(id)) id = base + '-' + (n++);
+  return id;
+}
+function saveCategories(tree, msg){
+  return window.fdb.ref('categories').set(tree).then(()=>{ if(msg) atoast(msg); })
+    .catch(e=> alert('Save failed: '+e.message + (e.code==='PERMISSION_DENIED' ? '\n\nনতুন firebase-rules.json Publish করুন (SETUP-GUIDE.md দেখুন)।' : '')));
+}
+function renderCategories(){
+  document.getElementById('content').innerHTML = `
+    ${permWarn('categories')}
+    <div class="panel">
+      <div class="panel-head"><h2>Categories (${CATEGORY_TREE.length})</h2>
+        <div class="panel-tools"><button class="b b-green b-sm" onclick="editCategory()">+ Add Category</button></div></div>
+      <p class="sec-note">এখানে ক্যাটাগরি / সাব-ক্যাটাগরি যোগ, নাম বদল, ক্রম বদল বা মুছে ফেলা যায় — ওয়েবসাইটের মেনু, হোমপেজ ও ফিল্টার সাথে সাথে আপডেট হয়।
+        Product-কে সাব-ক্যাটাগরিতে রাখা হয় (Products → Edit → Categories)।</p>
+      <div style="padding:14px 18px">
+        ${CATEGORY_TREE.map((c,i)=>`
+          <div class="cat-card">
+            <div class="cat-card-head">
+              <h3>${esc(c.label)} <span class="tag-mini">${esc(c.id)}</span></h3>
+              <span class="tag-mini">${products.filter(p=>getCats(p).some(id=>id===c.id || (c.subs||[]).some(s=>s.id===id))).length} products</span>
+              <div class="row-acts">
+                <button class="b b-ghost b-sm" ${i===0?'disabled style="opacity:.4"':''} onclick="moveCategory(${i},-1)" title="Move up">↑</button>
+                <button class="b b-ghost b-sm" ${i===CATEGORY_TREE.length-1?'disabled style="opacity:.4"':''} onclick="moveCategory(${i},1)" title="Move down">↓</button>
+                <button class="b b-ghost b-sm" onclick="editCategory(${i})">Rename</button>
+                <button class="b b-green b-sm" onclick="editSub(${i})">+ Sub</button>
+                <button class="b b-rose b-sm" onclick="deleteCategory(${i})">Delete</button>
+              </div>
+            </div>
+            <div class="sub-chips">
+              ${(c.subs||[]).map((s,j)=>`<span class="sub-chip">${esc(s.label)} <span class="n">${productsInCat(s.id)}</span>
+                <button onclick="editSub(${i},${j})" title="Edit">✎</button><button class="x" onclick="deleteSub(${i},${j})" title="Delete">✕</button></span>`).join('')
+                || '<span class="tag-mini">No subcategories — products can be assigned to this category directly.</span>'}
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="note-box">Tip: Category-র ছবি (হোমপেজ chip) <b>Banners → Category Images</b> থেকে আপলোড করুন। <button class="b b-ghost b-sm" style="margin-left:8px" onclick="restoreDefaultCategories()">Restore default categories</button></div>`;
+}
+const treeCopy = () => JSON.parse(JSON.stringify(CATEGORY_TREE));
+function moveCategory(i, d){
+  const t = treeCopy(); const [c] = t.splice(i,1); t.splice(i+d,0,c);
+  saveCategories(t);
+}
+function editCategory(i){
+  const c = i!=null ? CATEGORY_TREE[i] : null;
+  const label = prompt(c ? 'Category name:' : 'New category name (e.g. "Skin Care"):', c ? c.label : '');
+  if(label==null || !label.trim()) return;
+  const t = treeCopy();
+  if(c) t[i].label = label.trim();
+  else t.push({ id: uniqueId(label), label: label.trim(), subs: [] });
+  saveCategories(t, c ? 'Category renamed ✓' : 'Category added ✓ — now add subcategories');
+}
+function deleteCategory(i){
+  const c = CATEGORY_TREE[i];
+  const n = products.filter(p=>getCats(p).some(id=>id===c.id || (c.subs||[]).some(s=>s.id===id))).length;
+  if(!confirm(`Delete category "${c.label}"${(c.subs||[]).length?` and its ${c.subs.length} subcategories`:''}?` + (n ? `\n\n⚠️ ${n} product(s) use it — they will stay in the store but won't appear under this category. Re-assign them from Products.` : ''))) return;
+  const t = treeCopy(); t.splice(i,1);
+  if(!t.length){ alert('At least one category is required.'); return; }
+  saveCategories(t, 'Category deleted');
+}
+function editSub(i, j){
+  const s = j!=null ? CATEGORY_TREE[i].subs[j] : null;
+  document.getElementById('modal').innerHTML = `
+    <div class="modal-head"><h3>${s?'Edit':'Add'} subcategory — ${esc(CATEGORY_TREE[i].label)}</h3><button onclick="closeModal()">×</button></div>
+    <div class="modal-body">
+      <div class="fld"><label>Name *</label><input id="sub_label" value="${esc(s?.label||'')}" placeholder="e.g. Toner" maxlength="40"></div>
+      <div class="fld"><label>Short note (optional)</label><input id="sub_note" value="${esc(s?.note||'')}" placeholder="e.g. Balance & refresh" maxlength="40"><div class="hint">Shown in the menu dropdown under the name.</div></div>
+      ${s ? `<div class="tag-mini">ID: ${esc(s.id)} (stays the same so products keep their category)</div>` : ''}
+    </div>
+    <div class="modal-foot"><button class="b b-ghost" onclick="closeModal()">Cancel</button><button class="b b-green" onclick="saveSub(${i},${j==null?'null':j})">Save</button></div>`;
+  openModal();
+  setTimeout(()=>document.getElementById('sub_label').focus(), 50);
+}
+function saveSub(i, j){
+  const label = document.getElementById('sub_label').value.trim();
+  const note = document.getElementById('sub_note').value.trim();
+  if(!label){ alert('Name দিতে হবে।'); return; }
+  const t = treeCopy();
+  t[i].subs = t[i].subs || [];
+  if(j!=null){ t[i].subs[j].label = label; t[i].subs[j].note = note; }
+  else t[i].subs.push({ id: uniqueId(label), label, note });
+  saveCategories(t, 'Saved ✓').then(closeModal);
+}
+function deleteSub(i, j){
+  const s = CATEGORY_TREE[i].subs[j];
+  const n = productsInCat(s.id);
+  if(!confirm(`Delete subcategory "${s.label}"?` + (n ? `\n\n⚠️ ${n} product(s) use it — re-assign them from Products, otherwise they won't show under any category.` : ''))) return;
+  const t = treeCopy(); t[i].subs.splice(j,1);
+  saveCategories(t, 'Subcategory deleted');
+}
+function restoreDefaultCategories(){
+  if(!confirm('Restore the original 8 default categories? Your custom category changes will be lost.')) return;
+  window.fdb.ref('categories').remove().then(()=>atoast('Default categories restored')).catch(e=>alert(e.message));
+}
+
+/* ============================ BANNERS ============================ */
 function renderBanners(){
   document.getElementById('content').innerHTML = `
     <div class="panel">
       <div class="panel-head"><h2>Hero Banner Image</h2></div>
-      <p style="color:var(--muted);font-size:13px;padding:14px 18px 0;margin:0">
-        হোমপেজের সবচেয়ে উপরের hero-এর ব্যাকগ্রাউন্ড ছবি — একটাই ফিক্সড ছবি (rotate করে না)।
-        উপরে লেখা (headline, বাটন) এর ছবির উপরেই বসবে। ছবি না দিলে সাধারণ রঙিন ব্যাকগ্রাউন্ড দেখাবে।
-      </p>
+      <p class="sec-note">হোমপেজের সবচেয়ে উপরের বড় ব্যানার ছবি। ছবি দিলে পুরো ছবিটাই দেখাবে (লেখা ছবির মধ্যেই রাখুন); না দিলে সাধারণ রঙিন ব্যাকগ্রাউন্ড + লেখা দেখাবে।</p>
       <div class="note-box" style="margin:12px 18px 0">
-        <b>প্রস্তাবিত সাইজ:</b> ১৬০০ × ৬০০ পিক্সেল (ratio প্রায় ২.৭:১) — চওড়া/landscape ছবি। ছবিটা
-        কন্টেইনারে auto-crop হয়ে বসে (<code>cover</code>), তাই মাপ হুবহু না মিললেও চলবে —
-        তবে এই ratio-র কাছাকাছি রাখলে কম কাটা পড়বে।<br>
-        <b>জরুরি:</b> ছবির <b>ডান পাশে</b> মূল প্রোডাক্ট/বিষয়বস্তু রাখুন — বাম পাশ লেখার
-        (headline/বাটন) নিচে ঢাকা পড়ে যাবে, তাই বামে গুরুত্বপূর্ণ কিছু না রাখাই ভালো।
-        ফাইল সাইজ ৫০০KB-এর কম রাখলে পেজ দ্রুত লোড হবে।
+        <b>প্রস্তাবিত সাইজ:</b> ১৬০০ × ৬০০ পিক্সেল (চওড়া/landscape)। ফাইল সাইজ ৫০০KB-এর কম রাখলে পেজ দ্রুত লোড হবে।
       </div>
       <div style="padding:14px 18px">
         <div class="courier-card">
@@ -753,25 +1380,23 @@ function renderBanners(){
 
     <div class="panel">
       <div class="panel-head">
-        <h2>Banners (${banners.length})</h2>
-        <div class="panel-tools">
-          <button class="b b-green b-sm" onclick="openBanner()">Add Banner</button>
-        </div>
+        <h2>Promo Banners (${banners.length})</h2>
+        <div class="panel-tools"><button class="b b-green b-sm" onclick="openBanner()">+ Add Banner</button></div>
       </div>
       ${banners.length ? `
       <div class="table-wrap">
         <table><thead><tr><th>Order</th><th>Banner</th><th>Link</th><th>Status</th><th></th></tr></thead><tbody>
           ${banners.map(b=>`<tr>
-            <td><b>${b.order||0}</b></td>
+            <td><b>${num(b.order)}</b></td>
             <td><div style="display:flex;gap:11px;align-items:center">
               ${b.img?`<img class="t-img" src="${esc(b.img)}" alt="">`:`<div class="t-emoji">—</div>`}
               <div><b>${esc(b.title)}</b><div class="tag-mini">${b.img?'Custom image':esc(b.subtitle||'')+' · '+esc(b.bigText||'')}</div></div>
             </div></td>
             <td class="tag-mini">${b.link?esc(b.link):'—'}</td>
-            <td><button class="stock-toggle ${b.active!==false?'in':'out'}" onclick="toggleBannerActive('${b._key}',${b.active===false})">${b.active!==false?'Active':'Hidden'}</button></td>
+            <td><button class="stock-toggle ${b.active!==false?'in':'out'}" onclick="toggleBannerActive(${jsq(b._key)},${b.active===false})">${b.active!==false?'Active':'Hidden'}</button></td>
             <td><div class="row-acts">
-              <button class="b b-ghost b-sm" onclick="openBanner('${b._key}')">Edit</button>
-              <button class="b b-rose b-sm" onclick="delBanner('${b._key}')">Delete</button>
+              <button class="b b-ghost b-sm" onclick="openBanner(${jsq(b._key)})">Edit</button>
+              <button class="b b-rose b-sm" onclick="delBanner(${jsq(b._key)})">Delete</button>
             </div></td>
           </tr>`).join('')}
         </tbody></table>
@@ -782,113 +1407,60 @@ function renderBanners(){
             <div>
               <div style="font-weight:700;font-size:15px">${esc(b.title)}</div>
               <div class="tag-mini">${esc(b.subtitle||'')} · ${esc(b.bigText||'')}</div>
-              <div class="tag-mini">Order ${b.order||0}${b.link?' · '+esc(b.link):''}</div>
+              <div class="tag-mini">Order ${num(b.order)}${b.link?' · '+esc(b.link):''}</div>
             </div>
-            <button class="stock-toggle ${b.active!==false?'in':'out'}" onclick="toggleBannerActive('${b._key}',${b.active===false})">${b.active!==false?'Active':'Hidden'}</button>
+            <button class="stock-toggle ${b.active!==false?'in':'out'}" onclick="toggleBannerActive(${jsq(b._key)},${b.active===false})">${b.active!==false?'Active':'Hidden'}</button>
           </div>
           <div class="m-card-acts">
-            <button class="b b-ghost b-sm" onclick="openBanner('${b._key}')" style="flex:1;justify-content:center">Edit</button>
-            <button class="b b-rose b-sm" onclick="delBanner('${b._key}')" style="flex:1;justify-content:center">Delete</button>
+            <button class="b b-ghost b-sm" onclick="openBanner(${jsq(b._key)})">Edit</button>
+            <button class="b b-rose b-sm" onclick="delBanner(${jsq(b._key)})">Delete</button>
           </div>
         </div>`).join('')}
       </div>
       ` : `<div class="empty">No banners yet — the homepage shows 2 default banners until you add your own.</div>`}
     </div>
-    <div class="note-box">Homepage hero-side shows the top 2 <b>active</b> banners (sorted by Order). Add more than 2 to have spares ready — only the first 2 show live.</div>
+    <div class="note-box">Homepage shows the top 2 <b>active</b> banners (sorted by Order) as a slider. Extra banners stay ready as spares.</div>
 
     <div class="panel" style="margin-top:20px">
       <div class="panel-head"><h2>Category Images</h2></div>
-      <p style="color:var(--muted);font-size:13px;padding:14px 18px 0;margin:0">
-        হোমপেজের "Shop by Category" chip-এ প্রতিটা ক্যাটাগরির পাশে একটা ছোট ছবি দেখাতে চাইলে এখানে আপলোড করুন।
-        ছবি না দিলে সাদামাটা লেখা-চিপ দেখাবে।
-      </p>
+      <p class="sec-note">হোমপেজের "Shop by Category" গোল chip-এ প্রতিটা ক্যাটাগরির ছবি। ছবি না দিলে প্রথম অক্ষর দেখাবে।</p>
       <div style="padding:14px 18px;display:flex;flex-direction:column;gap:10px">
         ${TOP_CATEGORIES.map(c=>`
           <div class="courier-card">
             <div class="cc-logo" style="overflow:hidden">${categoryImages[c.id]?`<img src="${esc(categoryImages[c.id])}" alt="" style="width:100%;height:100%;object-fit:cover">`:'—'}</div>
             <div class="cc-info"><div class="cc-name">${esc(c.label)}</div></div>
             <div class="cc-acts">
-              <input type="file" id="ci_file_${c.id}" accept="image/*" style="display:none" onchange="uploadCategoryImage('${c.id}')">
-              <button class="b b-ghost b-sm" onclick="document.getElementById('ci_file_${c.id}').click()">Upload</button>
-              ${categoryImages[c.id]?`<button class="b b-rose b-sm" onclick="removeCategoryImage('${c.id}')">Remove</button>`:''}
+              <input type="file" id="ci_file_${esc(c.id)}" accept="image/*" style="display:none" onchange="uploadCategoryImage(${jsq(c.id)})">
+              <button class="b b-ghost b-sm" onclick="document.getElementById(${jsq('ci_file_'+c.id)}).click()">Upload</button>
+              ${categoryImages[c.id]?`<button class="b b-rose b-sm" onclick="removeCategoryImage(${jsq(c.id)})">Remove</button>`:''}
             </div>
           </div>
-          <div id="ci_status_${c.id}" style="font-size:12px;margin-top:-4px"></div>`).join('')}
+          <div id="ci_status_${esc(c.id)}" style="font-size:12px;margin-top:-4px"></div>`).join('')}
       </div>
     </div>`;
 }
 function uploadCategoryImage(catId){
-  const file = document.getElementById('ci_file_'+catId).files[0];
   const status = document.getElementById('ci_status_'+catId);
-  if(!file) return;
-  if(!IMGBB_KEY){
-    status.style.color = '#c0392b';
-    status.textContent = 'ImgBB API key set kora nei — Settings > Image Upload (ImgBB) e giye key boshao.';
-    return;
-  }
-  status.style.color = 'var(--muted)';
-  status.textContent = 'Uploading…';
-  const reader = new FileReader();
-  reader.onload = () => {
-    const base64 = reader.result.split(',')[1];
-    const form = new FormData();
-    form.append('image', base64);
-    fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(IMGBB_KEY)}`, { method:'POST', body:form })
-      .then(r=>r.json())
-      .then(j=>{
-        if(j.success && j.data && j.data.url){
-          window.fdb.ref('categoryImages/'+catId).set(j.data.url)
-            .then(()=>{ status.style.color = '#1a7a35'; status.textContent = 'Upload হয়ে গেছে ✓'; })
-            .catch(e=>{ status.style.color = '#c0392b'; status.textContent = 'Save failed: '+e.message; });
-        } else {
-          status.style.color = '#c0392b';
-          status.textContent = 'Upload failed: ' + (j.error?.message || 'unknown error');
-        }
-      })
-      .catch(e=>{ status.style.color = '#c0392b'; status.textContent = 'Upload failed: ' + e.message; });
-  };
-  reader.onerror = () => { status.style.color = '#c0392b'; status.textContent = 'File read failed.'; };
-  reader.readAsDataURL(file);
+  imgbbUpload(document.getElementById('ci_file_'+catId).files[0], status).then(url=>
+    window.fdb.ref('categoryImages/'+catId).set(url)
+      .then(()=>{ status.style.color = '#1a7a35'; status.textContent = 'Upload হয়ে গেছে ✓'; })
+      .catch(e=>{ status.style.color = '#c0392b'; status.textContent = 'Save failed: '+e.message; })
+  ).catch(()=>{});
 }
 function removeCategoryImage(catId){
   if(!confirm('এই ক্যাটাগরির ছবি সরিয়ে দেবো?')) return;
   window.fdb.ref('categoryImages/'+catId).remove().catch(e=>alert(e.message));
 }
 function uploadHeroImage(){
-  const file = document.getElementById('hero_img_file').files[0];
   const status = document.getElementById('hero_img_status');
-  if(!file) return;
-  if(!IMGBB_KEY){
-    status.style.color = '#c0392b';
-    status.textContent = 'ImgBB API key set kora nei — Settings > Image Upload (ImgBB) e giye key boshao.';
-    return;
-  }
-  status.style.color = 'var(--muted)';
-  status.textContent = 'Uploading…';
-  const reader = new FileReader();
-  reader.onload = () => {
-    const base64 = reader.result.split(',')[1];
-    const form = new FormData();
-    form.append('image', base64);
-    fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(IMGBB_KEY)}`, { method:'POST', body:form })
-      .then(r=>r.json())
-      .then(j=>{
-        if(j.success && j.data && j.data.url){
-          window.fdb.ref('heroImage').set(j.data.url)
-            .then(()=>{ status.style.color = '#1a7a35'; status.textContent = 'Upload হয়ে গেছে ✓'; })
-            .catch(e=>{ status.style.color = '#c0392b'; status.textContent = 'Save failed: '+e.message; });
-        } else {
-          status.style.color = '#c0392b';
-          status.textContent = 'Upload failed: ' + (j.error?.message || 'unknown error');
-        }
-      })
-      .catch(e=>{ status.style.color = '#c0392b'; status.textContent = 'Upload failed: ' + e.message; });
-  };
-  reader.onerror = () => { status.style.color = '#c0392b'; status.textContent = 'File read failed.'; };
-  reader.readAsDataURL(file);
+  imgbbUpload(document.getElementById('hero_img_file').files[0], status).then(url=>
+    window.fdb.ref('heroImage').set(url)
+      .then(()=>{ status.style.color = '#1a7a35'; status.textContent = 'Upload হয়ে গেছে ✓'; })
+      .catch(e=>{ status.style.color = '#c0392b'; status.textContent = 'Save failed: '+e.message; })
+  ).catch(()=>{});
 }
 function removeHeroImage(){
-  if(!confirm('Hero banner-er chobi ta sorie debo?')) return;
+  if(!confirm('Hero banner-এর ছবি সরিয়ে দেবো?')) return;
   window.fdb.ref('heroImage').remove().catch(e=>alert(e.message));
 }
 function openBanner(key){
@@ -899,12 +1471,12 @@ function openBanner(key){
     <div class="modal-body">
       <div class="fld"><label>Banner image (optional)</label>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <input id="bn_img" value="${esc(b?.img||'')}" placeholder="images\banner.jpg or https://…" style="flex:1;min-width:180px">
-          <input type="file" id="bn_img_file" accept="image/*" style="display:none" onchange="uploadBannerImage()">
+          <input id="bn_img" value="${esc(b?.img||'')}" placeholder="https://… (or Upload)" style="flex:1;min-width:180px">
+          <input type="file" id="bn_img_file" accept="image/*" style="display:none" onchange="uploadInto('bn_img_file','bn_img','bn_img_status')">
           <button type="button" class="b b-ghost b-sm" onclick="document.getElementById('bn_img_file').click()">Upload</button>
         </div>
         <div id="bn_img_status" style="font-size:12px;margin-top:6px"></div>
-        <p style="color:var(--muted);font-size:12px;margin:6px 0 0">নিজের বানানো ব্যানার ছবি upload করলে সেটাই দেখাবে (নিচের Title/Subtitle লেখা তখন আর দেখাবে না — শুধু ছবি + লিংক)। ছবি না দিলে নিচের লেখা দিয়ে রঙিন ব্যানার তৈরি হবে।</p>
+        <p style="color:var(--muted);font-size:12px;margin:6px 0 0">নিজের বানানো ব্যানার ছবি দিলে সেটাই দেখাবে (Title/Subtitle তখন দেখাবে না — শুধু ছবি + লিংক)। ছবি না দিলে নিচের লেখা দিয়ে রঙিন ব্যানার তৈরি হবে।</p>
       </div>
       <div class="fld"><label>Title *</label><input id="bn_title" value="${esc(b?.title||'')}" placeholder="e.g. Protein Festival"></div>
       <div class="fld"><label>Subtitle</label><input id="bn_subtitle" value="${esc(b?.subtitle||'')}" placeholder="e.g. Whey, mass gainer & BCAA"></div>
@@ -915,15 +1487,13 @@ function openBanner(key){
           <option value="a" ${!b||b.theme==='a'?'selected':''}>Orange</option>
           <option value="b" ${b?.theme==='b'?'selected':''}>Sage green</option>
         </select></div>
-        <div class="fld"><label>Order</label><input id="bn_order" type="number" value="${b?.order||banners.length}"></div>
+        <div class="fld"><label>Order</label><input id="bn_order" type="number" value="${b ? num(b.order) : banners.length}"></div>
       </div>
-      <label style="display:inline-flex;gap:8px;align-items:center;font-weight:500">
-        <input type="checkbox" id="bn_active" ${!b||b.active!==false?'checked':''}> Active (show on homepage)
-      </label>
+      <label class="chk"><input type="checkbox" id="bn_active" ${!b||b.active!==false?'checked':''}> Active (show on homepage)</label>
     </div>
     <div class="modal-foot">
       <button class="b b-ghost" onclick="closeModal()">Cancel</button>
-      <button class="b b-green" onclick="saveBanner(${isEdit?`'${key}'`:'null'})">${isEdit?'Save changes':'Add banner'}</button>
+      <button class="b b-green" onclick="saveBanner(${isEdit?jsq(key):'null'})">${isEdit?'Save changes':'Add banner'}</button>
     </div>`;
   openModal();
 }
@@ -931,8 +1501,10 @@ function saveBanner(key){
   const v = id => document.getElementById(id).value.trim();
   const title = v('bn_title');
   if(!title){ alert('Title দিতে হবে।'); return; }
+  const link = v('bn_link');
+  if(/^\s*javascript:/i.test(link)){ alert('Invalid link.'); return; }
   const data = {
-    title, subtitle: v('bn_subtitle'), bigText: v('bn_big'), link: v('bn_link'), img: v('bn_img'),
+    title, subtitle: v('bn_subtitle'), bigText: v('bn_big'), link, img: v('bn_img'),
     theme: v('bn_theme'), order: parseInt(v('bn_order'),10)||0,
     active: document.getElementById('bn_active').checked
   };
@@ -948,266 +1520,468 @@ function delBanner(key){
   window.fdb.ref('banners/'+key).remove().catch(e=>alert('Delete failed: '+e.message));
 }
 
-function openProduct(id){
-  const p = id!=null ? products.find(x=>x.id===id) : null;
-  const isEdit = !!p;
-  const selCats = getCats(p || {});
-  const tagChecks = TAGS.map(t=>`<label style="display:inline-flex;gap:5px;align-items:center;font-weight:500;margin-right:14px">
-     <input type="checkbox" id="pt_${t}" ${p&&(p.tags||[]).includes(t)?'checked':''}> ${t}</label>`).join('');
-  document.getElementById('modal').innerHTML = `
-    <div class="modal-head"><h3>${isEdit?'Edit':'Add'} Product</h3><button onclick="closeModal()">×</button></div>
-    <div class="modal-body">
-      <div class="fld"><label>Product name *</label><input id="p_name" value="${esc(p?.name||'')}" placeholder="e.g. Whey Protein Isolate 2kg"></div>
-      <div class="fld"><label>Brand</label><input id="p_brand" value="${esc(p?.brand||'')}" placeholder="e.g. NutriPro"></div>
-      <div class="fld">
-        <label>Categories * <span style="color:var(--muted);font-weight:400;font-size:12px">(একাধিক select করা যাবে)</span></label>
-        <div class="msd" id="msd">
-          <button type="button" class="msd-trigger" id="msd-trigger" onclick="msdToggle()">
-            <span class="msd-placeholder" id="msd-placeholder">Category বেছে নাও…</span>
-          </button>
-          <div class="msd-menu" id="msd-menu">
-            <div class="msd-search"><input id="msd-search" placeholder="Search category…" oninput="msdFilter(this.value)" onclick="event.stopPropagation()"></div>
-            <div class="msd-list" id="msd-list"></div>
-            <div class="msd-footer"><span id="msd-count">0 selected</span><button onclick="msdClear()">Clear all</button></div>
+/* ============================ COUPONS ============================ */
+function couponState(c){
+  if(c.active === false) return ['Off','out'];
+  if(c.expires && new Date().toISOString().slice(0,10) > c.expires) return ['Expired','out'];
+  return ['Active','in'];
+}
+function renderCoupons(){
+  const usage = {};
+  orders.filter(isLive).forEach(o=>{ if(o.coupon){ usage[o.coupon] = usage[o.coupon] || {n:0, disc:0}; usage[o.coupon].n++; usage[o.coupon].disc += num(o.discount); } });
+  document.getElementById('content').innerHTML = `
+    ${permWarn('coupons')}
+    <div class="panel">
+      <div class="panel-head"><h2>Coupons (${coupons.length})</h2>
+        <div class="panel-tools"><button class="b b-green b-sm" onclick="openCoupon()">+ Add Coupon</button></div></div>
+      ${coupons.length ? `
+      <div class="table-wrap">
+        <table><thead><tr><th>Code</th><th>Discount</th><th>Min order</th><th>Expires</th><th>Used</th><th>Status</th><th></th></tr></thead><tbody>
+          ${coupons.map(c=>{ const [st,cls] = couponState(c); const u = usage[c._key]||{n:0,disc:0}; return `<tr>
+            <td><b style="font-family:monospace;font-size:15px">${esc(c._key)}</b>${c.note?`<div class="tag-mini">${esc(c.note)}</div>`:''}</td>
+            <td><b>${c.type==='flat' ? money(c.value) : num(c.value)+'%'}</b> off</td>
+            <td>${num(c.minOrder) ? money(c.minOrder) : '—'}</td>
+            <td class="tag-mini">${esc(c.expires||'Never')}</td>
+            <td class="tag-mini">${u.n} order${u.n!==1?'s':''}${u.disc?' · '+money(u.disc):''}</td>
+            <td><button class="stock-toggle ${cls}" onclick="toggleCoupon(${jsq(c._key)})">${st}</button></td>
+            <td><div class="row-acts">
+              <button class="b b-ghost b-sm" onclick="openCoupon(${jsq(c._key)})">Edit</button>
+              <button class="b b-rose b-sm" onclick="delCoupon(${jsq(c._key)})">Delete</button>
+            </div></td>
+          </tr>`; }).join('')}
+        </tbody></table>
+      </div>
+      <div class="m-card-list">
+        ${coupons.map(c=>{ const [st,cls] = couponState(c); return `<div class="m-card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+            <div><div style="font-weight:800;font-size:16px;font-family:monospace">${esc(c._key)}</div>
+              <div class="tag-mini">${c.type==='flat' ? money(c.value) : num(c.value)+'%'} off${num(c.minOrder)?' · min '+money(c.minOrder):''}${c.expires?' · until '+esc(c.expires):''}</div></div>
+            <button class="stock-toggle ${cls}" onclick="toggleCoupon(${jsq(c._key)})">${st}</button>
           </div>
-        </div>
-      </div>
-      <div class="g3">
-        <div class="fld"><label>Price (৳) *</label><input id="p_price" type="number" value="${p?.price||''}"></div>
-        <div class="fld"><label>Old price (৳)</label><input id="p_old" type="number" value="${p?.oldPrice||''}"></div>
-        <div class="fld"><label>Size / pack</label><input id="p_size" value="${esc(p?.size||'')}" placeholder="60 capsules"></div>
-      </div>
-      <div class="fld"><label>Image URL</label>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <input id="p_img" value="${esc(p?.img||'')}" placeholder="images/product.jpg or https://…" style="flex:1;min-width:180px">
-          <input type="file" id="p_img_file" accept="image/*" style="display:none" onchange="uploadProductImage()">
-          <button type="button" class="b b-ghost b-sm" onclick="document.getElementById('p_img_file').click()">Upload</button>
-        </div>
-        <div id="p_img_status" style="font-size:12px;margin-top:6px"></div>
-      </div>
-      <div class="g3">
-        <div class="fld"><label>Timing</label><select id="p_timing">
-          ${['morning','postworkout','night','anytime'].map(t=>`<option value="${t}" ${p?.timing===t?'selected':''}>${t}</option>`).join('')}
-        </select></div>
-        <div class="fld"><label>Rating</label><input id="p_rating" type="number" step="0.1" min="0" max="5" value="${p?.rating||4.7}"></div>
-        <div class="fld"><label>Reviews</label><input id="p_reviews" type="number" value="${p?.reviews||0}"></div>
-      </div>
-      <div class="fld"><label>Description</label><textarea id="p_desc" placeholder="Short product description…">${esc(p?.desc||'')}</textarea></div>
-      <div class="fld"><label>Benefits (one per line)</label><textarea id="p_benefits" placeholder="Boosts immunity">${esc((p?.benefits||[]).join('\n'))}</textarea></div>
-      <div class="fld"><label>Tags</label><div>${tagChecks}</div></div>
+          <div class="m-card-acts"><button class="b b-ghost b-sm" onclick="openCoupon(${jsq(c._key)})">Edit</button><button class="b b-rose b-sm" onclick="delCoupon(${jsq(c._key)})">Delete</button></div>
+        </div>`; }).join('')}
+      </div>` : `<div class="empty">No coupons yet. Create one (e.g. <b>EID20</b> — 20% off) and share it on Facebook.</div>`}
     </div>
-    <div class="modal-foot">
-      <button class="b b-ghost" onclick="closeModal()">Cancel</button>
-      <button class="b b-green" onclick="saveProduct(${isEdit?p.id:'null'})">${isEdit?'Save changes':'Add product'}</button>
-    </div>`;
+    <div class="note-box">Customers type the code in the cart or at checkout. Coupons are checked live — turning one <b>Off</b> stops it immediately.
+      Built-in fallback codes in <code>app.js</code> (HEALTH10, FIT15) keep working unless you create the same code here and turn it off.</div>`;
+}
+function openCoupon(code){
+  const c = code ? coupons.find(x=>x._key===code) : null;
+  document.getElementById('modal').innerHTML = `
+    <div class="modal-head"><h3>${c?'Edit':'Add'} Coupon</h3><button onclick="closeModal()">×</button></div>
+    <div class="modal-body">
+      <div class="fld"><label>Coupon code *</label><input id="cp_code" value="${esc(c?._key||'')}" placeholder="e.g. EID20" maxlength="30" style="text-transform:uppercase;font-family:monospace" ${c?'disabled':''}>
+        <div class="hint">Letters, numbers, - or _ only. ${c?'Code can\'t be changed — delete and create a new one instead.':''}</div></div>
+      <div class="g2">
+        <div class="fld"><label>Discount type</label><select id="cp_type">
+          <option value="percent" ${c?.type!=='flat'?'selected':''}>Percent (%)</option>
+          <option value="flat" ${c?.type==='flat'?'selected':''}>Fixed amount (৳)</option>
+        </select></div>
+        <div class="fld"><label>Discount value *</label><input id="cp_value" type="number" min="1" value="${c?num(c.value):''}" placeholder="e.g. 20"></div>
+      </div>
+      <div class="g2">
+        <div class="fld"><label>Minimum order (৳)</label><input id="cp_min" type="number" min="0" value="${c?num(c.minOrder)||'':''}" placeholder="0 = no minimum"></div>
+        <div class="fld"><label>Expiry date</label><input id="cp_exp" type="date" value="${esc(c?.expires||'')}"><div class="hint">Leave empty = never expires</div></div>
+      </div>
+      <div class="fld"><label>Internal note</label><input id="cp_note" value="${esc(c?.note||'')}" placeholder="e.g. Eid campaign on Facebook" maxlength="100"></div>
+      <label class="chk"><input type="checkbox" id="cp_active" ${!c || c.active!==false ? 'checked':''}> Active</label>
+    </div>
+    <div class="modal-foot"><button class="b b-ghost" onclick="closeModal()">Cancel</button><button class="b b-green" onclick="saveCoupon(${c?jsq(c._key):'null'})">${c?'Save changes':'Create coupon'}</button></div>`;
   openModal();
-  msdInit(selCats);
 }
-function saveProduct(id){
-  const v = i => document.getElementById(i).value.trim();
-  const name = v('p_name'), price = parseInt(v('p_price'),10);
-  if(!name || !price){ alert('Name আর Price দিতে হবে।'); return; }
-  const selCats = msdGetSelected();
-  if(!selCats.length){ alert('অন্তত একটা Category select করতে হবে।'); return; }
-  const existing = id!=null ? products.find(x=>x.id===id) : null;
-  const newId = id!=null ? id : (products.reduce((m,p)=>Math.max(m,p.id||0),0)+1);
+function saveCoupon(existing){
+  const code = existing || document.getElementById('cp_code').value.trim().toUpperCase();
+  const type = document.getElementById('cp_type').value;
+  const value = num(document.getElementById('cp_value').value);
+  if(!/^[A-Z0-9_-]{2,30}$/.test(code)){ alert('Code must be 2–30 letters/numbers (- and _ allowed).'); return; }
+  if(!(value > 0) || (type==='percent' && value > 90)){ alert(type==='percent' ? 'Percent must be between 1 and 90.' : 'Enter a discount amount.'); return; }
+  if(!existing && coupons.some(c=>c._key===code)){ alert('This code already exists.'); return; }
+  const prev = existing ? coupons.find(c=>c._key===existing) : null;
   const data = {
-    id: newId, name, cats: selCats,
-    goal: selCats[0], /* backward compat for storefront */
-    brand: v('p_brand'),
-    price, oldPrice: parseInt(v('p_old'),10) || price,
-    img: v('p_img'),
-    timing: v('p_timing'), rating: parseFloat(v('p_rating'))||4.7, reviews: parseInt(v('p_reviews'),10)||0,
-    size: v('p_size'), desc: v('p_desc'),
-    benefits: v('p_benefits').split('\n').map(s=>s.trim()).filter(Boolean),
-    tags: TAGS.filter(t=>document.getElementById('pt_'+t).checked),
-    use: (existing && existing.use) || {dose:'', when:'', duration:''}
+    type, value, minOrder: num(document.getElementById('cp_min').value),
+    expires: document.getElementById('cp_exp').value || '',
+    note: document.getElementById('cp_note').value.trim(),
+    active: document.getElementById('cp_active').checked,
+    createdAt: prev?.createdAt || Date.now()
   };
-  window.fdb.ref(ADMIN.productsKey+'/'+newId).set(data)
-    .then(()=>{ closeModal(); })
-    .catch(e=>alert('Save failed: '+e.message));
+  window.fdb.ref('coupons/'+code).set(data).then(()=>{ closeModal(); atoast('Coupon saved ✓'); })
+    .catch(e=> alert('Save failed: '+e.message + (e.code==='PERMISSION_DENIED' ? '\n\nনতুন firebase-rules.json Publish করুন।' : '')));
+}
+function toggleCoupon(code){
+  const c = coupons.find(x=>x._key===code); if(!c) return;
+  window.fdb.ref('coupons/'+code+'/active').set(c.active===false).catch(e=>alert(e.message));
+}
+function delCoupon(code){
+  if(!confirm(`Delete coupon ${code}?`)) return;
+  window.fdb.ref('coupons/'+code).remove().catch(e=>alert(e.message));
 }
 
-/* Product form-e "Upload" button diye select kora chobi ImgBB-e push kore,
-   return kora URL shorasori p_img input-e boshiye dey. */
-function uploadProductImage(){
-  const file = document.getElementById('p_img_file').files[0];
-  const status = document.getElementById('p_img_status');
-  if(!file) return;
-  if(!IMGBB_KEY){
-    status.style.color = '#c0392b';
-    status.textContent = 'ImgBB API key set kora nei — Settings > Image Upload (ImgBB) e giye key boshao.';
-    return;
-  }
-  status.style.color = 'var(--muted)';
-  status.textContent = 'Uploading…';
-  const reader = new FileReader();
-  reader.onload = () => {
-    const base64 = reader.result.split(',')[1];
-    const form = new FormData();
-    form.append('image', base64);
-    fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(IMGBB_KEY)}`, { method:'POST', body:form })
-      .then(r=>r.json())
-      .then(j=>{
-        if(j.success && j.data && j.data.url){
-          document.getElementById('p_img').value = j.data.url;
-          status.style.color = '#1a7a35';
-          status.textContent = 'Upload হয়ে গেছে ✓';
-        } else {
-          status.style.color = '#c0392b';
-          status.textContent = 'Upload failed: ' + (j.error?.message || 'unknown error');
-        }
-      })
-      .catch(e=>{ status.style.color = '#c0392b'; status.textContent = 'Upload failed: ' + e.message; });
-  };
-  reader.onerror = () => { status.style.color = '#c0392b'; status.textContent = 'File read failed.'; };
-  reader.readAsDataURL(file);
+/* ============================ CUSTOMERS (orders theke) + SUBSCRIBERS ============================ */
+let custSearch = '';
+function customerList(){
+  const map = {};
+  orders.forEach(o=>{
+    const ph = normPhone(o.customer?.phone); if(!ph) return;
+    const c = map[ph] = map[ph] || { phone:ph, name:'', email:'', district:'', orders:0, spent:0, last:'' };
+    c.orders++;
+    if(isLive(o)) c.spent += num(o.total);
+    if(!c.last || new Date(o.placedAt) > new Date(c.last)){
+      c.last = o.placedAt; c.name = o.customer?.name || c.name; c.district = o.customer?.district || c.district; c.email = o.customer?.email || c.email;
+    }
+  });
+  return Object.values(map).sort((a,b)=> b.spent - a.spent);
 }
+function renderCustomers(){
+  const all = customerList();
+  const q = custSearch.toLowerCase();
+  const list = q ? all.filter(c=> (c.name+' '+c.phone+' '+c.district+' '+c.email).toLowerCase().includes(q)) : all;
+  const repeat = all.filter(c=>c.orders>1).length;
+  document.getElementById('content').innerHTML = `
+    <div class="stats">
+      <div class="stat"><div class="lbl">Customers</div><div class="val">${all.length}</div></div>
+      <div class="stat green"><div class="lbl">Repeat customers</div><div class="val">${repeat}</div><div class="sub">${all.length ? Math.round(repeat/all.length*100) : 0}% came back</div></div>
+      <div class="stat"><div class="lbl">Newsletter subscribers</div><div class="val">${subscribers.length}</div></div>
+      <div class="stat"><div class="lbl">Avg. spend / customer</div><div class="val">${money(all.length ? Math.round(all.reduce((s,c)=>s+c.spent,0)/all.length) : 0)}</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Customers (${list.length})</h2>
+        <div class="panel-tools">
+          <input placeholder="Search name, phone, district…" value="${esc(custSearch)}" oninput="custSearch=this.value;renderCustomers();const i=document.getElementById('custSearchBox');i.focus();i.setSelectionRange(i.value.length,i.value.length)" id="custSearchBox">
+          <button class="b b-ghost b-sm" onclick="exportCustomers()">Export CSV</button>
+        </div></div>
+      ${list.length ? `
+      <div class="table-wrap">
+        <table><thead><tr><th>Customer</th><th>Phone</th><th>District</th><th>Orders</th><th>Total spent</th><th>Last order</th><th></th></tr></thead><tbody>
+          ${list.slice(0,300).map(c=>`<tr>
+            <td><b>${esc(c.name||'-')}</b>${c.email?`<div class="tag-mini">${esc(c.email)}</div>`:''}</td>
+            <td><a href="tel:${esc(c.phone)}">${esc(c.phone)}</a></td>
+            <td class="tag-mini">${esc(c.district||'-')}</td>
+            <td>${c.orders}${c.orders>1?' <span class="pill goal">repeat</span>':''}</td>
+            <td><b>${money(c.spent)}</b></td>
+            <td class="tag-mini">${fmtDate(c.last)}</td>
+            <td><button class="b b-ghost b-sm" onclick="orderSearch=${jsq(c.phone)};orderFilter='all';go('orders')">Orders</button></td>
+          </tr>`).join('')}
+        </tbody></table>
+      </div>
+      <div class="m-card-list">
+        ${list.slice(0,300).map(c=>`<div class="m-card" onclick="orderSearch=${jsq(c.phone)};orderFilter='all';go('orders')">
+          <div style="display:flex;justify-content:space-between;gap:10px">
+            <div><b>${esc(c.name||'-')}</b><div class="tag-mini">${esc(c.phone)} · ${esc(c.district||'')}</div></div>
+            <div style="text-align:right"><b>${money(c.spent)}</b><div class="tag-mini">${c.orders} order${c.orders!==1?'s':''}</div></div>
+          </div></div>`).join('')}
+      </div>` : `<div class="empty">No customers yet.</div>`}
+    </div>
 
-/* Banner form-e "Upload" button diye select kora chobi ImgBB-e push kore,
-   return kora URL shorasori bn_img input-e boshiye dey — product image upload-er moto e. */
-function uploadBannerImage(){
-  const file = document.getElementById('bn_img_file').files[0];
-  const status = document.getElementById('bn_img_status');
-  if(!file) return;
-  if(!IMGBB_KEY){
-    status.style.color = '#c0392b';
-    status.textContent = 'ImgBB API key set kora nei — Settings > Image Upload (ImgBB) e giye key boshao.';
-    return;
-  }
-  status.style.color = 'var(--muted)';
-  status.textContent = 'Uploading…';
-  const reader = new FileReader();
-  reader.onload = () => {
-    const base64 = reader.result.split(',')[1];
-    const form = new FormData();
-    form.append('image', base64);
-    fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(IMGBB_KEY)}`, { method:'POST', body:form })
-      .then(r=>r.json())
-      .then(j=>{
-        if(j.success && j.data && j.data.url){
-          document.getElementById('bn_img').value = j.data.url;
-          status.style.color = '#1a7a35';
-          status.textContent = 'Upload হয়ে গেছে ✓';
-        } else {
-          status.style.color = '#c0392b';
-          status.textContent = 'Upload failed: ' + (j.error?.message || 'unknown error');
-        }
-      })
-      .catch(e=>{ status.style.color = '#c0392b'; status.textContent = 'Upload failed: ' + e.message; });
-  };
-  reader.onerror = () => { status.style.color = '#c0392b'; status.textContent = 'File read failed.'; };
-  reader.readAsDataURL(file);
-}
-
-/* ================================================================
-   MSD — Multi-Select Dropdown engine
-   ================================================================ */
-let _msdSel = [];
-
-function msdInit(initSel = []) {
-  _msdSel = [...initSel];
-  msdRenderList('');
-  msdRenderTrigger();
-  setTimeout(()=>{
-    document.addEventListener('click', msdOutside);
-  }, 50);
-}
-function msdOutside(e){
-  const msd = document.getElementById('msd');
-  if(msd && !msd.contains(e.target)) msdClose();
-}
-function msdToggle(){
-  const msd = document.getElementById('msd');
-  if(!msd) return;
-  if(msd.classList.contains('open')){ msdClose(); }
-  else {
-    msd.classList.add('open');
-    setTimeout(()=>document.getElementById('msd-search')?.focus(), 60);
-  }
-}
-function msdClose(){
-  document.getElementById('msd')?.classList.remove('open');
-}
-function msdFilter(q){
-  msdRenderList(q.toLowerCase());
-}
-function msdRenderList(q){
-  const list = document.getElementById('msd-list');
-  if(!list) return;
-  const filtered = q ? CATS.filter(c=>c.label.toLowerCase().includes(q)) : CATS;
-  list.innerHTML = filtered.map(c=>{
-    const on = _msdSel.includes(c.id);
-    return `<div class="msd-item ${on?'on':''}" onclick="msdToggleItem('${c.id}')">
-      <div class="msd-cb">${on?'✓':''}</div>
-      <span>${c.label}</span>
+    ${permWarn('subscribers')}
+    <div class="panel">
+      <div class="panel-head"><h2>Newsletter subscribers (${subscribers.length})</h2>
+        <div class="panel-tools"><button class="b b-ghost b-sm" onclick="exportSubscribers()">Export CSV</button></div></div>
+      ${subscribers.length ? `<div class="table-wrap"><table><thead><tr><th>Email</th><th>Subscribed</th><th></th></tr></thead><tbody>
+        ${subscribers.map(s=>`<tr><td>${esc(s.email)}</td><td class="tag-mini">${fmtDate(s.ts)}</td><td><button class="b b-rose b-sm" onclick="delSubscriber(${jsq(s._key)})">✕</button></td></tr>`).join('')}
+      </tbody></table></div>
+      <div class="m-card-list">${subscribers.map(s=>`<div class="m-card" style="display:flex;justify-content:space-between;align-items:center"><div>${esc(s.email)}<div class="tag-mini">${fmtDate(s.ts)}</div></div><button class="b b-rose b-sm" onclick="delSubscriber(${jsq(s._key)})">✕</button></div>`).join('')}</div>`
+      : `<div class="empty">No subscribers yet — the homepage newsletter form saves emails here.</div>`}
     </div>`;
-  }).join('') || `<div style="padding:14px;text-align:center;color:var(--muted);font-size:13px">কিছু পাওয়া গেলো না</div>`;
 }
-function msdToggleItem(id){
-  if(_msdSel.includes(id)) _msdSel = _msdSel.filter(x=>x!==id);
-  else _msdSel.push(id);
-  const q = document.getElementById('msd-search')?.value || '';
-  msdRenderList(q.toLowerCase());
-  msdRenderTrigger();
+function delSubscriber(key){ if(confirm('Remove this subscriber?')) window.fdb.ref('subscribers/'+key).remove().catch(e=>alert(e.message)); }
+
+/* ============================ REVIEWS (moderation) ============================ */
+function loadAllReviews(){
+  reviewsFlat = null; if(curTab==='reviews') renderReviews();
+  window.fdb.ref('reviews').once('value').then(snap=>{
+    const val = snap.val() || {};
+    reviewsFlat = [];
+    Object.entries(val).forEach(([pid, list])=> Object.entries(list||{}).forEach(([rid, r])=>{
+      if(r) reviewsFlat.push({ pid, rid, ...r });
+    }));
+    reviewsFlat.sort((a,b)=> num(b.ts)-num(a.ts));
+    if(curTab==='reviews') renderReviews();
+  }).catch(e=>{ reviewsFlat = []; alert('Could not load reviews: '+e.message); });
 }
-function msdRenderTrigger(){
-  const trigger = document.getElementById('msd-trigger');
-  const count   = document.getElementById('msd-count');
-  if(!trigger) return;
-  trigger.innerHTML = '';
-  if(_msdSel.length === 0){
-    trigger.innerHTML = `<span class="msd-placeholder">Category বেছে নাও…</span>`;
-  } else {
-    _msdSel.forEach(id=>{
-      const c = CATS.find(x=>x.id===id);
-      if(!c) return;
-      const pill = document.createElement('span');
-      pill.className = 'msd-pill';
-      pill.innerHTML = `${c.label}<span class="rm" onclick="event.stopPropagation();msdRemove('${c.id}')">×</span>`;
-      trigger.appendChild(pill);
-    });
-  }
-  const arr = document.createElement('span');
-  arr.style.cssText = 'position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:13px';
-  arr.textContent = '▾';
-  trigger.appendChild(arr);
-  if(count) count.textContent = `${_msdSel.length} selected`;
+function renderReviews(){
+  const list = reviewsFlat || [];
+  const avg = list.length ? (list.reduce((s,r)=>s+num(r.rating),0)/list.length).toFixed(1) : '—';
+  document.getElementById('content').innerHTML = `
+    <div class="stats" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat"><div class="lbl">Total reviews</div><div class="val">${reviewsFlat===null?'…':list.length}</div></div>
+      <div class="stat amber"><div class="lbl">Average rating</div><div class="val">${avg}</div></div>
+      <div class="stat rose"><div class="lbl">Low ratings (1–2★)</div><div class="val">${list.filter(r=>num(r.rating)<=2).length}</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Product reviews</h2><div class="panel-tools"><button class="b b-ghost b-sm" onclick="loadAllReviews()">Refresh</button></div></div>
+      ${reviewsFlat===null ? `<div class="empty">Loading reviews…</div>` : list.length ? list.map(r=>{
+        const p = products.find(x=>String(x.id)===String(r.pid));
+        const n = Math.max(0, Math.min(5, Math.round(num(r.rating))));
+        return `<div class="rv-adm">
+          <div style="flex:1;min-width:0">
+            <div><b>${esc(r.name||'Anonymous')}</b> <span class="stars">${'★'.repeat(n)}${'☆'.repeat(5-n)}</span> <span class="tag-mini">· ${fmtDate(r.ts)}</span></div>
+            <div class="tag-mini">on <a href="product.html?id=${encodeURIComponent(r.pid)}" target="_blank" style="text-decoration:underline">${esc(p ? p.name : 'Product #'+r.pid)}</a></div>
+            <p>${esc(r.text||'')}</p>
+          </div>
+          <button class="b b-rose b-sm" onclick="delReview(${jsq(r.pid)},${jsq(r.rid)})">Delete</button>
+        </div>`; }).join('') : `<div class="empty">No reviews yet.</div>`}
+    </div>
+    <div class="note-box">Customers' reviews appear on the product page instantly. Delete spam or abusive reviews here.</div>`;
 }
-function msdRemove(id){
-  _msdSel = _msdSel.filter(x=>x!==id);
-  msdRenderTrigger();
-  const q = document.getElementById('msd-search')?.value || '';
-  msdRenderList(q.toLowerCase());
-}
-function msdClear(){
-  _msdSel = [];
-  msdRenderTrigger();
-  const q = document.getElementById('msd-search')?.value || '';
-  msdRenderList(q.toLowerCase());
-}
-function msdGetSelected(){ return [..._msdSel]; }
-function delProduct(id){
-  const p = products.find(x=>x.id===id);
-  if(!confirm(`Delete "${p?.name}"?`)) return;
-  window.fdb.ref(ADMIN.productsKey+'/'+id).remove().catch(e=>alert('Delete failed: '+e.message));
+function delReview(pid, rid){
+  if(!confirm('Delete this review?')) return;
+  window.fdb.ref('reviews/'+pid+'/'+rid).remove()
+    .then(()=>{ reviewsFlat = (reviewsFlat||[]).filter(r=>!(r.pid===pid && r.rid===rid)); renderReviews(); })
+    .catch(e=>alert(e.message));
 }
 
-/* ========================= STOCK =========================
-   stock: 0 = Out of Stock, 1–5 = Low Stock, 6+ = In Stock
-   Firebase: products/{id}/stock
-   ========================================================= */
-function stockCell(p){
-  const inStock = p.stock !== false && p.stock != null;
-  return `<button class="stock-toggle ${inStock?'in':'out'}" onclick="stockToggle(${p.id})">
-    ${inStock ? 'In Stock' : 'Out of Stock'}
-  </button>`;
+/* ============================ AI ASSISTANT ============================
+   Firebase 'aiConfig' (website pore) + 'aiLogs' (customer-er prosno, naam/phone chara).
+   Mode 'basic' = free keyword matcher, 'ai' = Cloudflare Worker -> Claude API. */
+function renderAI(){
+  const c = aiCfg;
+  const dayAgo = Date.now() - 864e5, weekAgo = Date.now() - 7*864e5;
+  const today = aiLogs.filter(l=>num(l.ts) >= dayAgo).length;
+  const week = aiLogs.filter(l=>num(l.ts) >= weekAgo);
+  const aiCount = week.filter(l=>l.mode==='ai').length;
+  const fallbackCount = week.filter(l=>l.mode==='basic-fallback').length;
+  const sugg = {};
+  aiLogs.forEach(l=> String(l.products||'').split(',').filter(Boolean).forEach(id=>{ sugg[id] = (sugg[id]||0)+1; }));
+  const topSugg = Object.entries(sugg).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const pname = id => products.find(p=>String(p.id)===String(id))?.name || ('#'+id);
+  const modeLabel = m => ({ai:'AI', basic:'Basic', 'basic-fallback':'Basic (AI failed)'})[m] || esc(m||'-');
+  const sel = (id, opts, v) => `<select id="${id}">${opts.map(([val,l])=>`<option value="${esc(val)}" ${String(v)===String(val)?'selected':''}>${esc(l)}</option>`).join('')}</select>`;
+  const f = (id, label, ph, hint) => `<div class="fld"><label for="ai_${id}">${label}</label><input id="ai_${id}" value="${esc(c[id]??'')}" placeholder="${esc(ph||'')}">${hint?`<div class="hint">${hint}</div>`:''}</div>`;
+
+  document.getElementById('content').innerHTML = `
+    ${permWarn('aiConfig')}
+    <div class="stats">
+      <div class="stat"><div class="lbl">Questions (24h)</div><div class="val">${today}</div></div>
+      <div class="stat"><div class="lbl">Questions (7 days)</div><div class="val">${week.length}</div></div>
+      <div class="stat ${c.mode==='ai'?'green':''}"><div class="lbl">Mode</div><div class="val" style="font-size:20px">${c.enabled===false ? 'Off' : c.mode==='ai' ? 'AI (Claude)' : 'Basic'}</div>
+        <div class="sub">${c.mode==='ai' ? `${aiCount} AI answers this week${fallbackCount?` · <span style="color:var(--rose)">${fallbackCount} fell back</span>`:''}` : 'free keyword matching'}</div></div>
+      <div class="stat"><div class="lbl">Most suggested</div><div class="val" style="font-size:15px;line-height:1.3">${topSugg.length ? esc(pname(topSugg[0][0])).slice(0,48) : '—'}</div><div class="sub">${topSugg.length ? topSugg[0][1]+(topSugg[0][1]===1?' time':' times') : ''}</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Assistant settings</h2><a class="b b-ghost b-sm" href="index.html#aiSection" target="_blank">Open on store →</a></div>
+      <div style="padding:20px">
+        <div class="form-sec">Status</div>
+        <div style="display:flex;gap:22px;flex-wrap:wrap;margin-bottom:14px">
+          <label class="chk"><input type="checkbox" id="ai_enabled" ${c.enabled!==false?'checked':''}> Show AI assistant on the website</label>
+          <label class="chk"><input type="checkbox" id="ai_floatingButton" ${c.floatingButton!==false?'checked':''}> Floating "Ask AI" button on other pages</label>
+        </div>
+
+        <div class="form-sec">Brain</div>
+        <div class="g2">
+          <div class="fld"><label for="ai_mode">Answer mode</label>${sel('ai_mode', [['basic','Basic — free, built-in keyword matching'],['ai','AI — real Claude AI (needs Cloudflare Worker)']], c.mode)}
+            <div class="hint">Basic works now with no setup. AI understands any wording, Bangla/Banglish/English, and follow-up questions.</div></div>
+          <div class="fld"><label for="ai_model">AI model</label>${sel('ai_model', AI_MODELS, c.model)}
+            <div class="hint">Used only in AI mode. Cost is per question from your Anthropic account.</div></div>
+        </div>
+        <div class="fld"><label for="ai_workerUrl">Cloudflare Worker URL</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="ai_workerUrl" value="${esc(c.workerUrl||'')}" placeholder="https://myhealth-ai.yourname.workers.dev" style="flex:1;min-width:220px">
+            <button type="button" class="b b-ghost b-sm" onclick="aiTestConnection()">Test connection</button>
+          </div>
+          <div class="hint">Setup steps: SETUP-GUIDE.md section 7 (file <code>ai-worker.js</code>). If the AI ever fails, the website automatically answers in Basic mode.</div>
+          <div id="aiTestMsg" style="font-size:13px;margin-top:6px"></div>
+        </div>
+        <div class="g2">
+          <div class="fld"><label for="ai_maxProducts">Products per answer</label>${sel('ai_maxProducts', [2,3,4,5,6].map(n=>[n, n+' products']), c.maxProducts)}</div>
+          ${f('assistantName','Assistant name','Health Assistant')}
+        </div>
+        <div class="fld"><label for="ai_instructions">Extra instructions for the AI <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <textarea id="ai_instructions" placeholder="e.g. Always mention our Eid offer: 15% off with code EID15. Prefer local brands when possible. Reply in Bangla if the customer writes Banglish.">${esc(c.instructions||'')}</textarea>
+          <div class="hint">AI mode only. Write it like you'd brief a new shop assistant.</div></div>
+
+        <div class="form-sec">Text on the website</div>
+        ${f('title','Section title','Tell us your problem — get the right products','The part after " — " is highlighted.')}
+        <div class="fld"><label for="ai_subtitle">Section subtitle</label><textarea id="ai_subtitle" style="min-height:52px">${esc(c.subtitle||'')}</textarea></div>
+        <div class="fld"><label for="ai_welcome">Welcome message (first chat bubble)</label><textarea id="ai_welcome" style="min-height:52px">${esc(c.welcome||'')}</textarea></div>
+        ${f('placeholder','Input placeholder','Describe your problem…')}
+        <div class="fld"><label for="ai_chips">Quick problem buttons <span style="font-weight:400;color:var(--muted)">(one per line, max 8)</span></label>
+          <textarea id="ai_chips" style="min-height:96px">${esc((c.chips||[]).join('\n'))}</textarea></div>
+        ${f('disclaimer','Disclaimer (small text under the chat)','Suggestions are not medical advice…')}
+
+        <div id="aiSaveMsg" style="display:none;font-size:13px;margin:6px 0 12px"></div>
+        <button class="b b-green" id="aiSaveBtn" onclick="saveAISettings()">Save AI settings</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Try it — ask a test question</h2></div>
+      <div style="padding:16px 20px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <input id="aiTestQ" value="amar chul onek pore, ki khabo?" style="flex:1;min-width:220px;height:40px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font-family:inherit;font-size:14px">
+          <button class="b b-green b-sm" onclick="aiTestQuestion()">Ask the AI</button>
+        </div>
+        <div class="hint" style="font-size:12px;color:var(--muted);margin-top:6px">Sends one real question to your Worker (uses a little API credit). For Basic mode, just try the chat on the homepage.</div>
+        <div id="aiTestOut" style="margin-top:12px;font-size:14px"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Problem → product rules (${(c.rules||[]).length})</h2>
+        <div class="panel-tools"><button class="b b-green b-sm" onclick="openAIRule()">+ Add rule</button></div></div>
+      <p class="sec-note">নির্দিষ্ট সমস্যার কথা বললে কোন প্রোডাক্টগুলো আগে দেখাবে, তা এখানে ঠিক করুন। যেমন keyword: <i>chul pore, hair fall, চুল পড়া</i> → আপনার পছন্দের ৩টা প্রোডাক্ট। Basic ও AI দুই মোডেই কাজ করে।</p>
+      <div style="padding:12px 18px 16px">
+        ${(c.rules||[]).length ? c.rules.map((r,i)=>`
+          <div class="cat-card">
+            <div class="cat-card-head">
+              <h3 style="font-size:14.5px">${esc(r.keywords)}</h3>
+              <div class="row-acts">
+                <button class="b b-ghost b-sm" onclick="openAIRule(${i})">Edit</button>
+                <button class="b b-rose b-sm" onclick="delAIRule(${i})">Delete</button>
+              </div>
+            </div>
+            ${r.note ? `<div class="tag-mini" style="margin-top:6px">💡 ${esc(r.note)}</div>` : ''}
+            <div class="sub-chips">${(r.products||[]).map(id=>`<span class="sub-chip" style="padding-right:12px">${esc(pname(id))}</span>`).join('') || '<span class="tag-mini">No products</span>'}</div>
+          </div>`).join('') : `<div class="empty" style="padding:20px">No rules yet — the assistant picks products automatically from categories and descriptions.</div>`}
+      </div>
+    </div>
+
+    ${permWarn('aiLogs')}
+    <div class="panel">
+      <div class="panel-head"><h2>What customers are asking (${aiLogs.length})</h2>
+        <div class="panel-tools">
+          <button class="b b-ghost b-sm" onclick="exportAILogs()">Export CSV</button>
+          ${aiLogs.length ? `<button class="b b-rose b-sm" onclick="clearAILogs()">Clear all</button>` : ''}
+        </div></div>
+      ${topSugg.length ? `<p class="sec-note"><b>Most suggested:</b> ${topSugg.map(([id,n])=>`${esc(pname(id))} (${n})`).join(' · ')}</p>` : ''}
+      ${aiLogs.length ? `
+      <div class="table-wrap"><table><thead><tr><th>When</th><th>Question</th><th>Mode</th><th>Suggested</th></tr></thead><tbody>
+        ${aiLogs.slice(0,150).map(l=>`<tr>
+          <td class="tag-mini" style="white-space:nowrap">${fmtDate(l.ts)}</td>
+          <td style="max-width:380px">${esc(l.q)}</td>
+          <td class="tag-mini">${modeLabel(l.mode)}</td>
+          <td class="tag-mini" style="max-width:280px">${String(l.products||'').split(',').filter(Boolean).map(id=>esc(pname(id))).join(', ') || '—'}</td>
+        </tr>`).join('')}
+      </tbody></table></div>
+      <div class="m-card-list">${aiLogs.slice(0,150).map(l=>`<div class="m-card"><div style="font-weight:600">${esc(l.q)}</div>
+        <div class="tag-mini" style="margin-top:4px">${fmtDate(l.ts)} · ${modeLabel(l.mode)}</div></div>`).join('')}</div>`
+      : `<div class="empty">No questions yet. When customers use the assistant, their questions appear here (without names or phone numbers) — great for knowing what to stock.</div>`}
+    </div>`;
 }
-function stockToggle(id){
-  const p = products.find(x=>x.id===id); if(!p) return;
-  const next = !(p.stock !== false && p.stock != null);
-  window.fdb.ref(ADMIN.productsKey+'/'+id+'/stock').set(next)
-    .catch(e=>alert('Stock update failed: '+e.message));
+async function saveAISettings(){
+  const v = id => (document.getElementById('ai_'+id)?.value || '').trim();
+  const msg = document.getElementById('aiSaveMsg');
+  const show = (t,ok)=>{ msg.style.display='block'; msg.style.color=ok?'#1a7a35':'#c0392b'; msg.textContent=t; };
+  const workerUrl = v('workerUrl').replace(/\/+$/,'');
+  const mode = v('mode');
+  if(workerUrl && !/^https:\/\/[^\s/]+\.[^\s]+$/i.test(workerUrl)){ show('Worker URL must start with https://', false); return; }
+  if(mode==='ai' && !workerUrl){ show('AI mode needs the Cloudflare Worker URL (or choose Basic mode).', false); return; }
+  const data = {
+    enabled: document.getElementById('ai_enabled').checked,
+    floatingButton: document.getElementById('ai_floatingButton').checked,
+    mode: mode==='ai' ? 'ai' : 'basic',
+    model: AI_MODELS.some(m=>m[0]===v('model')) ? v('model') : AI_DEFAULTS.model,
+    workerUrl,
+    maxProducts: Math.max(2, Math.min(6, num(v('maxProducts'))||4)),
+    assistantName: v('assistantName').slice(0,40),
+    instructions: v('instructions').slice(0,3000),
+    title: v('title').slice(0,120),
+    subtitle: v('subtitle').slice(0,300),
+    welcome: v('welcome').slice(0,400),
+    placeholder: v('placeholder').slice(0,100),
+    disclaimer: v('disclaimer').slice(0,300),
+    chips: v('chips').split('\n').map(s=>s.trim()).filter(Boolean).slice(0,8).map(s=>s.slice(0,40))
+  };
+  const btn = document.getElementById('aiSaveBtn'); btn.disabled = true;
+  try{
+    await window.fdb.ref('aiConfig').update(data);   // update — rules ager motoi thake
+    atoast('AI settings saved ✓ — live on the website');
+  }catch(e){
+    show('Save failed: '+e.message + (e.code==='PERMISSION_DENIED' ? ' — publish the new firebase-rules.json first (SETUP-GUIDE.md).' : ''), false);
+  }finally{ btn.disabled = false; }
+}
+async function aiTestConnection(){
+  const url = (document.getElementById('ai_workerUrl').value||'').trim();
+  const out = document.getElementById('aiTestMsg');
+  const show = (t,ok)=>{ out.style.color = ok ? '#1a7a35' : '#c0392b'; out.textContent = t; };
+  if(!/^https:\/\//i.test(url)){ show('Enter the Worker URL first (starts with https://).', false); return; }
+  show('Checking…', true); out.style.color = 'var(--muted)';
+  try{
+    const r = await fetch(url, { method:'GET' });
+    const j = await r.json().catch(()=>({}));
+    if(j.ok && j.configured) show('✓ Connected — Worker is running and the API key + Firebase URL are set. Choose "AI" mode and Save.', true);
+    else if(j.ok) show('Worker is running, but ANTHROPIC_API_KEY or FIREBASE_DB_URL is missing in its Settings → Variables and Secrets.', false);
+    else show('Reached the URL but it did not answer like the AI Worker (HTTP '+r.status+'). Did you paste ai-worker.js?', false);
+  }catch(e){ show('Could not reach the Worker: '+e.message+'. Check the URL, or set ALLOWED_ORIGINS correctly.', false); }
+}
+async function aiTestQuestion(){
+  const url = (document.getElementById('ai_workerUrl').value||'').trim() || aiCfg.workerUrl;
+  const q = document.getElementById('aiTestQ').value.trim();
+  const out = document.getElementById('aiTestOut');
+  if(!/^https:\/\//i.test(url)){ out.innerHTML = '<span style="color:#c0392b">Set the Worker URL above first.</span>'; return; }
+  if(!q) return;
+  out.innerHTML = '<span style="color:var(--muted)">Thinking…</span>';
+  try{
+    const r = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ messages:[{ role:'user', content:q }] }) });
+    const j = await r.json().catch(()=>({}));
+    if(!r.ok || !j.reply){
+      const why = { not_configured:'API key / Firebase URL missing in the Worker settings', bad_api_key:'The Anthropic API key is wrong or has no credit', busy:'Anthropic is busy or your rate limit was hit — try again', rate_limited:'Too many test questions from this IP — wait 10 minutes', disabled:'The assistant is turned off (Status above) — enable and Save first', origin_not_allowed:'This admin page\'s domain is not in ALLOWED_ORIGINS' }[j.error] || (j.error || ('HTTP '+r.status));
+      out.innerHTML = `<span style="color:#c0392b">AI error: ${esc(why)}</span>`; return;
+    }
+    out.innerHTML = `<div style="background:#fdfaf6;border:1px solid var(--line);border-radius:12px;padding:12px 14px">
+      <div>${esc(j.reply).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>')}</div>
+      ${(j.products||[]).length ? `<div class="sub-chips">${j.products.map(id=>`<span class="sub-chip" style="padding-right:12px">${esc(products.find(p=>p.id===id)?.name || '#'+id)}</span>`).join('')}</div>` : ''}
+      ${j.seeDoctor ? '<div class="tag-mini" style="margin-top:8px;color:#9a3412">🩺 Marked "see a doctor"</div>' : ''}
+      ${(j.followups||[]).length ? `<div class="tag-mini" style="margin-top:8px">Follow-ups: ${j.followups.map(esc).join(' · ')}</div>` : ''}
+    </div>`;
+  }catch(e){ out.innerHTML = `<span style="color:#c0392b">Could not reach the Worker: ${esc(e.message)}</span>`; }
+}
+
+/* ---- rules: keyword -> pochonder product ---- */
+let _rulePick = new Set();
+function openAIRule(i){
+  const r = i!=null ? aiCfg.rules[i] : null;
+  _rulePick = new Set((r?.products||[]).map(Number));
+  document.getElementById('modal').innerHTML = `
+    <div class="modal-head"><h3>${r?'Edit':'Add'} problem rule</h3><button onclick="closeModal()">×</button></div>
+    <div class="modal-body">
+      <div class="fld"><label>Keywords * <span style="font-weight:400;color:var(--muted)">(comma separated — Bangla, Banglish, English)</span></label>
+        <input id="rl_kw" value="${esc(r?.keywords||'')}" placeholder="e.g. chul pore, hair fall, চুল পড়া"></div>
+      <div class="fld"><label>Advice to show (optional)</label>
+        <input id="rl_note" value="${esc(r?.note||'')}" placeholder="e.g. Use the oil 3 times a week for at least 2 months" maxlength="300"></div>
+      <div class="fld"><label>Products to recommend first <span id="rl_count" style="font-weight:400;color:var(--muted)"></span></label>
+        <input id="rl_search" placeholder="Search products…" oninput="rulePickRender(this.value)" style="margin-bottom:8px">
+        <div id="rl_list" style="max-height:280px;overflow-y:auto;border:1.5px solid var(--line);border-radius:10px;padding:4px"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="b b-ghost" onclick="closeModal()">Cancel</button><button class="b b-green" onclick="saveAIRule(${i==null?'null':i})">Save rule</button></div>`;
+  openModal();
+  rulePickRender('');
+}
+function rulePickRender(q){
+  q = String(q||'').toLowerCase().trim();
+  const list = products.filter(p=> !q || ((p.name||'')+' '+(p.brand||'')).toLowerCase().includes(q))
+    .sort((a,b)=> _rulePick.has(b.id) - _rulePick.has(a.id)).slice(0,120);
+  document.getElementById('rl_list').innerHTML = list.map(p=>`
+    <label class="msd-item ${_rulePick.has(p.id)?'on':''}" style="gap:10px">
+      <input type="checkbox" ${_rulePick.has(p.id)?'checked':''} onchange="this.checked?_rulePick.add(${p.id}):_rulePick.delete(${p.id});this.closest('.msd-item').classList.toggle('on',this.checked);document.getElementById('rl_count').textContent='('+_rulePick.size+' selected)'" style="width:16px;height:16px;accent-color:var(--leaf)">
+      ${thumb(p)}<span style="flex:1;min-width:0">${esc(p.name)}<div class="tag-mini">${money(p.price)}${inStockP(p)?'':' · out of stock'}</div></span>
+    </label>`).join('') || '<div class="empty" style="padding:16px">No products found</div>';
+  document.getElementById('rl_count').textContent = `(${_rulePick.size} selected)`;
+}
+function saveAIRule(i){
+  const keywords = document.getElementById('rl_kw').value.split(',').map(s=>s.trim()).filter(Boolean).join(', ');
+  if(!keywords){ alert('অন্তত একটা keyword দিন।'); return; }
+  if(!_rulePick.size){ alert('অন্তত একটা প্রোডাক্ট select করুন।'); return; }
+  const rule = { keywords: keywords.slice(0,300), note: document.getElementById('rl_note').value.trim().slice(0,300), products: [..._rulePick].slice(0,6) };
+  const rules = (aiCfg.rules||[]).map(r=>({ keywords:r.keywords, note:r.note||'', products:r.products||[] }));
+  if(i!=null) rules[i] = rule; else rules.push(rule);
+  window.fdb.ref('aiConfig/rules').set(rules).then(()=>{ closeModal(); atoast('Rule saved ✓'); })
+    .catch(e=> alert('Save failed: '+e.message + (e.code==='PERMISSION_DENIED' ? '\n\nনতুন firebase-rules.json Publish করুন।' : '')));
+}
+function delAIRule(i){
+  if(!confirm('Delete this rule?')) return;
+  const rules = (aiCfg.rules||[]).filter((_,j)=>j!==i).map(r=>({ keywords:r.keywords, note:r.note||'', products:r.products||[] }));
+  window.fdb.ref('aiConfig/rules').set(rules.length ? rules : null).catch(e=>alert(e.message));
+}
+function exportAILogs(){
+  const name = id => products.find(p=>String(p.id)===String(id))?.name || id;
+  const rows = aiLogs.map(l=>[new Date(num(l.ts)).toISOString(), l.q, l.mode, String(l.products||'').split(',').filter(Boolean).map(name).join(' | ')].map(csvCell).join(','));
+  download(`ai-questions-${new Date().toISOString().slice(0,10)}.csv`, '﻿' + ['Time,Question,Mode,Suggested products', ...rows].join('\n'), 'text/csv;charset=utf-8');
+}
+function clearAILogs(){
+  if(!confirm('Delete all saved customer questions? This cannot be undone.')) return;
+  window.fdb.ref('aiLogs').remove().then(()=>atoast('Questions cleared')).catch(e=>alert(e.message));
 }
 
 /* ========================= COURIER =========================
@@ -1221,7 +1995,6 @@ const COURIERS_DEFAULT = [
   { id:'paperfly', name:'Paperfly',         phone:'09611-677776', area:'Nationwide' },
   { id:'sundarban',name:'Sundarban Courier', phone:'09612-121212', area:'Nationwide' },
 ];
-
 let couriers = [...COURIERS_DEFAULT];
 let pickups  = [];
 
@@ -1239,22 +2012,20 @@ function attachCourierListeners(){
   });
 }
 
-/* ---- COURIER TAB ---- */
 function renderCourier(){
   const pending   = pickups.filter(p=>p.status==='pending');
   const completed = pickups.filter(p=>p.status!=='pending');
   document.getElementById('content').innerHTML = `
     <div class="stats" style="grid-template-columns:repeat(3,1fr)">
-      <div class="stat"><div class="lbl">Courier Partners</div><div class="val">${couriers.length}</div></div>
-      <div class="stat amber"><div class="lbl">Pending Pickups</div><div class="val">${pending.length}</div></div>
+      <div class="stat"><div class="lbl">Courier partners</div><div class="val">${couriers.length}</div></div>
+      <div class="stat amber"><div class="lbl">Pending pickups</div><div class="val">${pending.length}</div></div>
       <div class="stat green"><div class="lbl">Completed</div><div class="val">${completed.length}</div></div>
     </div>
 
-    <!-- Courier Partners -->
     <div class="panel" style="margin-bottom:20px">
       <div class="panel-head">
         <h2>Courier Partners</h2>
-        <button class="b b-green b-sm" onclick="openAddCourier()">Add Courier</button>
+        <button class="b b-green b-sm" onclick="openAddCourier()">+ Add Courier</button>
       </div>
       <div style="padding:14px 16px">
         ${couriers.map(c=>`
@@ -1266,13 +2037,12 @@ function renderCourier(){
           </div>
           <div class="cc-acts">
             <a href="tel:${esc(c.phone)}" class="call-btn">Call</a>
-            <button class="b b-rose b-sm" onclick="delCourier('${esc(c.id)}')">✕</button>
+            <button class="b b-rose b-sm" onclick="delCourier(${jsq(c.id)})">✕</button>
           </div>
         </div>`).join('')}
       </div>
     </div>
 
-    <!-- Pending Pickups -->
     <div class="panel">
       <div class="panel-head"><h2>Pickup Requests</h2></div>
       ${pending.length ? `
@@ -1288,8 +2058,8 @@ function renderCourier(){
               <td class="tag-mini">${fmtDate(pk.requestedAt)}</td>
               <td><span class="stock-badge low">Pending</span></td>
               <td><div class="row-acts">
-                <button class="b b-green b-sm" onclick="pickupDone('${esc(pk._key)}')">Done</button>
-                <button class="b b-rose b-sm" onclick="pickupDel('${esc(pk._key)}')">✕</button>
+                <button class="b b-green b-sm" onclick="pickupDone(${jsq(pk._key)})">Done</button>
+                <button class="b b-rose b-sm" onclick="pickupDel(${jsq(pk._key)})">✕</button>
               </div></td>
             </tr>`;
           }).join('')}
@@ -1311,8 +2081,8 @@ function renderCourier(){
               <div class="m-card-row" style="border:none"><span>Courier</span><b>${esc(c.name)}</b></div>
             </div>
             <div class="m-card-acts">
-              <button class="b b-green b-sm" onclick="pickupDone('${esc(pk._key)}')" style="flex:1;justify-content:center">Done</button>
-              <button class="b b-rose b-sm" onclick="pickupDel('${esc(pk._key)}')" style="flex:1;justify-content:center">Cancel</button>
+              <button class="b b-green b-sm" onclick="pickupDone(${jsq(pk._key)})">Done</button>
+              <button class="b b-rose b-sm" onclick="pickupDel(${jsq(pk._key)})">Cancel</button>
             </div>
           </div>`;
         }).join('')}
@@ -1331,7 +2101,7 @@ function renderCourier(){
               <td><b>${esc(pk.orderId||'-')}</b></td>
               <td>${esc(c.name)}</td>
               <td class="tag-mini">${fmtDate(pk.requestedAt)}</td>
-              <td><button class="b b-rose b-sm" onclick="pickupDel('${esc(pk._key)}')">✕</button></td>
+              <td><button class="b b-rose b-sm" onclick="pickupDel(${jsq(pk._key)})">✕</button></td>
             </tr>`;
           }).join('')}
         </tbody></table>
@@ -1339,7 +2109,6 @@ function renderCourier(){
     </div>` : ''}`;
 }
 
-/* ---- ADD COURIER ---- */
 function openAddCourier(){
   document.getElementById('modal').innerHTML = `
     <div class="modal-head"><h3>নতুন Courier যোগ করো</h3><button onclick="closeModal()">×</button></div>
@@ -1360,19 +2129,26 @@ function saveCourier(){
   if(!name||!phone){ alert('নাম আর Phone দিতে হবে।'); return; }
   const id = 'cr_'+Date.now();
   const data = { id, name, phone, area: document.getElementById('cr_area').value.trim() };
-  window.fdb.ref('couriers/'+id).set(data)
+  /* default list Firebase-e na thakle prothome default gula save kori — na hole notun ta add korle baki gula hariye jay */
+  const base = {};
+  couriers.forEach(c=>{ base[c.id] = c; });
+  base[id] = data;
+  window.fdb.ref('couriers').update(base)
     .then(()=>closeModal())
     .catch(e=>alert('Save failed: '+e.message));
 }
 function delCourier(id){
   if(!confirm('এই courier সরিয়ে দেবো?')) return;
-  window.fdb.ref('couriers/'+id).remove().catch(e=>alert(e.message));
+  const rest = {};
+  couriers.filter(c=>c.id!==id).forEach(c=>{ rest[c.id] = c; });
+  window.fdb.ref('couriers').set(Object.keys(rest).length ? rest : null).catch(e=>alert(e.message));
 }
 
 /* ---- PICKUP REQUEST (Orders page থেকে) ---- */
 function openPickupModal(orderKey){
   const o = orders.find(x=>x._key===orderKey); if(!o) return;
   const opts = couriers.map(c=>`<option value="${esc(c.id)}">${esc(c.name)} — ${esc(c.phone)}</option>`).join('');
+  const cod = (o.payment==='cod' && o.paymentStatus!=='paid') ? num(o.total) : 0;  // prepaid hole 0
   document.getElementById('modal').innerHTML = `
     <div class="modal-head"><h3>Pickup Request — ${esc(o.id)}</h3><button onclick="closeModal()">×</button></div>
     <div class="modal-body">
@@ -1380,10 +2156,14 @@ function openPickupModal(orderKey){
         <div class="od-row"><span style="color:var(--muted)">Customer</span><b>${esc(o.customer?.name||'-')}</b></div>
         <div class="od-row"><span style="color:var(--muted)">Phone</span><b>${esc(o.customer?.phone||'-')}</b></div>
         <div class="od-row"><span style="color:var(--muted)">Address</span><b style="text-align:right;max-width:60%">${esc(o.customer?.address||'')}, ${esc(o.customer?.district||'')}</b></div>
-        <div class="od-row"><span style="color:var(--muted)">Total</span><b>${money(o.total)}</b></div>
+        <div class="od-row"><span style="color:var(--muted)">Order total</span><b>${money(o.total)}</b></div>
       </div>
       <div class="fld"><label>Courier বেছে নাও *</label>
         <select id="pu_courier">${opts}</select>
+      </div>
+      <div class="fld"><label>Collect from customer (COD ৳)</label>
+        <input id="pu_cod" type="number" min="0" value="${cod}">
+        <div class="hint">bKash/Nagad-এ আগেই পেমেন্ট করে থাকলে 0 দিন।</div>
       </div>
       <div class="fld"><label>Note (optional)</label>
         <textarea id="pu_note" placeholder="বিশেষ কোনো নির্দেশনা…" style="min-height:52px"></textarea>
@@ -1391,13 +2171,14 @@ function openPickupModal(orderKey){
     </div>
     <div class="modal-foot">
       <button class="b b-ghost" onclick="closeModal()">Cancel</button>
-      <button class="b b-green" onclick="submitPickup('${esc(orderKey)}','${esc(o.id||'')}')">Pickup Request দাও</button>
+      <button class="b b-green" onclick="submitPickup(${jsq(orderKey)},${jsq(o.id||'')})">Pickup Request দাও</button>
     </div>`;
   openModal();
 }
 async function submitPickup(orderKey, orderId){
   const courierId = document.getElementById('pu_courier').value;
   const note      = document.getElementById('pu_note').value.trim();
+  const codAmount = Math.max(0, num(document.getElementById('pu_cod').value));
   const o = orders.find(x=>x._key===orderKey);
   const btn = document.querySelector('.modal-foot .b-green');
   const reset = ()=>{ if(btn){ btn.disabled=false; btn.textContent='Pickup Request দাও'; } };
@@ -1405,17 +2186,14 @@ async function submitPickup(orderKey, orderId){
 
   let consignment_id=null, tracking_code=null, courierStatus='manual';
 
-  /* Steadfast (ba onno API courier) hole Worker diye DIRECT parcel pathao.
-     Custom/manual courier hole sudhu local record (age-er moto). */
+  /* API courier hole Worker diye DIRECT parcel; custom courier hole sudhu local record */
   if(o && API_COURIERS.includes(courierId)){
-    // Steadfast hole key thakte hobe (Settings e boshano)
     if(courierId === 'steadfast' && (!COURIER_KEYS.sfKey || !COURIER_KEYS.sfSecret)){
       reset();
       return alert('Steadfast Api-Key/Secret-Key boshano nei.\nSettings → Courier API te key boshiye Save koro, tarpor abar try koro.');
     }
     try {
       const addr = [o.customer?.address, o.customer?.district, o.customer?.division].filter(Boolean).join(', ');
-      const cod  = (o.payment === 'cod') ? Number(o.total||0) : 0;  // prepaid hole COD = 0
       const res  = await fetch(COURIER_WORKER, {
         method:'POST',
         headers:{ 'Content-Type':'application/json' },
@@ -1427,7 +2205,7 @@ async function submitPickup(orderKey, orderId){
           recipient_name:  o.customer?.name  || '',
           recipient_phone: o.customer?.phone || '',
           recipient_address: addr,
-          cod_amount: cod,
+          cod_amount: codAmount,
           note
         })
       });
@@ -1448,20 +2226,21 @@ async function submitPickup(orderKey, orderId){
     }
   }
 
-  /* pickup record + order update Firebase e save */
   const key  = 'pu_' + Date.now();
-  const data = { orderId, orderKey, courierId, note, consignment_id, tracking_code,
+  const data = { orderId, orderKey, courierId, note, codAmount, consignment_id, tracking_code,
                  status:'pending', courierStatus, requestedAt:new Date().toISOString() };
   try {
     await window.fdb.ref('pickups/'+key).set(data);
-    const upd = { status:'confirmed' };
+    const upd = { status:'shipped', courier: courierId };
+    upd['statusHistory/shipped'] = Date.now();
+    if(!o?.statusHistory?.confirmed) upd['statusHistory/confirmed'] = Date.now();
     if(consignment_id) upd.consignment_id = consignment_id;
     if(tracking_code)  upd.tracking_code  = tracking_code;
     await window.fdb.ref(ADMIN.ordersKey+'/'+orderKey).update(upd);
     closeModal();
     alert(consignment_id
-      ? `Steadfast এ parcel create হলো!\nConsignment: ${consignment_id}\nTracking: ${tracking_code||'-'}`
-      : 'Pickup request saved! Courier tab এ দেখো।');
+      ? `Steadfast এ parcel create হলো!\nConsignment: ${consignment_id}\nTracking: ${tracking_code||'-'}\n\nOrder status → Shipped`
+      : 'Pickup request saved! Order status → Shipped. Courier tab এ দেখো।');
   } catch(e){
     reset();
     alert('Firebase save failed: ' + e.message);
@@ -1476,22 +2255,44 @@ function pickupDel(key){
 }
 
 /* ============================ ORDERS ============================ */
-let orderFilter = 'all';
+let orderFilter = 'all', orderSearch = '', orderRange = 'all';
+function filteredOrders(){
+  const q = orderSearch.trim().toLowerCase();
+  const qPhone = normPhone(q);
+  const since = orderRange==='today' ? new Date(new Date().setHours(0,0,0,0)).getTime()
+              : orderRange==='7' ? Date.now()-7*864e5 : orderRange==='30' ? Date.now()-30*864e5 : 0;
+  return orders.filter(o=>{
+    if(orderFilter!=='all' && (o.status||'pending')!==orderFilter) return false;
+    if(since && new Date(o.placedAt).getTime() < since) return false;
+    if(q){
+      const hay = ((o.id||'')+' '+(o.customer?.name||'')+' '+(o.customer?.district||'')+' '+(o.paymentInfo?.trxId||'')).toLowerCase();
+      if(!hay.includes(q) && !(qPhone.length>=4 && normPhone(o.customer?.phone).includes(qPhone))) return false;
+    }
+    return true;
+  });
+}
 function renderOrders(){
-  const list = orderFilter==='all' ? orders : orders.filter(o=>o.status===orderFilter);
+  const list = filteredOrders();
+  const counts = {}; orders.forEach(o=>{ const s=o.status||'pending'; counts[s]=(counts[s]||0)+1; });
+  const statusSel = o => `<select class="status" data-s="${esc(o.status||'pending')}" onclick="event.stopPropagation()" onchange="setStatus(${jsq(o._key)},this.value)">
+      ${STATUSES.map(s=>`<option value="${s}" ${(o.status||'pending')===s?'selected':''}>${s}</option>`).join('')}</select>`;
   document.getElementById('content').innerHTML = `
     <div class="panel">
       <div class="panel-head">
-        <h2>Orders (${orders.length})</h2>
+        <h2>Orders (${list.length}${list.length!==orders.length?' of '+orders.length:''})</h2>
         <div class="panel-tools">
+          <input id="orderSearchBox" placeholder="Search ID, name, phone, TrxID…" value="${esc(orderSearch)}" oninput="orderSearch=this.value;renderOrders();const i=document.getElementById('orderSearchBox');i.focus();i.setSelectionRange(i.value.length,i.value.length)">
           <select onchange="orderFilter=this.value;renderOrders()">
-            <option value="all">All statuses</option>
-            <option value="pending" ${orderFilter==='pending'?'selected':''}>Pending</option>
-            <option value="confirmed" ${orderFilter==='confirmed'?'selected':''}>Confirmed</option>
-            <option value="delivered" ${orderFilter==='delivered'?'selected':''}>Delivered</option>
-            <option value="cancelled" ${orderFilter==='cancelled'?'selected':''}>Cancelled</option>
+            <option value="all">All statuses (${orders.length})</option>
+            ${STATUSES.map(s=>`<option value="${s}" ${orderFilter===s?'selected':''}>${s[0].toUpperCase()+s.slice(1)} (${counts[s]||0})</option>`).join('')}
           </select>
-          <button class="b b-ghost b-sm" onclick="exportOrders()">Export CSV</button>
+          <select onchange="orderRange=this.value;renderOrders()">
+            <option value="all">All time</option>
+            <option value="today" ${orderRange==='today'?'selected':''}>Today</option>
+            <option value="7" ${orderRange==='7'?'selected':''}>Last 7 days</option>
+            <option value="30" ${orderRange==='30'?'selected':''}>Last 30 days</option>
+          </select>
+          <button class="b b-ghost b-sm" onclick="exportOrders(filteredOrders())">Export CSV</button>
         </div>
       </div>
       ${list.length ? `
@@ -1499,17 +2300,15 @@ function renderOrders(){
         <table><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Pay</th><th>Status</th><th></th></tr></thead><tbody>
           ${list.map(o=>`<tr>
             <td><b>${esc(o.id)}</b><div class="tag-mini">${fmtDate(o.placedAt)}</div></td>
-            <td>${esc(o.customer?.name||'-')}<div class="tag-mini">${esc(o.customer?.phone||'')}</div></td>
-            <td>${(o.items||[]).reduce((s,i)=>s+i.qty,0)} items</td>
+            <td>${esc(o.customer?.name||'-')}<div class="tag-mini">${esc(o.customer?.phone||'')} · ${esc(o.customer?.district||'')}</div></td>
+            <td>${itemCount(o)} items</td>
             <td><b>${money(o.total)}</b></td>
-            <td class="tag-mini">${esc((o.payment||'').toUpperCase())}</td>
-            <td><select class="status" data-s="${esc(o.status||'pending')}" onchange="setStatus('${esc(o._key)}',this.value)">
-              ${['pending','confirmed','delivered','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}
-            </select></td>
+            <td class="tag-mini">${esc((o.payment||'').toUpperCase())}<div>${payTag(o)}</div></td>
+            <td>${statusSel(o)}</td>
             <td><div class="row-acts">
-              <button class="b b-ghost b-sm" onclick="viewOrder('${esc(o._key)}')">View</button>
-              <button class="b b-green b-sm" onclick="openPickupModal('${esc(o._key)}')">Pickup</button>
-              <button class="b b-rose b-sm" onclick="delOrder('${esc(o._key)}')">✕</button>
+              <button class="b b-ghost b-sm" onclick="viewOrder(${jsq(o._key)})">View</button>
+              <button class="b b-green b-sm" onclick="openPickupModal(${jsq(o._key)})">Pickup</button>
+              <button class="b b-ghost b-sm" onclick="printInvoice(${jsq(o._key)})" title="Print invoice">🖨</button>
             </div></td>
           </tr>`).join('')}
         </tbody></table>
@@ -1523,145 +2322,293 @@ function renderOrders(){
             </div>
             <div style="text-align:right">
               <div style="font-weight:800;font-size:16px;font-family:var(--display)">${money(o.total)}</div>
-              <div class="tag-mini">${esc((o.payment||'').toUpperCase())}</div>
+              <div class="tag-mini">${esc((o.payment||'').toUpperCase())} ${payTag(o)}</div>
             </div>
           </div>
           <div class="m-card-body">
             <div class="m-card-row"><span>Customer</span><b>${esc(o.customer?.name||'-')}</b></div>
-            <div class="m-card-row"><span>Phone</span><b>${esc(o.customer?.phone||'-')}</b></div>
-            <div class="m-card-row"><span>Items</span><b>${(o.items||[]).reduce((s,i)=>s+i.qty,0)} items</b></div>
-            <div class="m-card-row" style="border-bottom:none;padding-top:10px">
-              <span>Status</span>
-              <select class="status" data-s="${esc(o.status||'pending')}" onchange="setStatus('${esc(o._key)}',this.value)">
-                ${['pending','confirmed','delivered','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}
-              </select>
-            </div>
+            <div class="m-card-row"><span>Phone</span><b><a href="tel:${esc(o.customer?.phone||'')}">${esc(o.customer?.phone||'-')}</a></b></div>
+            <div class="m-card-row"><span>Items</span><b>${itemCount(o)} items</b></div>
+            <div class="m-card-row" style="border-bottom:none;padding-top:10px"><span>Status</span>${statusSel(o)}</div>
           </div>
           <div class="m-card-acts">
-            <button class="b b-ghost b-sm" onclick="viewOrder('${esc(o._key)}')">View</button>
-            <button class="b b-green b-sm" onclick="openPickupModal('${esc(o._key)}')">Pickup</button>
-            <button class="b b-rose b-sm" onclick="delOrder('${esc(o._key)}')">Delete</button>
+            <button class="b b-ghost b-sm" onclick="viewOrder(${jsq(o._key)})">View</button>
+            <button class="b b-green b-sm" onclick="openPickupModal(${jsq(o._key)})">Pickup</button>
+            <button class="b b-ghost b-sm" onclick="printInvoice(${jsq(o._key)})">Invoice</button>
           </div>
         </div>`).join('')}
       </div>
-      ` : `<div class="empty">No orders ${orderFilter!=='all'?'with status "'+orderFilter+'"':'yet'}.</div>`}
+      ` : `<div class="empty">No orders match${orderSearch?' “'+esc(orderSearch)+'”':''}.</div>`}
     </div>`;
 }
-function setStatus(key, status){ window.fdb.ref(ADMIN.ordersKey+'/'+key+'/status').set(status).catch(e=>alert(e.message)); }
-function delOrder(key){ if(confirm('Delete this order?')) window.fdb.ref(ADMIN.ordersKey+'/'+key).remove().catch(e=>alert(e.message)); }
+function setStatus(key, status){
+  if(!STATUSES.includes(status)) return;
+  const upd = { status };
+  upd['statusHistory/'+status] = Date.now();
+  window.fdb.ref(ADMIN.ordersKey+'/'+key).update(upd).catch(e=>alert(e.message));
+}
+function delOrder(key){
+  const o = orders.find(x=>x._key===key);
+  if(!confirm(`Permanently delete order ${o?.id||''}?\nTip: use status "cancelled" instead to keep a record.`)) return;
+  window.fdb.ref(ADMIN.ordersKey+'/'+key).remove().then(closeModal).catch(e=>alert(e.message));
+}
+function setPaid(key, paid){
+  window.fdb.ref(ADMIN.ordersKey+'/'+key+'/paymentStatus').set(paid ? 'paid' : 'unpaid')
+    .then(()=> viewOrder(key)).catch(e=>alert(e.message));
+}
+function saveAdminNote(key){
+  const v = document.getElementById('od_note').value.trim().slice(0,1000);
+  window.fdb.ref(ADMIN.ordersKey+'/'+key+'/adminNote').set(v).then(()=>atoast('Note saved ✓')).catch(e=>alert(e.message));
+}
 function viewOrder(key){
   const o = orders.find(x=>x._key===key); if(!o) return;
   const c = o.customer||{};
+  const ph = normPhone(c.phone);
+  const prevOrders = orders.filter(x=>x._key!==key && normPhone(x.customer?.phone)===ph).length;
+  const hist = o.statusHistory || {};
+  const waMsg = `Hi ${c.name||''}, this is ${storeSettings.brand||'My Health'}. Your order ${o.id} (${money(o.total)}) `;
   document.getElementById('modal').innerHTML = `
     <div class="modal-head"><h3>Order ${esc(o.id)}</h3><button onclick="closeModal()">×</button></div>
     <div class="modal-body">
-      <div class="od-row"><span style="color:var(--muted)">Date</span><b>${fmtDate(o.placedAt)}</b></div>
-      <div class="od-row"><span style="color:var(--muted)">Status</span><b>${esc(o.status)}</b></div>
-      <h3 style="font-size:15px;margin:16px 0 6px">Customer</h3>
+      <div class="od-row"><span style="color:var(--muted)">Placed</span><b>${fmtDate(o.placedAt)}</b></div>
+      <div class="od-row"><span style="color:var(--muted)">Status</span>
+        <select class="status" data-s="${esc(o.status||'pending')}" onchange="setStatus(${jsq(o._key)},this.value);this.dataset.s=this.value">
+          ${STATUSES.map(s=>`<option value="${s}" ${(o.status||'pending')===s?'selected':''}>${s}</option>`).join('')}</select></div>
+      ${Object.keys(hist).length ? `<div class="tag-mini" style="text-align:right">${STATUSES.filter(s=>hist[s]).map(s=>`${s}: ${fmtDate(hist[s])}`).join(' · ')}</div>` : ''}
+
+      <h3 class="od-sec">Customer</h3>
       <div class="od-row"><span style="color:var(--muted)">Name</span><b>${esc(c.name)}</b></div>
-      <div class="od-row"><span style="color:var(--muted)">Phone</span><b>${esc(c.phone)}</b></div>
+      <div class="od-row"><span style="color:var(--muted)">Phone</span><b>${esc(c.phone)}${prevOrders?` <span class="pill goal">${prevOrders} previous order${prevOrders>1?'s':''}</span>`:''}</b></div>
       ${c.email?`<div class="od-row"><span style="color:var(--muted)">Email</span><b>${esc(c.email)}</b></div>`:''}
       <div class="od-row"><span style="color:var(--muted)">Address</span><b style="text-align:right;max-width:60%">${esc(c.address)}, ${esc(c.district)}, ${esc(c.division)}</b></div>
-      ${c.note?`<div class="od-row"><span style="color:var(--muted)">Note</span><b>${esc(c.note)}</b></div>`:''}
-      <h3 style="font-size:15px;margin:16px 0 6px">Items</h3>
-      <div class="od-items">${(o.items||[]).map(i=>`<div class="it"><span>${esc(i.name)} × ${i.qty}</span><b>${money(i.price*i.qty)}</b></div>`).join('')}</div>
+      ${c.note?`<div class="od-row"><span style="color:var(--muted)">Note</span><b style="text-align:right;max-width:60%">${esc(c.note)}</b></div>`:''}
+      <div class="od-acts">
+        <a class="b b-ghost b-sm" href="tel:${esc(c.phone)}">📞 Call</a>
+        <a class="b b-ghost b-sm" target="_blank" rel="noopener" href="https://wa.me/88${encodeURIComponent(ph)}?text=${encodeURIComponent(waMsg)}">WhatsApp</a>
+      </div>
+
+      <h3 class="od-sec">Items</h3>
+      <div class="od-items">${(o.items||[]).map(i=>`<div class="it"><span>${esc(i.name)} × ${num(i.qty)}</span><b>${money(num(i.price)*num(i.qty))}</b></div>`).join('')}</div>
       <div class="od-row"><span style="color:var(--muted)">Subtotal</span><span>${money(o.subtotal)}</span></div>
-      ${o.discount?`<div class="od-row"><span style="color:var(--muted)">Discount ${o.coupon?'('+esc(o.coupon)+')':''}</span><span>-${money(o.discount)}</span></div>`:''}
-      <div class="od-row"><span style="color:var(--muted)">Delivery</span><span>${o.delivery?money(o.delivery):'FREE'}</span></div>
+      ${num(o.discount)?`<div class="od-row"><span style="color:var(--muted)">Discount ${o.coupon?'('+esc(o.coupon)+')':''}</span><span>-${money(o.discount)}</span></div>`:''}
+      <div class="od-row"><span style="color:var(--muted)">Delivery</span><span>${num(o.delivery)?money(o.delivery):'FREE'}</span></div>
       <div class="od-row" style="font-size:18px;font-weight:800;font-family:var(--display);border-top:1px solid var(--line);padding-top:10px;margin-top:6px"><span>Total</span><span>${money(o.total)}</span></div>
-      <div class="od-row"><span style="color:var(--muted)">Payment</span><b>${esc((o.payment||'').toUpperCase())}</b></div>
+
+      <h3 class="od-sec">Payment</h3>
+      <div class="od-row"><span style="color:var(--muted)">Method</span><b>${esc((o.payment||'').toUpperCase())} ${payTag(o)}</b></div>
+      ${o.paymentInfo ? `
+        <div class="od-row"><span style="color:var(--muted)">Transaction ID</span><b style="font-family:monospace">${esc(o.paymentInfo.trxId)}</b></div>
+        <div class="od-row"><span style="color:var(--muted)">Sent from</span><b>${esc(o.paymentInfo.sender)}</b></div>` : ''}
+      ${o.payment && o.payment!=='cod' ? `<div class="od-acts">${o.paymentStatus==='paid'
+          ? `<button class="b b-ghost b-sm" onclick="setPaid(${jsq(o._key)}, false)">Mark as unpaid</button>`
+          : `<button class="b b-green b-sm" onclick="setPaid(${jsq(o._key)}, true)">✓ Payment verified — mark paid</button>`}</div>` : ''}
+      ${o.tracking_code || o.consignment_id ? `<h3 class="od-sec">Courier</h3>
+        <div class="od-row"><span style="color:var(--muted)">Courier</span><b>${esc(o.courier||'steadfast')}</b></div>
+        ${o.consignment_id?`<div class="od-row"><span style="color:var(--muted)">Consignment</span><b>${esc(String(o.consignment_id))}</b></div>`:''}
+        ${o.tracking_code?`<div class="od-row"><span style="color:var(--muted)">Tracking</span><b>${esc(o.tracking_code)}</b></div>`:''}` : ''}
+
+      <h3 class="od-sec">Internal note <span class="tag-mini">(only admins see this)</span></h3>
+      <textarea id="od_note" style="width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-family:inherit;font-size:14px;min-height:60px" placeholder="e.g. Customer asked for evening delivery">${esc(o.adminNote||'')}</textarea>
+      <button class="b b-ghost b-sm" style="margin-top:6px" onclick="saveAdminNote(${jsq(o._key)})">Save note</button>
     </div>
-    <div class="modal-foot">
-      <button class="b b-ghost" onclick="window.print()">Print</button>
-      <button class="b b-green" style="background:#1a7a35" onclick="closeModal();openPickupModal('${esc(o._key)}')">Pickup Request</button>
+    <div class="modal-foot" style="flex-wrap:wrap">
+      <button class="b b-rose" onclick="delOrder(${jsq(o._key)})" style="margin-right:auto">Delete</button>
+      <button class="b b-ghost" onclick="printInvoice(${jsq(o._key)})">🖨 Invoice</button>
+      <button class="b b-green" style="background:#1a7a35" onclick="closeModal();openPickupModal(${jsq(o._key)})">Pickup</button>
       <button class="b b-green" onclick="closeModal()">Close</button>
     </div>`;
   openModal();
 }
 
+/* printable invoice — alada window e, shudhu invoice print hoy */
+function printInvoice(key){
+  const o = orders.find(x=>x._key===key); if(!o) return;
+  const c = o.customer||{}, s = storeSettings;
+  const w = window.open('', '_blank', 'width=820,height=960');
+  if(!w){ alert('Popup blocked — allow popups for this site to print invoices.'); return; }
+  const rows = (o.items||[]).map((i,n)=>`<tr><td>${n+1}</td><td>${esc(i.name)}</td><td class="r">${money(i.price)}</td><td class="r">${num(i.qty)}</td><td class="r">${money(num(i.price)*num(i.qty))}</td></tr>`).join('');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoice ${esc(o.id)}</title>
+  <style>
+    *{box-sizing:border-box} body{font-family:Arial,Helvetica,sans-serif;color:#222;margin:0;padding:32px;font-size:13px}
+    .top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #EA7317;padding-bottom:16px}
+    .brand{font-size:26px;font-weight:800;color:#2B1810}.brand span{color:#EA7317}
+    .muted{color:#777} h2{margin:0;font-size:22px;letter-spacing:.06em;color:#EA7317}
+    .grid{display:flex;justify-content:space-between;gap:24px;margin:20px 0}
+    .box h4{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#999}
+    table{width:100%;border-collapse:collapse;margin-top:6px} th{background:#f6f1ea;text-align:left;padding:9px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+    td{padding:9px 10px;border-bottom:1px solid #eee} .r{text-align:right}
+    .tot{width:280px;margin-left:auto;margin-top:12px} .tot div{display:flex;justify-content:space-between;padding:5px 0}
+    .tot .g{font-size:17px;font-weight:800;border-top:2px solid #222;margin-top:6px;padding-top:9px}
+    .foot{margin-top:40px;text-align:center;color:#888;font-size:12px;border-top:1px dashed #ccc;padding-top:14px}
+    .stamp{display:inline-block;border:2px solid #1a7a35;color:#1a7a35;font-weight:800;padding:4px 12px;border-radius:6px;transform:rotate(-6deg);margin-top:8px}
+    @media print{ body{padding:12px} .noprint{display:none} }
+  </style></head><body>
+  <div class="noprint" style="text-align:right;margin-bottom:14px"><button onclick="window.print()" style="padding:8px 18px;font-weight:700;cursor:pointer">Print</button></div>
+  <div class="top">
+    <div><div class="brand">${(()=>{ const p=(s.brand||'My Health').split(' '); return `<span>${esc(p[0])}</span> ${esc(p.slice(1).join(' '))}`; })()}</div>
+      <div class="muted">${esc(s.address||'')}<br>${esc(s.hotline||'')}${s.email?' · '+esc(s.email):''}${s.tradeLicense?'<br>Trade Licence: '+esc(s.tradeLicense):''}</div></div>
+    <div style="text-align:right"><h2>INVOICE</h2><div><b>${esc(o.id)}</b></div><div class="muted">${fmtDate(o.placedAt)}</div></div>
+  </div>
+  <div class="grid">
+    <div class="box"><h4>Bill / Ship to</h4><b>${esc(c.name)}</b><br>${esc(c.phone)}<br>${esc(c.address)}<br>${esc(c.district)}, ${esc(c.division)}${c.note?'<br><i>Note: '+esc(c.note)+'</i>':''}</div>
+    <div class="box" style="text-align:right"><h4>Payment</h4>${esc(({cod:'Cash on Delivery',bkash:'bKash',nagad:'Nagad'})[o.payment]||o.payment||'')}
+      ${o.paymentInfo?'<br>TrxID: '+esc(o.paymentInfo.trxId):''}
+      ${o.paymentStatus==='paid' ? '<br><span class="stamp">PAID</span>' : (o.payment==='cod' ? '<br><b>Collect: '+money(o.total)+'</b>' : '')}</div>
+  </div>
+  <table><thead><tr><th>#</th><th>Item</th><th class="r">Price</th><th class="r">Qty</th><th class="r">Amount</th></tr></thead><tbody>${rows}</tbody></table>
+  <div class="tot">
+    <div><span>Subtotal</span><span>${money(o.subtotal)}</span></div>
+    ${num(o.discount)?`<div><span>Discount ${o.coupon?'('+esc(o.coupon)+')':''}</span><span>-${money(o.discount)}</span></div>`:''}
+    <div><span>Delivery</span><span>${num(o.delivery)?money(o.delivery):'FREE'}</span></div>
+    <div class="g"><span>Total</span><span>${money(o.total)}</span></div>
+  </div>
+  <div class="foot">Thank you for shopping with ${esc(s.brand||'us')}!</div>
+  <script>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script>
+  </body></html>`);
+  w.document.close();
+}
+
 /* ============================ SETTINGS ============================ */
 function renderSettings(){
+  const s = storeSettings;
+  const f = (id, label, ph, hint, type) => `<div class="fld"><label for="st_${id}">${label}</label><input id="st_${id}" type="${type||'text'}" value="${esc(s[id]??'')}" placeholder="${esc(ph||'')}">${hint?`<div class="hint">${hint}</div>`:''}</div>`;
   document.getElementById('content').innerHTML = `
-    <div class="panel" style="max-width:560px">
+    ${permWarn('settings')}
+    <div class="panel" style="max-width:760px">
+      <div class="panel-head"><h2>Store Settings</h2><span class="tag-mini">website-e sathe sathe update hoy</span></div>
+      <div style="padding:20px">
+        <div class="form-sec">Brand</div>
+        <div class="g2">${f('brand','Store name *','My Health')}${f('tagline','Tagline','Health, Beauty & Wellness')}</div>
+        ${f('siteUrl','Website URL','https://www.yourshop.com','Your real domain (no / at the end) — used for Google (SEO) links and the sitemap.')}
+        ${f('announcement','Top bar announcement','e.g. 🎉 Eid sale — 20% off with code EID20','Leave empty to show the free-delivery message.')}
+        <div class="fld"><label for="st_footerAbout">Footer about text</label><textarea id="st_footerAbout">${esc(s.footerAbout||'')}</textarea></div>
+
+        <div class="form-sec">Contact</div>
+        <div class="g2">${f('hotline','Hotline / phone','09XXXXXXXXX')}${f('whatsapp','WhatsApp number','8801XXXXXXXXX','Start with 880, no + sign. Enables the WhatsApp button & "Order on WhatsApp".')}</div>
+        <div class="g2">${f('email','Support email','support@yourshop.com')}${f('tradeLicense','Trade licence no.','')}</div>
+        ${f('address','Shop address','House, Road, Area, Dhaka')}
+
+        <div class="form-sec">Delivery charges (৳)</div>
+        <div class="g3">${f('deliveryFee','Inside Dhaka','60','', 'number')}${f('deliveryFeeOuter','Outside Dhaka','120','', 'number')}${f('freeDeliveryOver','Free delivery over','1500','0 = no free delivery','number')}</div>
+
+        <div class="form-sec">bKash / Nagad payment</div>
+        <p style="color:var(--muted);font-size:13px;margin:-4px 0 12px">Number দিলে checkout-এ customer-কে নম্বর দেখাবে এবং Transaction ID চাইবে। খালি রাখলে bKash/Nagad বাছলে আপনি ফোনে পেমেন্ট ডিটেইলস দেবেন।</p>
+        <div class="g2">${f('bkash','bKash number','01XXXXXXXXX')}
+          <div class="fld"><label for="st_bkashType">bKash account type</label><select id="st_bkashType"><option ${s.bkashType!=='Merchant'?'selected':''}>Personal</option><option ${s.bkashType==='Merchant'?'selected':''}>Merchant</option></select><div class="hint">Personal = "Send Money", Merchant = "Payment"</div></div></div>
+        <div class="g2">${f('nagad','Nagad number','01XXXXXXXXX')}
+          <div class="fld"><label for="st_nagadType">Nagad account type</label><select id="st_nagadType"><option ${s.nagadType!=='Merchant'?'selected':''}>Personal</option><option ${s.nagadType==='Merchant'?'selected':''}>Merchant</option></select></div></div>
+
+        <div class="form-sec">Social links</div>
+        <div class="g2">${f('facebook','Facebook page URL','https://facebook.com/yourpage')}${f('instagram','Instagram URL','https://instagram.com/yourshop')}</div>
+        <div class="g2">${f('youtube','YouTube URL','https://youtube.com/@yourshop')}${f('tiktok','TikTok URL','https://tiktok.com/@yourshop')}</div>
+
+        <div class="form-sec">Marketing</div>
+        <div class="g2">${f('fbPixel','Facebook Pixel ID','1234567890','Tracks ViewContent, AddToCart, InitiateCheckout & Purchase for Facebook ads.')}${f('gaId','Google Analytics 4 ID','G-XXXXXXXXXX')}</div>
+
+        <div id="stMsg" style="display:none;font-size:13px;margin:6px 0 12px"></div>
+        <button class="b b-green" onclick="saveStoreSettings()" id="stSaveBtn">Save store settings</button>
+      </div>
+    </div>
+
+    <div class="panel" style="max-width:760px">
       <div class="panel-head"><h2>Account</h2></div>
       <div style="padding:20px">
         <div class="od-row"><span style="color:var(--muted)">Logged in as</span><b>${esc(window.ADMIN_EMAIL||'')}</b></div>
-        <p style="color:var(--muted);font-size:13px;margin:10px 0 16px">Password change korte Firebase Console → Authentication → Users theke koro, ba "Forgot password" reset email use koro.</p>
+        <p style="color:var(--muted);font-size:13px;margin:10px 0 16px">Password বদলাতে নিচের বাটনে চাপুন — আপনার ইমেইলে reset link যাবে।</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="b b-ghost" onclick="window.fauth.sendPasswordResetEmail(window.ADMIN_EMAIL).then(()=>alert('Password reset email sent to '+window.ADMIN_EMAIL)).catch(e=>alert(e.message))">Change password</button>
           <a class="b b-ghost" href="index.html" target="_blank" rel="noopener">View store</a>
           <button class="b" style="background:var(--rose);color:#fff" onclick="logout()">Logout</button>
         </div>
       </div>
     </div>
-    <div class="panel" style="max-width:560px">
+    <div class="panel" style="max-width:760px">
       <div class="panel-head"><h2>Courier API (Steadfast)</h2></div>
       <div style="padding:20px">
         <p style="color:var(--muted);font-size:13px;margin:0 0 14px">
-          Steadfast merchant panel → <b>Settings → API</b> theke Api-Key ar Secret-Key niye ekhane boshao.
-          Save korle Pickup request thika <b>direct Steadfast e parcel</b> create hobe.
+          Steadfast merchant panel → <b>Settings → API</b> থেকে Api-Key আর Secret-Key নিয়ে এখানে বসান।
+          Save করলে Pickup request থেকে <b>সরাসরি Steadfast-এ parcel</b> তৈরি হবে।
         </p>
         <div class="fld"><label>Steadfast Api-Key</label>
-          <input id="sfApiKey" placeholder="${COURIER_KEYS.sfKey ? '•••••••• (saved · '+esc(COURIER_KEYS.sfKey.slice(-4))+')' : 'Api-Key paste koro'}" autocomplete="off"></div>
+          <input id="sfApiKey" placeholder="${COURIER_KEYS.sfKey ? '•••••••• (saved · '+esc(COURIER_KEYS.sfKey.slice(-4))+')' : 'Paste Api-Key'}" autocomplete="off"></div>
         <div class="fld"><label>Steadfast Secret-Key</label>
-          <input id="sfApiSecret" placeholder="${COURIER_KEYS.sfSecret ? '•••••••• (saved · '+esc(COURIER_KEYS.sfSecret.slice(-4))+')' : 'Secret-Key paste koro'}" autocomplete="off"></div>
+          <input id="sfApiSecret" placeholder="${COURIER_KEYS.sfSecret ? '•••••••• (saved · '+esc(COURIER_KEYS.sfSecret.slice(-4))+')' : 'Paste Secret-Key'}" autocomplete="off"></div>
         <div id="sfKeyMsg" style="display:none;font-size:13px;margin:6px 0 12px"></div>
         <button class="b b-green" onclick="saveCourierKeys()">Save Keys</button>
-        <p style="color:var(--muted);font-size:12px;margin-top:12px">
-          Key gulo Firebase e admin-only kore rakha thake — public na. Khali rakhle purono key thakbe (overwrite hobe na).
-        </p>
+        <p style="color:var(--muted);font-size:12px;margin-top:12px">Keys are stored admin-only in Firebase. Leave a box empty to keep the saved key.</p>
       </div>
     </div>
-    <div class="panel" style="max-width:560px">
+    <div class="panel" style="max-width:760px">
       <div class="panel-head"><h2>Image Upload (ImgBB)</h2></div>
       <div style="padding:20px">
         <p style="color:var(--muted);font-size:13px;margin:0 0 14px">
-          <a href="https://api.imgbb.com/" target="_blank" rel="noopener">api.imgbb.com</a> theke free account
-          banie <b>API Key</b> niye ekhane boshao. Save korle Product form-e "Upload" button diye
-          shorasori chobi upload kora jabe — link boshate hobe na, URL nije-e bosbe.
+          <a href="https://api.imgbb.com/" target="_blank" rel="noopener" style="text-decoration:underline">api.imgbb.com</a> থেকে free account খুলে <b>API Key</b> নিয়ে এখানে বসান।
+          তারপর Product/Banner form-এ "Upload" বাটনে সরাসরি ছবি আপলোড করা যাবে।
         </p>
         <div class="fld"><label>ImgBB API Key</label>
-          <input id="imgbbApiKey" placeholder="${IMGBB_KEY ? '•••••••• (saved · '+esc(IMGBB_KEY.slice(-4))+')' : 'API key paste koro'}" autocomplete="off"></div>
+          <input id="imgbbApiKey" placeholder="${IMGBB_KEY ? '•••••••• (saved · '+esc(IMGBB_KEY.slice(-4))+')' : 'Paste API key'}" autocomplete="off"></div>
         <div id="imgbbKeyMsg" style="display:none;font-size:13px;margin:6px 0 12px"></div>
         <button class="b b-green" onclick="saveImgbbKey()">Save Key</button>
-        <p style="color:var(--muted);font-size:12px;margin-top:12px">
-          Key Firebase e admin-only kore rakha thake — public na. Khali rakhle purono key thakbe (overwrite hobe na).
-        </p>
       </div>
     </div>
-    <div class="panel" style="max-width:560px">
-      <div class="panel-head"><h2>Data</h2></div>
+    <div class="panel" style="max-width:760px">
+      <div class="panel-head"><h2>Data &amp; backup</h2></div>
       <div style="padding:20px;display:flex;gap:10px;flex-wrap:wrap">
         <button class="b b-ghost" onclick="exportProducts()">Backup product.js</button>
-        <button class="b b-ghost" onclick="exportOrders()">Export orders CSV</button>
-        <button class="b b-ghost" onclick="downloadSitemap()">sitemap.xml ডাউনলোড</button>
+        <button class="b b-ghost" onclick="exportOrders(orders)">Export all orders (CSV)</button>
+        <button class="b b-ghost" onclick="downloadSitemap()">Download sitemap.xml</button>
         <button class="b b-green" onclick="addMissingProducts()">product.js থেকে নতুন প্রোডাক্ট মার্জ করো</button>
-        <button class="b b-rose" onclick="syncWithProductJs()">Firebase-কে product.js এর সাথে Sync করো (পুরনো delete + নতুন add)</button>
+        <button class="b b-rose" onclick="syncWithProductJs()">Firebase-কে product.js এর সাথে Sync করো</button>
       </div>
       <p style="color:var(--muted);font-size:12px;padding:0 20px 16px;margin:0">
-        product.js ফাইলে নতুন প্রোডাক্ট যোগ করা থাকলে কিন্তু সেগুলো এখনো Firebase-এ পাঠানো হয়নি —
-        এই বাটনে ক্লিক করলে শুধু সেই নতুন প্রোডাক্টগুলো Firebase-এ merge হয়ে যাবে। যেগুলো ইতিমধ্যে আছে সেগুলো ছোঁবে না।
+        <b>Merge</b> — product.js-এ নতুন প্রোডাক্ট থাকলে শুধু সেগুলো Firebase-এ যোগ হবে (বাকিগুলো ছোঁবে না)।
+        <b>Sync</b> — Firebase-কে হুবহু product.js-এর মতো করে দেবে (অতিরিক্তগুলো delete হবে) — সাবধানে ব্যবহার করুন।
+        <b>sitemap.xml</b> — নতুন প্রোডাক্ট যোগ করার পর মাসে একবার ডাউনলোড করে হোস্টিংয়ের root-এ আপলোড করুন।
       </p>
-      <p style="color:var(--muted);font-size:12px;padding:0 20px 16px;margin:0">
-        <b>Sync</b> বাটনটা আরো strong — Firebase-এ যা product.js-এ নেই (যেমন পুরনো fictional-brand বা demo product)
-        সেগুলো <b>delete</b> করে দেবে, আর product.js-এ যা নতুন আছে সেগুলো add করবে। শেষে Firebase আর product.js হুবহু একরকম হয়ে যাবে।
-      </p>
-      <p style="color:var(--muted);font-size:12px;padding:0 20px 16px;margin:0">
-        sitemap.xml — Google-এর জন্য সব প্রোডাক্ট লিংকসহ sitemap বানিয়ে দেয়। নতুন প্রোডাক্ট যোগ করার পর
-        মাসে একবার ডাউনলোড করে হোস্টিংয়ের root-এ আপলোড করলেই যথেষ্ট।
-      </p>
-    </div>
-    <div class="note-box" style="max-width:560px">Product + order sob <b>Firebase</b> e live ase. Sob device theke ek-i data dekhabe.</div>`;
+    </div>`;
+}
+async function saveStoreSettings(){
+  const v = id => (document.getElementById('st_'+id)?.value || '').trim();
+  const msg = document.getElementById('stMsg');
+  const show = (t,ok)=>{ msg.style.display='block'; msg.style.color=ok?'#1a7a35':'#c0392b'; msg.textContent=t; };
+  const data = {};
+  Object.keys(DEFAULT_SETTINGS).forEach(k=>{
+    const el = document.getElementById('st_'+k); if(!el) return;
+    data[k] = typeof DEFAULT_SETTINGS[k] === 'number' ? Math.max(0, num(el.value)) : el.value.trim();
+  });
+  if(!data.brand){ show('Store name is required.', false); return; }
+  data.siteUrl = data.siteUrl.replace(/\/+$/,'');
+  if(data.whatsapp && !/x/i.test(data.whatsapp)){
+    let w = data.whatsapp.replace(/[^0-9]/g,'');
+    if(/^01\d{9}$/.test(w)) w = '88' + w;            // 01XXXXXXXXX -> 8801XXXXXXXXX
+    if(!/^8801\d{9}$/.test(w)){ show('WhatsApp number must look like 8801XXXXXXXXX', false); return; }
+    data.whatsapp = w;
+  }
+  for(const k of ['facebook','instagram','youtube','tiktok']){
+    if(data[k] && !/^https?:\/\//i.test(data[k])){ show(`${k} link must start with https://`, false); return; }
+  }
+  if(data.gaId && !/^G-[A-Z0-9]+$/i.test(data.gaId)){ show('Google Analytics ID must look like G-XXXXXXXXXX', false); return; }
+  if(data.fbPixel && !/^[0-9]{6,20}$/.test(data.fbPixel)){ show('Facebook Pixel ID must be numbers only', false); return; }
+  for(const k of ['bkash','nagad']){
+    if(data[k] && !/^01[0-9]{9}$/.test(data[k].replace(/\D/g,''))){ show(`${k} number must be an 11-digit mobile number (01XXXXXXXXX)`, false); return; }
+    data[k] = data[k].replace(/\D/g,'');
+  }
+  const btn = document.getElementById('stSaveBtn'); btn.disabled = true;
+  try{
+    await window.fdb.ref('settings').set(data);
+    show('Saved ✓ — the website now uses these settings.', true);
+    atoast('Store settings saved ✓');
+  }catch(e){
+    show('Save failed: '+e.message + (e.code==='PERMISSION_DENIED' ? ' — publish the new firebase-rules.json first (see SETUP-GUIDE.md).' : ''), false);
+  }finally{ btn.disabled = false; }
 }
 
-/* client je key boshay seta Firebase adminConfig e save (admin-only).
-   khali box overwrite kore na — sudhu ja deya hoyeche tai update hoy. */
 async function saveCourierKeys(){
   const k = (document.getElementById('sfApiKey').value||'').trim();
   const s = (document.getElementById('sfApiSecret').value||'').trim();
   const msg = document.getElementById('sfKeyMsg');
   const show = (t,ok)=>{ msg.style.display='block'; msg.style.color=ok?'#1a7a35':'#c0392b'; msg.textContent=t; };
-
-  if(!k && !s){ show('Kichu boshale tobe save hobe.', false); return; }
+  if(!k && !s){ show('Paste a key first.', false); return; }
   const payload = {};
   if(k) payload.sfKey = k;
   if(s) payload.sfSecret = s;
@@ -1669,71 +2616,73 @@ async function saveCourierKeys(){
     await window.fdb.ref('adminConfig/courierKeys').update(payload);
     if(k) COURIER_KEYS.sfKey = k;
     if(s) COURIER_KEYS.sfSecret = s;
-    document.getElementById('sfApiKey').value = '';
-    document.getElementById('sfApiSecret').value = '';
-    show('Keys save hoyeche! Ekhon Pickup request direct Steadfast e jabe.', true);
-    renderSettings(); // placeholder e masked value dekhabe
+    renderSettings();
+    atoast('Steadfast keys saved ✓');
   }catch(e){ show('Save failed: '+e.message, false); }
 }
-
-/* ImgBB key save — same pattern as Steadfast courier keys */
 async function saveImgbbKey(){
   const k = (document.getElementById('imgbbApiKey').value||'').trim();
   const msg = document.getElementById('imgbbKeyMsg');
   const show = (t,ok)=>{ msg.style.display='block'; msg.style.color=ok?'#1a7a35':'#c0392b'; msg.textContent=t; };
-  if(!k){ show('Kichu boshale tobe save hobe.', false); return; }
+  if(!k){ show('Paste a key first.', false); return; }
   try{
     await window.fdb.ref('adminConfig/imgbbKey').set(k);
     IMGBB_KEY = k;
-    document.getElementById('imgbbApiKey').value = '';
-    show('Key save hoyeche! Ekhon Product form-e Upload button use kora jabe.', true);
     renderSettings();
+    atoast('ImgBB key saved ✓ — Upload buttons are ready');
   }catch(e){ show('Save failed: '+e.message, false); }
 }
 
 /* ============================ EXPORTS ============================ */
-/* ⚠️ DOMAIN PLACEHOLDER — site je thikanay host korba, seta ekhane boshao (sese / CHARA).
-   app.js er CONFIG.siteUrl, sitemap.xml ar robots.txt eo same domain boshate hobe. */
-const SITE_BASE_URL = 'https://YOUR-DOMAIN.com';
+function siteBase(){ const u = (storeSettings.siteUrl||'').trim(); return (u && !/YOUR-DOMAIN/i.test(u) ? u : SITE_BASE_URL).replace(/\/+$/,''); }
 function downloadSitemap(){
+  const base = siteBase();
   const today = new Date().toISOString().slice(0,10);
-  const staticPages = ['', 'index.html', 'category.html?goal=all', 'track.html', 'account.html',
+  const staticPages = ['', 'category.html?goal=all', 'track.html',
     'page.html?p=about', 'page.html?p=contact', 'page.html?p=delivery',
     'page.html?p=return', 'page.html?p=privacy', 'page.html?p=terms', 'page.html?p=faq'];
-  /* top-level category id -- ei list app.js er CATEGORIES er sathe MIL rekhe cholte hobe */
-  const topCatIds = ['supplements','facecare','haircare','bodycare','makeup','motherbaby','menscare','foods'];
-  const goalIds = CATS.map(c=>c.id);
+  const xmlEsc = s => String(s).replace(/&/g,'&amp;');
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-  staticPages.forEach(p=>{ xml += `  <url><loc>${SITE_BASE_URL}/${p}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq></url>\n`; });
-  topCatIds.forEach(c=>{ xml += `  <url><loc>${SITE_BASE_URL}/category.html?goal=${c}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq></url>\n`; });
-  goalIds.forEach(g=>{ xml += `  <url><loc>${SITE_BASE_URL}/category.html?goal=${g}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq></url>\n`; });
-  products.forEach(p=>{ xml += `  <url><loc>${SITE_BASE_URL}/product.html?id=${p.id}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq></url>\n`; });
+  const add = p => { xml += `  <url><loc>${xmlEsc(base+'/'+p)}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq></url>\n`; };
+  staticPages.forEach(add);
+  TOP_CATEGORIES.forEach(c=> add('category.html?goal='+encodeURIComponent(c.id)));
+  CATEGORY_TREE.forEach(c=> (c.subs||[]).forEach(s=> add('category.html?goal='+encodeURIComponent(s.id))));
+  products.forEach(p=> add('product.html?id='+p.id));
   xml += '</urlset>\n';
   download('sitemap.xml', xml, 'application/xml;charset=utf-8');
   alert(`sitemap.xml ডাউনলোড হচ্ছে (${products.length}টি প্রোডাক্ট)।\nএবার ফাইলটা হোস্টিংয়ের root ফোল্ডারে আপলোড করো।`
-    + (SITE_BASE_URL.includes('YOUR-DOMAIN') ? '\n\nমনে রেখো: admin.html এ SITE_BASE_URL এখনো placeholder — ডোমেইন কেনার পর বদলাতে হবে!' : ''));
+    + (/YOUR-DOMAIN/i.test(base) ? '\n\n⚠️ Website URL এখনো সেট করা নেই — Settings → Store Settings → Website URL-এ আসল ডোমেইন দিয়ে আবার ডাউনলোড করো!' : ''));
 }
 function download(name, text, type){
   const blob = new Blob([text], {type:type||'text/plain'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
 }
+/* CSV cell — Excel formula injection (=, +, -, @) atkate ' prefix */
+const csvCell = v => { let s = String(v==null?'':v); if(/^[=+\-@\t\r]/.test(s)) s = "'" + s; return `"${s.replace(/"/g,'""')}"`; };
 function exportProducts(){
-  const header = `/* MY HEALTH — product.js backup (admin theke export)
-   Eta product.js er content. Use korte: ei file-er bhitor-er sob copy kore
-   tomar product.js e paste koro (ba file ta rename kore product.js koro). */\n\n`;
-  // .txt hisebe namabo -> browser ".js harmful" warning dey na
+  const header = `/* ${storeSettings.brand||'MY HEALTH'} — product.js backup (admin theke export)
+   Use korte: ei file-er bhitor-er sob copy kore product.js e paste koro (ba file rename kore product.js koro). */\n\n`;
   download('product.js.txt', header + 'const PRODUCTS = ' + JSON.stringify(products, null, 2) + ';\n', 'text/plain');
 }
-function exportOrders(){
-  const head = ['Order ID','Date','Name','Phone','Division','District','Address','Items','Subtotal','Discount','Delivery','Total','Payment','Status'];
-  const rows = orders.map(o=>{
+function exportOrders(list){
+  const head = ['Order ID','Date','Name','Phone','Email','Division','District','Address','Note','Items','Subtotal','Discount','Coupon','Delivery','Total','Payment','TrxID','Payment status','Status','Tracking'];
+  const rows = (list||orders).map(o=>{
     const c=o.customer||{};
-    const items=(o.items||[]).map(i=>`${i.name} x${i.qty}`).join(' | ');
-    return [o.id, o.placedAt, c.name, c.phone, c.division, c.district, c.address, items, o.subtotal, o.discount, o.delivery, o.total, o.payment, o.status]
-      .map(v=>`"${String(v==null?'':v).replace(/"/g,'""')}"`).join(',');
+    const items=(o.items||[]).map(i=>`${i.name} x${num(i.qty)}`).join(' | ');
+    return [o.id, o.placedAt, c.name, c.phone, c.email, c.division, c.district, c.address, c.note, items, o.subtotal, o.discount, o.coupon, o.delivery, o.total, o.payment, o.paymentInfo?.trxId, o.paymentStatus, o.status, o.tracking_code]
+      .map(csvCell).join(',');
   });
-  download('myhealth-orders.csv', [head.join(','), ...rows].join('\n'), 'text/csv');
+  download(`orders-${new Date().toISOString().slice(0,10)}.csv`, '﻿' + [head.join(','), ...rows].join('\n'), 'text/csv;charset=utf-8');
+}
+function exportCustomers(){
+  const head = ['Name','Phone','Email','District','Orders','Total spent','Last order'];
+  const rows = customerList().map(c=>[c.name,c.phone,c.email,c.district,c.orders,c.spent,c.last].map(csvCell).join(','));
+  download(`customers-${new Date().toISOString().slice(0,10)}.csv`, '﻿' + [head.join(','), ...rows].join('\n'), 'text/csv;charset=utf-8');
+}
+function exportSubscribers(){
+  const rows = subscribers.map(s=>[s.email, new Date(num(s.ts)).toISOString()].map(csvCell).join(','));
+  download('subscribers.csv', '﻿' + ['Email,Subscribed', ...rows].join('\n'), 'text/csv;charset=utf-8');
 }
 
 /* ============================ MODAL ============================ */
@@ -1743,6 +2692,8 @@ function closeModal(){
   document.removeEventListener('click', msdOutside);
 }
 document.getElementById('modalBg').addEventListener('click', e=>{ if(e.target.id==='modalBg') closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+window.addEventListener('hashchange', ()=>{ const h = location.hash.slice(1); if(appStarted && h !== curTab && TABS.some(t=>t[0]===h)) go(h); });
 </script>
 </body>
 </html>

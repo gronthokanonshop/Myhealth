@@ -4,9 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
 <title>Checkout — My Health</title>
-<meta name="description" content="Secure checkout — order authentic supplements with bKash, Nagad, card or cash on delivery anywhere in Bangladesh." />
+<meta name="description" content="Secure checkout — order authentic products with Cash on Delivery, bKash or Nagad anywhere in Bangladesh." />
 <meta name="robots" content="noindex" />
 <meta name="theme-color" content="#0F5132" />
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
@@ -26,28 +27,24 @@
       <div class="co-card">
         <h3><span class="num">1</span> Contact &amp; Delivery</h3>
         <p class="sub">Tell us where to send your order.</p>
-        <div class="field"><label>Full name *</label><input id="fName" placeholder="Your name" /></div>
+        <div class="field" id="fwName"><label for="fName">Full name *</label><input id="fName" placeholder="Your name" maxlength="100" autocomplete="name" /><div class="field-err">Please enter your name</div></div>
         <div class="f2">
-          <div class="field"><label>Phone number *</label><input id="fPhone" inputmode="numeric" placeholder="01XXXXXXXXX" /></div>
-          <div class="field"><label>Email (optional)</label><input id="fEmail" type="email" placeholder="you@email.com" /></div>
+          <div class="field" id="fwPhone"><label for="fPhone">Phone number *</label><input id="fPhone" type="tel" inputmode="tel" placeholder="01XXXXXXXXX" maxlength="20" autocomplete="tel" /><div class="field-err">Enter a valid 11-digit mobile number (01XXXXXXXXX)</div></div>
+          <div class="field" id="fwEmail"><label for="fEmail">Email (optional)</label><input id="fEmail" type="email" placeholder="you@email.com" maxlength="100" autocomplete="email" /><div class="field-err">Please enter a valid email</div></div>
         </div>
         <div class="f2">
-          <div class="field"><label>Division *</label><select id="fDivision" onchange="loadDistricts()"><option value="">Select division</option></select></div>
-          <div class="field"><label>District *</label><select id="fDistrict"><option value="">Select district</option></select></div>
+          <div class="field" id="fwDivision"><label for="fDivision">Division *</label><select id="fDivision" onchange="loadDistricts()"><option value="">Select division</option></select><div class="field-err">Select your division</div></div>
+          <div class="field" id="fwDistrict"><label for="fDistrict">District *</label><select id="fDistrict" onchange="renderSummary()"><option value="">Select district</option></select><div class="field-err">Select your district</div></div>
         </div>
-        <div class="field"><label>Full address *</label><textarea id="fAddress" placeholder="House, road, area, thana…"></textarea></div>
-        <div class="field"><label>Delivery note (optional)</label><input id="fNote" placeholder="Landmark / instructions" /></div>
+        <div class="field" id="fwAddress"><label for="fAddress">Full address *</label><textarea id="fAddress" placeholder="House, road, area, thana…" maxlength="490" autocomplete="street-address"></textarea><div class="field-err">Please enter your full address</div></div>
+        <div class="field"><label for="fNote">Delivery note (optional)</label><input id="fNote" placeholder="Landmark / instructions" maxlength="290" /></div>
       </div>
 
       <div class="co-card">
         <h3><span class="num">2</span> Payment Method</h3>
         <p class="sub">Choose your preferred payment method.</p>
-        <div class="pay-opts" id="payOpts">
-          <label class="pay-opt sel"><input type="radio" name="pay" value="cod" checked onchange="selPay(this)"><div><b>Cash on Delivery</b><small>Pay cash when you receive it</small></div></label>
-          <label class="pay-opt"><input type="radio" name="pay" value="bkash" onchange="selPay(this)"><div><b>bKash</b><small>Send Money / Payment</small></div></label>
-          <label class="pay-opt"><input type="radio" name="pay" value="nagad" onchange="selPay(this)"><div><b>Nagad</b><small>Mobile payment</small></div></label>
-          <label class="pay-opt"><input type="radio" name="pay" value="card" onchange="selPay(this)"><div><b>Card</b><small>Visa / Mastercard</small></div></label>
-        </div>
+        <div class="pay-opts" id="payOpts"></div>
+        <div id="payDetail"></div>
       </div>
     </div>
 
@@ -56,15 +53,16 @@
       <h3>Order Summary</h3>
       <div id="sumItems"></div>
       <div class="coupon">
-        <input id="couponCode" placeholder="Coupon code (e.g. HEALTH10)" />
-        <button onclick="applyCoupon()">Apply</button>
+        <input id="couponCode" placeholder="Coupon code" autocomplete="off" onkeydown="if(event.key==='Enter') applyCoupon()" />
+        <button onclick="applyCoupon()" id="couponBtn">Apply</button>
       </div>
+      <div class="coupon-note" id="sCoupNote"></div>
       <div class="sumline"><span>Subtotal</span><span id="sSub">৳0</span></div>
-      <div class="sumline" id="sCouponRow" style="display:none; color:var(--leaf)"><span>Discount (<span id="sCouponName"></span>)</span><span id="sCoupon">-৳0</span></div>
-      <div class="sumline"><span>Delivery</span><span id="sDel">৳0</span></div>
+      <div class="sumline" id="sCouponRow" style="display:none; color:var(--leaf)"><span>Discount (<span id="sCouponName"></span>) <button class="coup-x" onclick="removeCoupon()" aria-label="Remove coupon">×</button></span><span id="sCoupon">-৳0</span></div>
+      <div class="sumline"><span>Delivery <small id="sDelArea" style="opacity:.75"></small></span><span id="sDel">৳0</span></div>
       <div class="sumline total"><span>Total</span><span id="sTotal">৳0</span></div>
       <button class="place-order" id="placeBtn" onclick="placeOrder()">Place Order</button>
-      <div class="pay-note">Your information is secure</div>
+      <div class="co-secure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg> Your information is safe with us</div>
     </aside>
   </div>
 </main>
@@ -78,56 +76,91 @@
 <script src="product.js"></script>
 <script src="app.js"></script>
 <script>
-/* ---- BD divisions → districts (subset; pore full list add korte parba) ---- */
+/* ---- Bangladesh: 8 division → 64 district ---- */
 const BD = {
-  "Dhaka": ["Dhaka","Gazipur","Narayanganj","Tangail","Munshiganj","Manikganj","Narsingdi","Kishoreganj","Faridpur"],
-  "Chattogram": ["Chattogram","Cox's Bazar","Cumilla","Feni","Noakhali","Brahmanbaria","Chandpur","Rangamati","Bandarban"],
-  "Sylhet": ["Sylhet","Moulvibazar","Habiganj","Sunamganj"],
-  "Rajshahi": ["Rajshahi","Bogura","Pabna","Sirajganj","Natore","Naogaon","Joypurhat","Chapainawabganj"],
-  "Khulna": ["Khulna","Jashore","Satkhira","Bagerhat","Kushtia","Jhenaidah","Magura","Narail","Chuadanga","Meherpur"],
-  "Barishal": ["Barishal","Bhola","Patuakhali","Pirojpur","Barguna","Jhalokathi"],
-  "Rangpur": ["Rangpur","Dinajpur","Kurigram","Gaibandha","Nilphamari","Lalmonirhat","Thakurgaon","Panchagarh"],
+  "Dhaka": ["Dhaka","Faridpur","Gazipur","Gopalganj","Kishoreganj","Madaripur","Manikganj","Munshiganj","Narayanganj","Narsingdi","Rajbari","Shariatpur","Tangail"],
+  "Chattogram": ["Chattogram","Bandarban","Brahmanbaria","Chandpur","Cox's Bazar","Cumilla","Feni","Khagrachari","Lakshmipur","Noakhali","Rangamati"],
+  "Rajshahi": ["Rajshahi","Bogura","Chapainawabganj","Joypurhat","Naogaon","Natore","Pabna","Sirajganj"],
+  "Khulna": ["Khulna","Bagerhat","Chuadanga","Jashore","Jhenaidah","Kushtia","Magura","Meherpur","Narail","Satkhira"],
+  "Barishal": ["Barishal","Barguna","Bhola","Jhalokathi","Patuakhali","Pirojpur"],
+  "Sylhet": ["Sylhet","Habiganj","Moulvibazar","Sunamganj"],
+  "Rangpur": ["Rangpur","Dinajpur","Gaibandha","Kurigram","Lalmonirhat","Nilphamari","Panchagarh","Thakurgaon"],
   "Mymensingh": ["Mymensingh","Jamalpur","Netrokona","Sherpur"]
 };
-let couponPct = 0, couponName = "";
+const GUEST_KEY = 'myhealth_checkout_info';
+let coupon = null;          // validated coupon object
+let pendingOrderId = null;  // retry korle same ID (duplicate order hoy na)
 /* checkout form live re-render e reset hoye jeto — tai ei page e off */
 window.NO_LIVE_RERENDER = true;
 
 function initPage(){
-  // empty cart guard
+  dropUnavailable();
   if(cartTotals().count === 0){
     document.getElementById('coWrap').innerHTML = `
       <div class="success">
         <h1>Your cart is empty</h1>
-        <p>Add some supplements before checking out.</p>
+        <p>Add some products before checking out.</p>
         <a class="btn btn-green" style="margin-top:18px" href="category.html?goal=all">Browse products</a>
       </div>`;
     return;
   }
-  // divisions
   const dv = document.getElementById('fDivision');
   Object.keys(BD).forEach(d=> dv.insertAdjacentHTML('beforeend', `<option value="${d}">${d}</option>`));
-  // cart drawer e coupon apply kora thakle ekhane o auto-apply
-  const saved = getCoupon();
-  if(saved){
-    couponPct = CONFIG.coupons[saved]; couponName = saved;
-    document.getElementById('couponCode').value = saved;
-  }
-  // logged-in customer hole shob shomoy e save kora naam/phone/thikana bosiye dei
+  renderPayOpts();
+
+  // guest-er age-r thikana (ei device e) — abar type korte hobe na
+  try{
+    const g = JSON.parse(localStorage.getItem(GUEST_KEY)||'null');
+    if(g) fillForm(g);
+  }catch(e){}
+  // logged-in customer hole profile theke
   if(window.fauth){
     window.fauth.onAuthStateChanged(user=>{ if(user) prefillFromProfile(user); });
   }
+  // drawer-e apply kora coupon — server e abar check kori (expired/off hole sorai)
+  const saved = getCoupon();
+  if(saved){
+    coupon = saved;
+    document.getElementById('couponCode').value = saved.code;
+    validateCoupon(saved.code).then(c=>{ coupon = c; setCoupon(c); renderSummary(); })
+      .catch(e=>{ coupon = null; setCoupon(null); document.getElementById('couponCode').value=''; toast(e.message+' — coupon removed', 2600); renderSummary(); });
+  }
+  // inline error clear on input
+  ['fName','fPhone','fEmail','fDivision','fDistrict','fAddress'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', ()=> document.getElementById('fw'+id.slice(1))?.classList.remove('invalid'));
+  });
+  document.getElementById('fPhone').addEventListener('blur', e=>{ const n = normalizePhone(e.target.value); if(/^01\d{9}$/.test(n)) e.target.value = n; });
   renderSummary();
+  const t = cartTotals();
+  trackEvent('InitiateCheckout', { value:t.total, num_items:t.count, content_ids:Object.keys(cart).map(Number) });
 }
 
+/* delete hoye jaoa / stock-out product cart theke sorai (order e jeno na jay) */
+function dropUnavailable(){
+  const removed = [];
+  Object.keys(cart).forEach(id=>{
+    const p = findP(id);
+    if(!p || !inStock(p)){ removed.push(p ? p.name : 'An item'); delete cart[id]; }
+  });
+  if(removed.length){
+    saveCart(); updateCartUI();
+    setTimeout(()=> toast(`${removed.length} unavailable item${removed.length>1?'s were':' was'} removed from your cart`, 3200), 400);
+  }
+}
+
+function fillForm(g){
+  const setIfEmpty = (id, v) => { const el = document.getElementById(id); if(el && !el.value && v) el.value = v; };
+  setIfEmpty('fName', g.name); setIfEmpty('fPhone', g.phone); setIfEmpty('fEmail', g.email); setIfEmpty('fAddress', g.address);
+  if(g.division && BD[g.division] && !val('fDivision')){
+    document.getElementById('fDivision').value = g.division; loadDistricts();
+    if(g.district && BD[g.division].includes(g.district)) document.getElementById('fDistrict').value = g.district;
+  }
+}
 function prefillFromProfile(user){
   window.fdb.ref('users/'+user.uid).once('value').then(snap=>{
-    const p = snap.val(); if(!p) return;
-    const setIfEmpty = (id, v) => { const el = document.getElementById(id); if(el && !el.value && v) el.value = v; };
-    setIfEmpty('fName', p.name);
-    setIfEmpty('fPhone', p.phone);
-    setIfEmpty('fAddress', p.address);
-    setIfEmpty('fEmail', user.email);
+    const p = snap.val() || {};
+    fillForm({ name:p.name, phone:p.phone, address:p.address, email:user.email, division:p.division, district:p.district });
+    renderSummary();
   }).catch(()=>{});
 }
 
@@ -135,129 +168,228 @@ function loadDistricts(){
   const dv = document.getElementById('fDivision').value;
   const dd = document.getElementById('fDistrict');
   dd.innerHTML = `<option value="">Select district</option>`;
-  (BD[dv]||[]).forEach(c=> dd.insertAdjacentHTML('beforeend', `<option value="${c}">${c}</option>`));
-  // Dhaka district = free/standard delivery; baire = outer fee
+  (BD[dv]||[]).forEach(c=> dd.insertAdjacentHTML('beforeend', `<option value="${esc(c)}">${esc(c)}</option>`));
+  if(dv === 'Dhaka') dd.value = 'Dhaka';
   renderSummary();
 }
 
+/* ---- Payment options: COD sob somoy; bKash/Nagad — number set thakle TrxID lage ---- */
+function renderPayOpts(){
+  const opts = [
+    { id:'cod',   label:'Cash on Delivery', sub:'Pay cash when you receive it' },
+    { id:'bkash', label:'bKash',            sub: CONFIG.bkash ? 'Pay now with bKash' : 'Pay with bKash — we\'ll share details by phone' },
+    { id:'nagad', label:'Nagad',            sub: CONFIG.nagad ? 'Pay now with Nagad' : 'Pay with Nagad — we\'ll share details by phone' },
+  ];
+  document.getElementById('payOpts').innerHTML = opts.map((o,i)=>`
+    <label class="pay-opt ${i===0?'sel':''}"><input type="radio" name="pay" value="${o.id}" ${i===0?'checked':''} onchange="selPay(this)"><div><b>${o.label}</b><small>${esc(o.sub)}</small></div></label>`).join('');
+}
 function selPay(el){
   document.querySelectorAll('.pay-opt').forEach(o=>o.classList.remove('sel'));
   el.closest('.pay-opt').classList.add('sel');
+  renderPayDetail();
+}
+const payNumber = m => m==='bkash' ? CONFIG.bkash : m==='nagad' ? CONFIG.nagad : '';
+const payType   = m => (m==='bkash' ? CONFIG.bkashType : CONFIG.nagadType) === 'Merchant' ? 'Payment' : 'Send Money';
+function renderPayDetail(){
+  const m = document.querySelector('input[name=pay]:checked')?.value;
+  const box = document.getElementById('payDetail');
+  const num = payNumber(m);
+  if(!num){ box.innerHTML = ''; return; }
+  const name = m==='bkash' ? 'bKash' : 'Nagad';
+  const {total} = currentTotals();
+  box.innerHTML = `
+    <div class="pay-detail">
+      <b>How to pay with ${name}</b>
+      <ol>
+        <li>Open your ${name} app and choose <b>${payType(m)}</b></li>
+        <li>Send <b id="payAmt">${money(total)}</b> to <span class="pnum">${esc(num)}</span><button type="button" class="copy" onclick="copyText('${esc(num)}')">Copy</button></li>
+        <li>Enter the Transaction ID below and place your order</li>
+      </ol>
+      <div class="f2">
+        <div class="field" id="fwTrx"><label for="fTrx">Transaction ID *</label><input id="fTrx" placeholder="e.g. 8N7A6D5C4B" maxlength="30" autocomplete="off" style="text-transform:uppercase" oninput="document.getElementById('fwTrx').classList.remove('invalid')"><div class="field-err">Enter the ${name} Transaction ID</div></div>
+        <div class="field" id="fwSender"><label for="fSender">Sent from number *</label><input id="fSender" type="tel" inputmode="tel" placeholder="01XXXXXXXXX" maxlength="20" oninput="document.getElementById('fwSender').classList.remove('invalid')"><div class="field-err">Enter the number you paid from</div></div>
+      </div>
+    </div>`;
+}
+function copyText(t){
+  (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject())
+    .then(()=> toast('Copied ✓')).catch(()=> prompt('Copy:', t));
 }
 
-function deliveryFee(){
+function deliveryFee(sub){
   const district = document.getElementById('fDistrict')?.value || "";
-  const {sub} = cartTotals();
-  if(sub >= CONFIG.freeDeliveryOver) return 0;
+  if(!sub) return 0;
+  if(freeDeliveryOn() && sub >= CONFIG.freeDeliveryOver) return 0;
   if(district && district !== "Dhaka") return CONFIG.deliveryFeeOuter;
   return CONFIG.deliveryFee;
 }
+function currentTotals(){
+  const {sub, count} = cartTotals();
+  const discount = couponDiscount(coupon, sub);
+  const del = deliveryFee(sub);
+  return { sub, count, discount, del, total: sub - discount + del };
+}
 
 function renderSummary(){
-  const {sub} = cartTotals();
   document.getElementById('sumItems').innerHTML = Object.keys(cart).map(id=>{
     const p=findP(id); if(!p) return ""; const q=cart[id];
-    const img = imgHTML(p);
     return `<div class="sum-item">
-      <div class="si-img">${img}</div>
-      <div style="flex:1; min-width:0"><div class="nm">${p.name}</div><div class="qp">${money(p.price)} × ${q}</div></div>
+      <div class="si-img">${imgHTML(p)}</div>
+      <div style="flex:1; min-width:0"><div class="nm">${esc(p.name)}</div><div class="qp">${money(p.price)} × ${q}</div></div>
       <div class="lp">${money(p.price*q)}</div>
     </div>`;
   }).join('');
 
-  const del = deliveryFee();
-  const discount = Math.round(sub * couponPct / 100);
-  const total = sub - discount + del;
-
+  const {sub, discount, del, total} = currentTotals();
+  const district = val('fDistrict');
   document.getElementById('sSub').textContent = money(sub);
   document.getElementById('sDel').textContent = del===0 ? "FREE" : money(del);
+  document.getElementById('sDelArea').textContent = !district ? '' : (district==='Dhaka' ? '(inside Dhaka)' : '(outside Dhaka)');
   const cr = document.getElementById('sCouponRow');
-  if(couponPct>0){ cr.style.display='flex'; document.getElementById('sCouponName').textContent=couponName;
-    document.getElementById('sCoupon').textContent = "-"+money(discount); }
-  else cr.style.display='none';
+  if(coupon && discount>0){
+    cr.style.display='flex'; document.getElementById('sCouponName').textContent=coupon.code;
+    document.getElementById('sCoupon').textContent = "-"+money(discount);
+  } else cr.style.display='none';
+  document.getElementById('sCoupNote').textContent = (coupon && coupon.minOrder && sub < coupon.minOrder)
+    ? `${coupon.code}: add ${money(coupon.minOrder - sub)} more to apply (min order ${money(coupon.minOrder)})` : '';
   document.getElementById('sTotal').textContent = money(total);
+  const pa = document.getElementById('payAmt'); if(pa) pa.textContent = money(total);
 }
 
 function applyCoupon(){
-  const code = (document.getElementById('couponCode').value||'').trim().toUpperCase();
-  if(CONFIG.coupons[code]){ couponPct = CONFIG.coupons[code]; couponName = code; setCoupon(code);
-    toast(`Coupon ${code} applied · ${couponPct}% off ✓`); }
-  else { couponPct=0; couponName=''; setCoupon(''); toast("Invalid coupon code"); }
-  renderSummary();
+  const code = (document.getElementById('couponCode').value||'').trim();
+  if(!code){ toast('Enter a coupon code'); return; }
+  const btn = document.getElementById('couponBtn'); btn.disabled = true;
+  validateCoupon(code).then(c=>{
+    coupon = c; setCoupon(c);
+    const sub = cartTotals().sub;
+    toast(c.minOrder && sub < c.minOrder ? `Add ${money(c.minOrder - sub)} more to use ${c.code}` : `Coupon ${c.code} applied · ${couponText(c)} ✓`, 2600);
+  }).catch(e=>{ toast(e.message); })
+    .finally(()=>{ btn.disabled = false; renderSummary(); });
+}
+function removeCoupon(){ coupon = null; setCoupon(null); document.getElementById('couponCode').value=''; renderSummary(); toast('Coupon removed'); }
+
+/* unguessable order ID — MH + 10 char (0/O/1/I bade, phone e porte shubidha) */
+function newOrderId(){
+  const A = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const r = new Uint8Array(6);
+  (window.crypto || window.msCrypto).getRandomValues(r);
+  return 'MH' + Date.now().toString(36).toUpperCase().slice(-4) + [...r].map(b=>A[b % A.length]).join('');
 }
 
+function invalid(fieldId, bad){ document.getElementById(fieldId)?.classList.toggle('invalid', !!bad); return !!bad; }
 function placeOrder(){
-  const name = val('fName'), phone = val('fPhone'), div = val('fDivision'),
-        dist = val('fDistrict'), addr = val('fAddress');
-  if(!name || !phone || !div || !dist || !addr){ toast("Please fill all required fields *"); return; }
-  if(!/^01\d{9}$/.test(phone)){ toast("Enter a valid 11-digit phone (01XXXXXXXXX)"); return; }
+  if(!Object.keys(cart).length){ location.reload(); return; }
+  const name = val('fName'), phone = normalizePhone(val('fPhone')), email = val('fEmail'),
+        div = val('fDivision'), dist = val('fDistrict'), addr = val('fAddress');
+  const pay = document.querySelector('input[name=pay]:checked')?.value || 'cod';
+  const needTrx = !!payNumber(pay);
+  const trx = needTrx ? val('fTrx').toUpperCase().replace(/\s+/g,'') : '';
+  const sender = needTrx ? normalizePhone(val('fSender')) : '';
 
-  const pay = document.querySelector('input[name=pay]:checked').value;
-  const {sub} = cartTotals();
-  const del = deliveryFee();
-  const discount = Math.round(sub*couponPct/100);
+  let bad = false;
+  bad = invalid('fwName', !name) || bad;
+  bad = invalid('fwPhone', !/^01[3-9]\d{8}$/.test(phone)) || bad;
+  bad = invalid('fwEmail', email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) || bad;
+  bad = invalid('fwDivision', !div) || bad;
+  bad = invalid('fwDistrict', !dist) || bad;
+  bad = invalid('fwAddress', addr.length < 6) || bad;
+  if(needTrx){
+    bad = invalid('fwTrx', !/^[A-Z0-9]{6,30}$/.test(trx)) || bad;
+    bad = invalid('fwSender', !/^01\d{9}$/.test(sender)) || bad;
+  }
+  if(bad){
+    toast('Please fix the highlighted fields');
+    document.querySelector('.field.invalid')?.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  document.getElementById('fPhone').value = phone;
+
+  const {sub, discount, del, total} = currentTotals();
   const uid = (window.fauth && window.fauth.currentUser) ? window.fauth.currentUser.uid : null;
+  if(!pendingOrderId) pendingOrderId = newOrderId();
+  const customer = { name, phone, division:div, district:dist, address:addr };
+  if(email) customer.email = email;
+  if(val('fNote')) customer.note = val('fNote');
   const order = {
-    id: "MH" + Date.now().toString().slice(-8),
+    id: pendingOrderId,
     items: Object.keys(cart).map(id=>{
       const p = findP(id); if(!p) return null;
       return { id:Number(id), name:p.name, qty:cart[id], price:p.price };
     }).filter(Boolean),
-    customer: { name, phone, email:val('fEmail'), division:div, district:dist, address:addr, note:val('fNote') },
-    payment: pay, subtotal:sub, discount, coupon:couponName, delivery:del, total: sub-discount+del,
+    customer,
+    payment: pay, subtotal:sub, discount, coupon: (coupon && discount>0) ? coupon.code : '', delivery:del, total,
     status: "pending", placedAt: new Date().toISOString()
   };
-  if(uid) order.uid = uid; /* logged-in customer hole order-e uid rakhi -> account.html "Order History"-te dekhabe */
+  if(needTrx) order.paymentInfo = { trxId: trx, sender };
+  if(uid) order.uid = uid;
 
-  /* ===========================================================
-     Order Firebase e push hocche -> admin panel e (sob device) dekha jabe.
-     Firebase na thakle localStorage fallback.
-     =========================================================== */
+  // ei device e thikana mone rakhi (porer bar auto-fill)
+  try{ localStorage.setItem(GUEST_KEY, JSON.stringify({ name, phone, email, division:div, district:dist, address:addr })); }catch(e){}
+
   const placeBtn = document.getElementById('placeBtn');
-  if(placeBtn){ placeBtn.disabled = true; placeBtn.textContent = 'Placing order…'; }
+  const resetBtn = () => { placeBtn.disabled = false; placeBtn.textContent = 'Place Order'; };
+  placeBtn.disabled = true; placeBtn.textContent = 'Placing order…';
 
   function done(){
-    cart = {}; saveCart(); setCoupon(''); updateCartUI();
-    showOrderSuccess(order, name, div, dist, pay);
+    cart = {}; saveCart(); setCoupon(null); updateCartUI();
+    trackEvent('Purchase', { value: order.total, content_ids: order.items.map(i=>i.id), content_type:'product', num_items: order.items.length });
+    pendingOrderId = null;
+    showOrderSuccess(order);
   }
 
-  if(window.fdb){
-    /* order.id (MH...) key hisebe use kori — Track Order page ei id diye khoje pay */
-    window.fdb.ref('orders/'+order.id).set(order)
-      .then(()=>{
-        /* logged-in hole account.html "Order History"-r jonno ekta lightweight reference o rakhi.
-           Ei write fail hole o order age-i shophol hoyeche — tai eta guest checkout ke block kore na. */
-        if(uid) window.fdb.ref('users/'+uid+'/orders/'+order.id).set(Date.now()).catch(()=>{});
-        done();
-      })
-      .catch(err=>{
-        if(placeBtn){ placeBtn.disabled = false; placeBtn.textContent = 'Place Order'; }
-        alert('Order save failed: ' + err.message + '\nPlease check your internet and try again.');
-      });
-  } else {
-    try {
-      const all = JSON.parse(localStorage.getItem('myhealth_orders') || '[]');
-      all.unshift(order);
-      localStorage.setItem('myhealth_orders', JSON.stringify(all));
-    } catch(e){}
-    done();
+  if(!window.fdb){
+    resetBtn();
+    alert('Could not connect to the server. Please check your internet connection and try again.');
+    return;
   }
+  const ref = window.fdb.ref('orders/'+order.id);
+  const timeout = new Promise((_,rej)=> setTimeout(()=> rej(new Error('timeout')), 20000));
+  Promise.race([ref.set(order), timeout])
+    .then(()=>{
+      if(uid){
+        window.fdb.ref('users/'+uid+'/orders/'+order.id).set(Date.now()).catch(()=>{});
+        // profile e thikana na thakle save kore dei
+        window.fdb.ref('users/'+uid).once('value').then(s=>{
+          const pf = s.val()||{};
+          const upd = {};
+          if(!pf.phone) upd.phone = phone;
+          if(!pf.address) upd.address = addr;
+          if(!pf.division){ upd.division = div; upd.district = dist; }
+          if(Object.keys(upd).length) window.fdb.ref('users/'+uid).update(upd).catch(()=>{});
+        }).catch(()=>{});
+      }
+      done();
+    })
+    .catch(err=>{
+      /* age-r try te order hoyto already save hoyeche (network slow chilo) — check kori */
+      ref.once('value').then(s=>{
+        const o = s.val();
+        if(o && o.customer && o.customer.phone === phone){ done(); return; }
+        resetBtn();
+        alert(err.message === 'timeout'
+          ? 'Your connection seems slow — the order could not be confirmed. Please check your internet and tap "Place Order" again.'
+          : 'Sorry, the order could not be placed. Please try again, or call us' + (CONFIG.hotline ? ' at ' + CONFIG.hotline : '') + '.');
+      }).catch(()=>{ resetBtn(); alert('Could not reach the server. Please check your internet connection and try again.'); });
+    });
 }
 
-function showOrderSuccess(order, name, div, dist, pay){
-  // WhatsApp confirmation message (dokan number thakle button dekhabe)
-  const waMsg = `Hi! I've just placed an order.\nOrder ID: ${order.id}\nName: ${name}\nTotal: ${money(order.total)}\nPlease confirm it. Thank you!`;
-  const waBtn = (CONFIG.whatsapp && !CONFIG.whatsapp.includes('X'))
-    ? `<a class="btn btn-wa" style="margin-top:10px" target="_blank" rel="noopener" href="${waLink(waMsg)}">Confirm on WhatsApp</a>` : '';
+function showOrderSuccess(order){
+  const c = order.customer;
+  const wa = waNumber();
+  const waMsg = `Hi! I've just placed an order.\nOrder ID: ${order.id}\nName: ${c.name}\nTotal: ${money(order.total)}\nPlease confirm it. Thank you!`;
+  const waBtn = wa ? `<a class="btn btn-wa" style="margin-top:10px" target="_blank" rel="noopener" href="${waLink(waMsg)}">Confirm on WhatsApp</a>` : '';
 
   document.getElementById('coWrap').innerHTML = `
     <div class="success">
       <div class="ok">✓</div>
       <h1>Order placed successfully!</h1>
-      <p>Thank you, ${name}! We'll call you shortly to confirm your order.</p>
-      <div class="oid">Order ID: ${order.id}</div>
-      <p style="font-size:14px">Payment: <b>${payLabel(pay)}</b> · Total: <b>${money(order.total)}</b></p>
-      <p style="font-size:14px">Delivery to: ${dist}, ${div}</p>
+      <p>Thank you, ${esc(c.name)}! We'll call you shortly on <b>${esc(c.phone)}</b> to confirm your order.</p>
+      <div class="oid">Order ID: ${esc(order.id)} <button class="coup-x" style="width:auto;height:auto;padding:3px 10px;border-radius:999px;font-size:12px" onclick="copyText('${esc(order.id)}')">Copy</button></div>
+      <p style="font-size:14px">Payment: <b>${payLabel(order.payment)}</b> · Total: <b>${money(order.total)}</b></p>
+      ${order.paymentInfo ? `<p style="font-size:13px">Transaction ID: <b>${esc(order.paymentInfo.trxId)}</b> — we'll verify your payment and confirm.</p>` : ''}
+      <p style="font-size:14px">Delivery to: ${esc(c.district)}, ${esc(c.division)}</p>
+      <p style="font-size:12.5px">Save your Order ID — you'll need it with your phone number to track the order.</p>
       <div class="success-acts">
         <a class="btn btn-green" href="track.html?id=${encodeURIComponent(order.id)}">Track order</a>
         <a class="btn btn-ghost-green" href="index.html">Continue shopping</a>
@@ -268,7 +400,7 @@ function showOrderSuccess(order, name, div, dist, pay){
   launchConfetti();
 }
 
-/* ---- Confetti — order shofol hole celebration (brand colors) 🎊 ---- */
+/* ---- Confetti — order shofol hole celebration (brand colors) ---- */
 function launchConfetti(){
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const c = document.createElement('canvas');

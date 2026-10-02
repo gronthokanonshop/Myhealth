@@ -6,6 +6,7 @@
 <title>Shop All Products — My Health</title>
 <meta name="description" content="Browse supplements, face care, hair care, body care, makeup, mother & baby and more — 100% authentic products delivered across Bangladesh." />
 <meta name="theme-color" content="#0F5132" />
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
@@ -16,22 +17,23 @@
 <div id="site-header"></div>
 
 <main class="wrap">
-  <div class="crumb"><a href="index.html">Home</a><span>›</span><span id="crumbCat">All Supplements</span></div>
+  <div class="crumb"><a href="index.html">Home</a><span>›</span><span id="crumbParent" style="display:none"></span><span id="crumbParentSep" style="display:none">›</span><span id="crumbCat">All Products</span></div>
 
   <div class="cat-hero">
-    <h1 id="catTitle">All Supplements</h1>
-    <p id="catDesc">Browse our full range of authentic supplements and nutrition.</p>
+    <h1 id="catTitle">All Products</h1>
+    <p id="catDesc">Browse our full range of authentic products.</p>
   </div>
 
   <div class="cat-results">
     <div class="cat-toolbar">
       <button class="filter-btn" onclick="openFilterDrawer()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
-        Filter
+        Filter <span class="fcount" id="filterCount" style="display:none"></span>
       </button>
       <div class="count" id="resultCount"></div>
-      <select id="sortBy" onchange="render()">
+      <select id="sortBy" onchange="resetPaging(); render()" aria-label="Sort products">
         <option value="pop">Sort: Popular</option>
+        <option value="new">Newest first</option>
         <option value="low">Price: Low → High</option>
         <option value="high">Price: High → Low</option>
         <option value="disc">Biggest discount</option>
@@ -39,7 +41,9 @@
       </select>
     </div>
 
+    <div class="chips" id="activeChips"></div>
     <div class="grid" id="catGrid"></div>
+    <button class="btn btn-outline-dark load-more" id="loadMore" style="display:none" onclick="pageSize += PAGE; render()">Load more products</button>
   </div>
 </main>
 
@@ -57,8 +61,21 @@
       <button onclick="setTag('best')" data-tag="best">Best sellers</button>
       <button onclick="setTag('new')" data-tag="new">New arrivals</button>
     </div>
+    <h4>Price (৳)</h4>
+    <div class="fprice">
+      <input id="fMin" type="number" inputmode="numeric" min="0" placeholder="Min" oninput="onPriceInput()">
+      <span>–</span>
+      <input id="fMax" type="number" inputmode="numeric" min="0" placeholder="Max" oninput="onPriceInput()">
+    </div>
+    <h4>Availability</h4>
+    <div class="fbrands" style="max-height:none">
+      <label class="fcheck"><input type="checkbox" id="fStock" onchange="inStockOnly=this.checked; resetPaging(); render()"> In stock only</label>
+    </div>
+    <h4>Brand</h4>
+    <div class="fbrands" id="brandFilters"></div>
+    <button class="fclear" onclick="clearFilters()">Clear all filters</button>
   </div>
-  <div class="drawer-foot"><button class="btn btn-dark" style="width:100%; justify-content:center" onclick="closeFilterDrawer()">Show results</button></div>
+  <div class="drawer-foot"><button class="btn btn-dark" style="width:100%; justify-content:center" onclick="closeFilterDrawer()" id="showResultsBtn">Show results</button></div>
 </aside>
 
 <footer id="site-footer"></footer>
@@ -69,88 +86,142 @@
 <script src="firebase-config.js"></script>
 <script src="product.js"></script>
 <script src="app.js"></script>
+<script src="ai.js"></script>
 <script>
 let activeGoal = param('goal') || 'all';
-let activeTag  = 'all';
+let activeTag  = ['flash','best','new'].includes(param('tag')) ? param('tag') : 'all';
 let searchQ    = (param('q') || '').toLowerCase().trim();
-
-/* activeGoal ekhon EITHER ekta subcategory id (jemon "immunity")
-   OR ekta top-level category id (jemon "facecare") hote pare. */
-function productMatchesGoal(p, filterId){
-  if(filterId === 'all') return true;
-  if(p.goal === filterId) return true;
-  const cat = categoryObj(filterId);
-  return !!cat && cat.subs.some(s=>s.id===p.goal);
-}
+let priceMin = null, priceMax = null, inStockOnly = false;
+let brandSel = new Set();
+const PAGE = 24;
+let pageSize = PAGE;
+function resetPaging(){ pageSize = PAGE; }
 
 function initPage(){
-  // sidebar: category accordion, each with its subcategories + counts
-  const counts = {};
-  PRODUCTS.forEach(p=> counts[p.goal] = (counts[p.goal]||0)+1 );
-  const catCount = c => c.subs.reduce((s,sub)=> s+(counts[sub.id]||0), 0);
+  // category accordion — protita category + subcategory, product count soho
+  const countOf = id => PRODUCTS.filter(p=>productInCat(p,id)).length;
   const gf = document.getElementById('goalFilters');
   gf.innerHTML =
     `<button class="fcat-all" onclick="setGoal('all')" data-goal="all"><span>All Products</span><span class="c">${PRODUCTS.length}</span></button>` +
     CATEGORIES.map(c=>`
-      <details class="fcat-group" data-cat="${c.id}">
-        <summary onclick="event.preventDefault(); setGoal('${c.id}');" data-goal="${c.id}">
-          <span>${c.label}</span><span class="c">${catCount(c)}</span>
+      <details class="fcat-group" data-cat="${esc(c.id)}">
+        <summary onclick="event.preventDefault(); setGoal('${esc(c.id)}');" data-goal="${esc(c.id)}">
+          <span>${esc(c.label)}</span><span class="c">${countOf(c.id)}</span>
         </summary>
         <div class="fcat-subs">
-          ${c.subs.map(s=>`<button onclick="setGoal('${s.id}')" data-goal="${s.id}"><span>${s.label}</span><span class="c">${counts[s.id]||0}</span></button>`).join('')}
+          ${(c.subs||[]).map(s=>`<button onclick="setGoal('${esc(s.id)}')" data-goal="${esc(s.id)}"><span>${esc(s.label)}</span><span class="c">${countOf(s.id)}</span></button>`).join('')}
         </div>
       </details>`).join('');
 
-  // if arrived via search, show it in the global search box
   if(searchQ){ const s=document.getElementById('globalSearch'); if(s) s.value = searchQ; }
 
   applyHero();
+  renderBrands();
   render();
 }
 
-function setGoal(id){ activeGoal=id; searchQ=''; applyHero(); render(); closeFilterDrawer(); }
-function setTag(t){ activeTag=t; render(); }
-function openFilterDrawer(){ document.getElementById('filterDrawer')?.classList.add('open'); document.getElementById('filterOverlay')?.classList.add('open'); }
-function closeFilterDrawer(){ document.getElementById('filterDrawer')?.classList.remove('open'); document.getElementById('filterOverlay')?.classList.remove('open'); }
+function setGoal(id){ activeGoal=id; searchQ=''; brandSel.clear(); resetPaging(); applyHero(); renderBrands(); render(); closeFilterDrawer(); syncUrl(); }
+function setTag(t){ activeTag=t; resetPaging(); render(); syncUrl(); }
+function openFilterDrawer(){ openPanel('filterDrawer','filterOverlay'); }
+function closeFilterDrawer(){ closePanel('filterDrawer','filterOverlay'); }
+let priceTimer;
+function onPriceInput(){
+  clearTimeout(priceTimer);
+  priceTimer = setTimeout(()=>{
+    const mn = parseInt(document.getElementById('fMin').value,10), mx = parseInt(document.getElementById('fMax').value,10);
+    priceMin = isNaN(mn) ? null : mn; priceMax = isNaN(mx) ? null : mx;
+    resetPaging(); render();
+  }, 300);
+}
+function toggleBrand(b, on){ on ? brandSel.add(b) : brandSel.delete(b); resetPaging(); render(); }
+function clearFilters(){
+  activeTag='all'; priceMin=priceMax=null; inStockOnly=false; brandSel.clear();
+  document.getElementById('fMin').value=''; document.getElementById('fMax').value='';
+  document.getElementById('fStock').checked=false;
+  resetPaging(); renderBrands(); render(); syncUrl();
+}
+/* URL e goal/tag rakhi — share/back button thik kaj kore */
+function syncUrl(){
+  const u = new URL(location.href);
+  u.searchParams.set('goal', activeGoal);
+  activeTag==='all' ? u.searchParams.delete('tag') : u.searchParams.set('tag', activeTag);
+  if(!searchQ) u.searchParams.delete('q');
+  history.replaceState(null, '', u);
+}
 
 function applyHero(){
-  const sub = goalObj(activeGoal);          // subcategory match
-  const cat = categoryObj(activeGoal);      // top-level category match
+  const sub = goalObj(activeGoal);
+  const cat = categoryObj(activeGoal);
+  const parent = sub ? categoryObj(sub.parent) : null;
   const label = sub ? sub.label : (cat ? cat.label : null);
   const title = searchQ ? `Results for “${searchQ}”` : (label ? label : "All Products");
   document.getElementById('catTitle').textContent = title;
   document.getElementById('crumbCat').textContent = title;
+  const cp = document.getElementById('crumbParent'), cps = document.getElementById('crumbParentSep');
+  if(parent && !searchQ){
+    cp.innerHTML = `<a href="category.html?goal=${encodeURIComponent(parent.id)}">${esc(parent.label)}</a>`;
+    cp.style.display = cps.style.display = '';
+  } else cp.style.display = cps.style.display = 'none';
   document.getElementById('catDesc').textContent = sub
-    ? `Curated ${sub.label.toLowerCase()} picks — ${sub.note}.`
+    ? `Curated ${sub.label.toLowerCase()} picks${sub.note ? ' — '+sub.note : ''}.`
     : (cat ? `Browse all ${cat.label.toLowerCase()} products.` : "Browse our full range of authentic products.");
-  // mark active buttons/accordion
+  document.title = title + ' — ' + CONFIG.brand;
   document.querySelectorAll('[data-goal]').forEach(b=> b.classList.toggle('on', b.dataset.goal===activeGoal));
-  const openGroup = sub ? document.querySelector(`.fcat-group[data-cat="${categoryOf(sub.id)?.id}"]`) : document.querySelector(`.fcat-group[data-cat="${activeGoal}"]`);
+  const openGroup = sub ? document.querySelector(`.fcat-group[data-cat="${CSS.escape(sub.parent)}"]`) : document.querySelector(`.fcat-group[data-cat="${CSS.escape(activeGoal)}"]`);
   document.querySelectorAll('.fcat-group').forEach(d=> d.open = (d===openGroup));
 }
 
+/* goal + search diye base list (brand/price/stock filter er AGE) */
+function baseList(){
+  const words = searchQ ? searchQ.split(/\s+/) : [];
+  return PRODUCTS.filter(p=> productInCat(p, activeGoal) && (!words.length || words.every(w=>searchText(p).includes(w))));
+}
+function renderBrands(){
+  const counts = {};
+  baseList().forEach(p=>{ if(p.brand) counts[p.brand] = (counts[p.brand]||0)+1; });
+  const brands = Object.keys(counts).sort((a,b)=>a.localeCompare(b));
+  document.getElementById('brandFilters').innerHTML = brands.length
+    ? brands.map(b=>`<label class="fcheck"><input type="checkbox" ${brandSel.has(b)?'checked':''} onchange="toggleBrand(this.dataset.b, this.checked)" data-b="${esc(b)}"> ${esc(b)}<span class="c">${counts[b]}</span></label>`).join('')
+    : `<div class="tag-mini" style="padding:4px 10px">No brands</div>`;
+}
+
 function render(){
-  let list = PRODUCTS.filter(p=>{
-    const mg = productMatchesGoal(p, activeGoal);
-    const mt = activeTag==='all'  || (p.tags||[]).includes(activeTag);
-    const mq = !searchQ || p.name.toLowerCase().includes(searchQ) ||
-               goalLabel(p.goal).toLowerCase().includes(searchQ) || (p.brand||'').toLowerCase().includes(searchQ);
-    return mg && mt && mq;
+  let list = baseList().filter(p=>{
+    if(activeTag!=='all' && !(p.tags||[]).includes(activeTag)) return false;
+    if(priceMin!=null && p.price < priceMin) return false;
+    if(priceMax!=null && p.price > priceMax) return false;
+    if(inStockOnly && !inStock(p)) return false;
+    if(brandSel.size && !brandSel.has(p.brand)) return false;
+    return true;
   });
 
   const sort = document.getElementById('sortBy').value;
-  const disc = p => 1 - p.price/p.oldPrice;
+  const disc = p => p.oldPrice ? 1 - p.price/p.oldPrice : 0;
   if(sort==='low')  list.sort((a,b)=>a.price-b.price);
   if(sort==='high') list.sort((a,b)=>b.price-a.price);
   if(sort==='disc') list.sort((a,b)=>disc(b)-disc(a));
-  if(sort==='rate') list.sort((a,b)=>b.rating-a.rating);
+  if(sort==='rate') list.sort((a,b)=>(b.rating||0)-(a.rating||0));
+  if(sort==='new')  list.sort((a,b)=>(b.id||0)-(a.id||0));
+  list.sort(stockFirst);   // stable sort — out of stock sobar sheshe
 
   document.getElementById('resultCount').textContent = `${list.length} product${list.length!==1?'s':''} found`;
   document.getElementById('catGrid').innerHTML = list.length
-    ? list.map(productCard).join('')
+    ? list.slice(0, pageSize).map(productCard).join('')
     : `<div style="grid-column:1/-1; text-align:center; padding:60px; color:var(--muted)">
-         No products match. Try another category or search.</div>`;
+         No products match these filters.<br><button class="btn btn-outline-dark" style="margin-top:16px" onclick="clearFilters()">Clear filters</button></div>`;
+  document.getElementById('loadMore').style.display = list.length > pageSize ? '' : 'none';
+  document.getElementById('showResultsBtn').textContent = `Show ${list.length} result${list.length!==1?'s':''}`;
   document.querySelectorAll('[data-tag]').forEach(b=> b.classList.toggle('on', b.dataset.tag===activeTag));
+
+  // active filter chips
+  const chips = [];
+  if(activeTag!=='all') chips.push([({flash:'On sale',best:'Best sellers',new:'New arrivals'})[activeTag], `setTag('all')`]);
+  if(priceMin!=null || priceMax!=null) chips.push([`${priceMin!=null?money(priceMin):'৳0'} – ${priceMax!=null?money(priceMax):'any'}`, `priceMin=priceMax=null;document.getElementById('fMin').value='';document.getElementById('fMax').value='';render()`]);
+  if(inStockOnly) chips.push(['In stock only', `inStockOnly=false;document.getElementById('fStock').checked=false;render()`]);
+  brandSel.forEach(b=> chips.push([b, `toggleBrand(${esc(JSON.stringify(b))}, false);renderBrands()`]));
+  document.getElementById('activeChips').innerHTML = chips.map(([t,fn])=>`<span class="chip">${esc(t)}<button onclick="${fn}" aria-label="Remove filter">×</button></span>`).join('');
+  const fc = document.getElementById('filterCount');
+  fc.textContent = chips.length; fc.style.display = chips.length ? '' : 'none';
 }
 </script>
 </body>
