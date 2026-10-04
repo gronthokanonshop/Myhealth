@@ -4,699 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
 <title>My Health — Authentic Health, Beauty & Wellness in Bangladesh</title>
-<meta name="description" content="Shop genuine vitamins & supplements, face care, hair care, body care, makeup, mother & baby and men's care. 100% authentic, fast delivery, bKash & Nagad." />
-<meta name="theme-color" content="#0F5132" />
+<meta name="description" content="Shop genuine vitamins & supplements, face care, hair care, body care, makeup, mother & baby and men's care. 100% authentic, fast delivery, Cash on Delivery, bKash & Nagad." />
+<meta name="theme-color" content="#3BB77E" />
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Lato:wght@400;700;900&family=Sora:wght@800&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
 <link rel="stylesheet" href="style.css">
-<style>
-/* ─── TRUST STRIP — perfect alignment fix ─── */
-.trust-card-single {
-  display: flex;
-  flex-wrap: nowrap;           /* desktop: 1 row */
-  align-items: stretch;        /* equal height columns */
-  justify-content: center;
-  gap: 0;
-}
-
-.trust-item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;         /* icon + text vertically centered */
-  gap: 12px;
-  flex: 1 1 0;
-  min-width: 0;
-  padding: 18px 20px;
-  text-align: left;
-}
-
-/* divider between items */
-.trust-item + .trust-item {
-  border-left: 1px solid rgba(0,0,0,.07);
-}
-
-.ti-badge {
-  flex-shrink: 0;
-  width: 52px;
-  height: 52px;
-  min-width: 52px;
-  min-height: 52px;
-  border-radius: 50%;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  position: relative;
-  overflow: visible;
-  /* reset any inherited padding/margin that shifts content */
-  padding: 0 !important;
-  margin: 0;
-  line-height: 1;
-  font-size: 0;       /* collapse any whitespace-based gap */
-}
-
-/* force the SVG inside ti-badge to be centered and not stretch */
-.ti-badge svg {
-  display: block !important;
-  width: 22px !important;
-  height: 22px !important;
-  flex-shrink: 0;
-  position: static !important;
-  top: auto !important;
-  left: auto !important;
-  transform: none !important;
-  margin: 0 !important;
-}
-
-.trust-item > div {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 0;
-}
-
-.trust-item b {
-  font-size: 1.05rem;
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.trust-item span {
-  font-size: .8rem;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-.trust-item small {
-  font-size: .72rem;
-  line-height: 1.35;
-  opacity: .65;
-  /* clamp to 2 lines so varying text length doesn't break alignment */
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* ─── CATEGORY NAV HEADER ─── */
-.cat-nav-section {
-  padding-top: 32px !important;
-  padding-bottom: 28px !important;
-}
-
-.cat-nav-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  gap: 16px;
-}
-
-.cat-nav-title-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.cat-nav-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: .7rem;
-  font-weight: 700;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: #0F5132;
-  background: rgba(15,81,50,.09);
-  border-radius: 999px;
-  padding: 4px 10px;
-  width: fit-content;
-}
-
-.cat-nav-title {
-  font-size: 1.6rem !important;
-  font-weight: 800 !important;
-  line-height: 1.15 !important;
-  margin: 0 !important;
-  color: #1a1a1a;
-}
-
-.cat-nav-title em {
-  font-style: normal;
-  color: #0F5132;
-}
-
-.cat-nav-sub {
-  font-size: .82rem;
-  color: #888;
-  margin: 0;
-  line-height: 1.4;
-}
-
-.cat-nav-all {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: .8rem;
-  font-weight: 600;
-  color: #0F5132;
-  white-space: nowrap;
-  padding: 7px 14px;
-  border: 1.5px solid rgba(15,81,50,.3);
-  border-radius: 999px;
-  text-decoration: none;
-  transition: background .18s, border-color .18s;
-  flex-shrink: 0;
-  align-self: center;
-}
-
-.cat-nav-all:hover {
-  background: rgba(15,81,50,.07);
-  border-color: #0F5132;
-}
-
-/* ─── CATEGORY CHIP — bigger round image ─── */
-.cat-chips-row {
-  display: flex !important;
-  flex-wrap: wrap;
-  gap: 16px 20px;
-  justify-content: flex-start;
-}
-
-.cat-chip {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  gap: 10px !important;
-  text-align: center;
-  flex-shrink: 0;
-  text-decoration: none;
-  min-width: 88px;
-  transition: transform .18s;
-}
-
-.cat-chip:hover {
-  transform: translateY(-3px);
-}
-
-.cat-chip > span:last-child {
-  font-size: .78rem;
-  font-weight: 600;
-  color: #222;
-  line-height: 1.3;
-  max-width: 88px;
-}
-
-.cc-img {
-  width: 88px !important;
-  height: 88px !important;
-  border-radius: 50% !important;
-  overflow: hidden !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  flex-shrink: 0;
-  border: 2.5px solid rgba(15,81,50,.12);
-  background: #f5f2ec;
-  box-shadow: 0 2px 10px rgba(0,0,0,.07);
-  transition: border-color .18s, box-shadow .18s;
-}
-
-.cat-chip:hover .cc-img {
-  border-color: #0F5132;
-  box-shadow: 0 4px 18px rgba(15,81,50,.15);
-}
-
-.cc-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.cc-initial {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: #0F5132;
-}
-
-/* ─── MOBILE (≤ 640px) ─── */
-@media (max-width: 640px) {
-
-  /* Trust: 2×2 grid */
-  .trust-card-single {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    flex-wrap: wrap;
-  }
-
-  .trust-item {
-    padding: 14px 12px;
-    gap: 10px;
-  }
-
-  /* remove left border on 1st column items */
-  .trust-item:nth-child(odd) {
-    border-left: none;
-  }
-
-  /* bottom border between rows */
-  .trust-item:nth-child(-n+2) {
-    border-bottom: 1px solid rgba(0,0,0,.07);
-  }
-
-  .ti-badge {
-    width: 40px;
-    height: 40px;
-  }
-
-  .trust-item b {
-    font-size: .9rem;
-  }
-
-  .trust-item span {
-    font-size: .72rem;
-  }
-
-  .trust-item small {
-    font-size: .67rem;
-  }
-
-  /* Category nav header — stack on mobile */
-  .cat-nav-head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 18px;
-  }
-
-  .cat-nav-title {
-    font-size: 1.25rem !important;
-  }
-
-  .cat-nav-sub {
-    display: none; /* save space on mobile */
-  }
-
-  /* Category chips — horizontal scroll on mobile */
-  .cat-chips-row {
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-    gap: 12px 14px !important;
-    padding-bottom: 10px;
-    scrollbar-width: none;
-  }
-  .cat-chips-row::-webkit-scrollbar { display: none; }
-
-  .cat-chip {
-    scroll-snap-align: start;
-    min-width: 72px !important;
-    flex: 0 0 auto !important;   /* override style.css @620px: .cat-chip{ flex:0 0 76px } */
-  }
-
-  .cc-img {
-    width: 70px !important;
-    height: 70px !important;
-  }
-
-  .cat-chip > span:last-child {
-    font-size: .72rem;
-    max-width: 70px;
-  }
-}
-
-/* ─── TABLET (641–1024px) ─── */
-@media (min-width: 641px) and (max-width: 1024px) {
-  .trust-card-single {
-    flex-wrap: wrap;
-  }
-  .trust-item {
-    flex: 1 1 45%;
-    min-width: 45%;
-  }
-  .trust-item:nth-child(odd) {
-    border-left: none;
-  }
-  .trust-item:nth-child(-n+2) {
-    border-bottom: 1px solid rgba(0,0,0,.07);
-  }
-}
-
-/* ─── PRODUCT CARD — slightly smaller than original 265px ─── */
-
-article.card {
-  width: 230px !important;
-  min-width: 230px !important;
-  max-width: 230px !important;
-  flex: 0 0 230px !important;
-  border-radius: 12px !important;
-  overflow: hidden !important;
-  box-sizing: border-box !important;
-}
-
-/* image container */
-article.card .card-img {
-  height: 220px !important;
-  width: 100% !important;
-  aspect-ratio: unset !important;   /* style.css এ aspect-ratio:1/1 আছে — এটা cancel করতে হবে */
-  overflow: hidden !important;
-  position: relative !important;
-  flex-shrink: 0 !important;
-}
-
-article.card .card-img img,
-article.card .card-img .img-ph,
-article.card .card-img .img-emoji {
-  width: 100% !important;
-  height: 100% !important;
-  display: block !important;
-}
-
-article.card .card-img img {
-  object-fit: contain !important;
-  position: static !important;
-}
-
-/* placeholder — center এ রাখো, full height fill করো */
-article.card .card-img .img-ph,
-article.card .card-img .img-emoji {
-  position: absolute !important;
-  inset: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  flex-direction: column !important;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* placeholder এর ভেতরের a tag যেটা absolute inset:0 নেয় */
-article.card .card-img a {
-  position: absolute !important;
-  inset: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 58px !important;
-}
-
-article.card .card-img a img {
-  position: static !important;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;
-}
-
-/* info body — natural padding, left-aligned */
-article.card .card-body {
-  padding: 11px 12px 13px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 4px !important;
-  text-align: left !important;
-}
-
-/* brand label */
-article.card .card-brand {
-  font-size: 10px !important;
-  font-weight: 600 !important;
-  letter-spacing: .03em !important;
-  text-transform: uppercase !important;
-  display: block !important;
-  color: var(--muted) !important;
-}
-
-/* product name */
-article.card .card-name {
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  line-height: 1.3 !important;
-  color: var(--ink) !important;
-  text-align: left !important;
-  display: -webkit-box !important;
-  -webkit-line-clamp: 2 !important;
-  -webkit-box-orient: vertical !important;
-  overflow: hidden !important;
-  min-height: 34px !important;
-}
-
-article.card .card-name a {
-  font-size: inherit !important;
-  line-height: inherit !important;
-  color: inherit !important;
-}
-
-/* price row — left aligned */
-article.card .price-row {
-  display: flex !important;
-  align-items: baseline !important;
-  gap: 6px !important;
-  flex-wrap: wrap !important;
-  margin-top: auto !important;
-  padding-top: 3px !important;
-  text-align: left !important;
-}
-
-article.card .price {
-  font-size: 15px !important;
-  font-weight: 700 !important;
-}
-
-article.card .old {
-  font-size: 11px !important;
-  opacity: .55 !important;
-  text-decoration: line-through !important;
-}
-
-/* add to cart button */
-article.card .add {
-  font-size: 11px !important;
-  height: 30px !important;
-  width: 100% !important;
-  border-radius: 7px !important;
-  margin-top: 5px !important;
-}
-
-/* discount badge */
-article.card .disc {
-  font-size: 10px !important;
-  padding: 3px 7px !important;
-}
-
-/* wishlist button */
-article.card .wish {
-  width: 30px !important;
-  height: 30px !important;
-  font-size: 14px !important;
-}
-
-/* quick view */
-article.card .qv-btn {
-  font-size: 11px !important;
-}
-
-/* carousel gap */
-.carousel {
-  gap: 12px !important;
-}
-
-/* ─── MOBILE ─── */
-@media (max-width: 640px) {
-  article.card {
-    width: 155px !important;
-    min-width: 155px !important;
-    max-width: 155px !important;
-    flex: 0 0 155px !important;
-  }
-
-  article.card .card-img {
-    height: 155px !important;
-    aspect-ratio: unset !important;
-  }
-
-  article.card .card-img img,
-  article.card .card-img .img-ph,
-  article.card .card-img .img-emoji {
-    height: 155px !important;
-    max-height: 155px !important;
-  }
-
-  article.card .card-name {
-    font-size: 12px !important;
-    min-height: 30px !important;
-  }
-
-  article.card .price {
-    font-size: 13px !important;
-  }
-}
-
-/* ─── TOP HERO BANNER — the image itself has the headline baked in, so
-   there's no overlay text to protect anymore. Simplify: no forced
-   aspect-ratio, no object-fit:cover — just show the picture at its own
-   natural shape, full width, nothing ever cropped, at every screen size. */
-/* ⚠️ FIX: age ei 3ta rule unconditionally .hero-banner/.hero-banner-img/.hero-main
-   e lagto — image upload na thakle (fresh install, ba admin "Remove" korle)
-   .hero-banner height:auto + kono image na thaka + .hero-main display:none
-   mile pura hero section 0px hoye ADRISHYO hoye jeto (kono gradient/text/button
-   kichu e dekha jeto na). Ekhon shudhu .has-img thakle e (mane real chobi
-   load hoyeche) ei "no-overlay-text, picture as-is" mode e jay — nahole
-   style.css-er original gradient+text hero fallback hisebe dekhay. */
-.hero-banner.has-img {
-  min-height: 0 !important;
-  height: auto !important;
-  width: 100% !important;
-  aspect-ratio: unset !important;
-  border-radius: var(--r-lg) !important;
-  overflow: hidden !important;
-  box-sizing: border-box !important;
-}
-
-.hero-banner.has-img .hero-banner-img {
-  display: block !important;
-  position: static !important;
-  inset: auto !important;
-  width: 100% !important;
-  height: auto !important;
-  object-fit: contain !important;
-}
-
-.hero-banner.has-img .hero-main {
-  display: none !important;
-}
-
-/* ─── BOTTOM PROMO BANNERS — 2-in-a-row becomes a 1-at-a-time slider ───
-   style.css uses `.promo-row{ display:grid; grid-template-columns:1fr 1fr }`
-   (stacking to 1 column only below 620px). We replace that grid with a
-   proper slider at every screen size: same row/space, one banner visible,
-   smoothly sliding into the other, with dots to jump between them.
-
-   Real bug behind the "cut off" banner: sizePromoSlider() used to measure
-   each slide's pixel height with offsetHeight BEFORE the admin-uploaded
-   <img> had finished loading, so it locked in a wrong (too-short) height —
-   then object-fit:cover cropped hard into the picture to fill that wrong
-   box. A guessed fixed aspect-ratio isn't the right fix either, because
-   every banner an admin uploads can be a different shape — the box needs
-   to match WHATEVER image gets uploaded, not one hardcoded ratio.
-
-   The real fix: object-fit:contain (never crops, whatever the image's
-   shape) + JS that waits for the image to actually finish loading, reads
-   its real naturalWidth/naturalHeight, and sizes the slider to exactly
-   that image's own proportions at the current track width. See
-   sizePromoSlider() in the script below. */
-.promo-row,
-.promo-slider {
-  display: block !important;
-  width: 100% !important;
-}
-
-.promo-slider {
-  position: relative !important;
-  overflow: hidden !important;
-  border-radius: var(--r-lg) !important;
-  height: auto !important;
-  min-height: 120px !important; /* fallback only, until JS measures the real image/content */
-  background: var(--cream) !important; /* shows through if an image is narrower than the slider's fixed height */
-}
-
-.promo-track {
-  display: flex !important;
-  height: 100% !important;
-  transition: transform .6s cubic-bezier(.4,0,.2,1) !important;
-}
-
-.promo-track .promo-slide {
-  flex: 0 0 100% !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  height: 100% !important;
-  box-sizing: border-box !important;
-  margin: 0 !important;
-}
-
-.promo-track .promo-slide.promo {
-  display: flex !important;
-  align-items: center !important;
-}
-
-.promo-track .promo-slide img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important; /* never crops — whatever shape the uploaded image is, it shows in full */
-  display: block !important;
-}
-
-.promo-dots {
-  position: absolute !important;
-  bottom: 12px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  display: flex !important;
-  gap: 6px !important;
-  z-index: 3 !important;
-}
-
-.promo-dot {
-  width: 7px !important;
-  height: 7px !important;
-  border-radius: 50% !important;
-  background: rgba(255,255,255,.55) !important;
-  cursor: pointer !important;
-  transition: width .25s, background .25s !important;
-  border: none !important;
-  padding: 0 !important;
-}
-
-.promo-dot.active {
-  width: 20px !important;
-  border-radius: 5px !important;
-  background: #fff !important;
-}
-
-/* ─── MOBILE tweaks for hero + promo ───
-   Per request: drop the text block on mobile entirely — just show the
-   banner photo, sized so it fits/displays properly (no cropping, no
-   overlay text to fight with). */
-@media (max-width: 640px) {
-  /* ⚠️ ei duita-o .has-img scope-e — na hole choto screen-e o image
-     upload na thakle hero section adrishyo hoye jay (dekho upore-r comment) */
-  .hero-banner.has-img {
-    aspect-ratio: unset !important;
-    height: auto !important;
-    min-height: 0 !important;
-    display: block !important;
-    border-radius: 14px !important;
-  }
-
-  .hero-banner.has-img .hero-banner-img {
-    position: static !important;
-    inset: auto !important;
-    display: block !important;
-    width: 100% !important;
-    height: auto !important;
-    object-fit: contain !important;
-  }
-
-  .promo-slider {
-    border-radius: 14px !important;
-  }
-
-  .promo-track .promo-slide.promo {
-    padding: 16px 18px !important;
-  }
-
-  .promo-text h3 {
-    font-size: 13px !important;
-  }
-
-  .promo-text .big {
-    font-size: 20px !important;
-  }
-}
-</style>
 <!-- ⚠️ DOMAIN PLACEHOLDER: niche "https://YOUR-DOMAIN.com" gulo domain kenar por real URL diye bodlao -->
 <script type="application/ld+json">
 {
@@ -731,72 +45,22 @@ article.card .qv-btn {
 
 <main class="wrap">
 
-  <section class="hero hero-light">
-    <div class="hero-banner" id="heroBanner">
-      <img class="hero-banner-img" id="heroBannerImg" alt="" fetchpriority="high">
-      <div class="hero-main">
-        <span class="hero-eyebrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4.5"/></svg>
-          100% Authentic · Lab-tested
-        </span>
-        <h1>Everything for your <em>health &amp; beauty</em></h1>
-        <p>Genuine supplements, skincare, haircare, makeup and mother &amp; baby essentials — verified imports, honest prices, delivered fast.</p>
-        <div class="hero-cta">
-          <a class="btn btn-dark" href="#categoryRows">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-            Shop by category
-          </a>
-          <a class="btn btn-outline-dark" href="category.html?goal=all">Browse all products</a>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- HERO — admin > Banners (hero image / "Hero slider" banners). Chobi na thakle designed text hero -->
+  <section class="hero"><div class="hero-slider" id="heroSlider"></div></section>
 
-  <section class="trust">
-    <div class="trust-card-single" id="trustCard">
-      <div class="trust-item">
-        <span class="ti-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></span>
-        <div><b>2,000+</b><span>Products</span><small>Wide range of authentic brands</small></div>
-      </div>
-      <div class="trust-item">
-        <span class="ti-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.5 3-5.5 6-5.5s6 2 6 5.5"/><circle cx="17" cy="9" r="2.3"/><path d="M15.5 14.2c2.4.3 4.5 2 4.5 5.3"/></svg></span>
-        <div><b>50k+</b><span>Happy Customers</span><small>Trusted by thousands across the country</small></div>
-      </div>
-      <div class="trust-item">
-        <span class="ti-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="12" height="9" rx="1"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17.5" cy="18" r="1.6"/></svg></span>
-        <div><b>64</b><span>Districts Delivery</span><small>Fast &amp; reliable delivery to your doorstep</small></div>
-      </div>
-      <div class="trust-item">
-        <span class="ti-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4.5"/></svg></span>
-        <div><b>100% Authentic</b><span>Lab-tested Products</span><small>Original products, assured quality</small></div>
-      </div>
-    </div>
-  </section>
+  <!-- SERVICE CARDS -->
+  <section class="svc-row" id="svcRow"></section>
 
-  <section class="section promo-row" id="heroBanners"></section>
-
-  <section class="section cat-nav-section">
-    <div class="cat-nav-head">
-      <div class="cat-nav-title-wrap">
-        <span class="cat-nav-pill">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-          Categories
-        </span>
-        <h2 class="cat-nav-title">Shop by <em>Category</em></h2>
-        <p class="cat-nav-sub">Find exactly what you need — from supplements to skincare</p>
-      </div>
-      <a class="cat-nav-all" href="category.html?goal=all">
-        Browse all
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-    </div>
-    <div class="cat-chips-row" id="catIconsRow"></div>
-  </section>
-
+  <!-- FEATURED CATEGORIES -->
   <section class="section">
-    <div class="sec-head"><div><div class="eyebrow">Loved by customers</div><h2>Best Selling Products</h2></div>
-      <a class="seeall" href="category.html?goal=all">See all →</a></div>
-    <div class="carousel" id="bestRow"></div>
+    <div class="sec-head">
+      <h2>Featured Categories</h2>
+      <div class="sec-tools">
+        <div class="pill-tabs" id="featLinks"></div>
+        <div class="sl-btns"><button class="sl-btn" onclick="scrollRow('catSlider',-1)" aria-label="Previous"></button><button class="sl-btn" onclick="scrollRow('catSlider',1)" aria-label="Next"></button></div>
+      </div>
+    </div>
+    <div class="cat-slider" id="catSlider"></div>
   </section>
 
   <!-- AI Health Assistant — ai.js render kore, admin > AI Assistant theke control -->
@@ -818,8 +82,38 @@ article.card .qv-btn {
     </div>
   </section>
 
-  <!-- Each category gets its own colored banner + product row (JS-filled, see initPage) -->
-  <div id="categoryRows"></div>
+  <!-- 3 PROMO BANNERS — admin > Banners ("Promo row") -->
+  <section class="promo3" id="promoRow"></section>
+
+  <!-- FLASH SALE (tag: flash) -->
+  <section class="section" id="flashSec" style="display:none">
+    <div class="sec-head">
+      <div class="flash-head">
+        <h2><span id="flashIco"></span> Flash Sale</h2>
+        <div class="countdown" aria-label="Time left">Ends in <span id="cdH">00</span><i>:</i><span id="cdM">00</span><i>:</i><span id="cdS">00</span></div>
+      </div>
+      <div class="sec-tools">
+        <a class="seeall" href="category.html?goal=all&tag=flash">View all →</a>
+        <div class="sl-btns"><button class="sl-btn" onclick="scrollRow('flashRow',-1)" aria-label="Previous"></button><button class="sl-btn" onclick="scrollRow('flashRow',1)" aria-label="Next"></button></div>
+      </div>
+    </div>
+    <div class="carousel" id="flashRow"></div>
+  </section>
+
+  <!-- POPULAR PRODUCTS with category tabs -->
+  <section class="section">
+    <div class="sec-head">
+      <h2>Popular Products</h2>
+      <div class="pill-tabs" id="popTabs"></div>
+    </div>
+    <div class="pgrid" id="popGrid"></div>
+  </section>
+
+  <!-- SHOP BY CATEGORY — protita category-r box + product row -->
+  <section class="section">
+    <div class="sec-head"><h2>Shop by Category</h2><a class="seeall" href="category.html?goal=all">All Products →</a></div>
+    <div id="categoryRows"></div>
+  </section>
 
   <section class="section" id="recentSec" style="display:none">
     <div class="sec-head"><div><div class="eyebrow">Pick up where you left off</div><h2>Recently Viewed</h2></div></div>
@@ -834,13 +128,24 @@ article.card .qv-btn {
     </div>
   </section>
 
+  <!-- NEWSLETTER / CTA -->
   <section class="section">
-    <div class="news">
-      <div><h2>Get health tips &amp; offers</h2><p>Join our newsletter for supplement guides and members-only discounts.</p></div>
-      <form onsubmit="event.preventDefault(); subscribeNewsletter(this);">
-        <input type="email" placeholder="Your email address" aria-label="Email address" maxlength="100" required />
-        <button class="btn btn-lime" type="submit">Subscribe</button>
-      </form>
+    <div class="cta-band">
+      <div>
+        <span class="chip">Members-only deals</span>
+        <h2>Stay healthy, <em>save more</em> every week</h2>
+        <p>Get health tips, new arrivals and subscriber-only coupons straight to your inbox. No spam — unsubscribe anytime.</p>
+      </div>
+      <div class="cta-side">
+        <form class="cta-form" onsubmit="event.preventDefault(); subscribeNewsletter(this);">
+          <input type="email" placeholder="Your email address" aria-label="Email address" maxlength="100" required />
+          <button type="submit">Subscribe</button>
+        </form>
+        <div class="cta-links">
+          <a class="btn btn-light" href="category.html?goal=all">Browse all products →</a>
+          <a class="btn btn-ghost" href="page.html?p=contact">Contact us</a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -856,223 +161,218 @@ article.card .qv-btn {
 <script src="app.js"></script>
 <script src="ai.js"></script>
 <script>
-/* Hero-r pichoner ekta fixed background image — admin panel > Banners >
-   "Hero Banner Image" theke upload kora hoy (rotating na, EKTAI fixed chobi).
-   Chobi na thakle plain gradient background e text overlay thik moto e dekhabe. */
-function loadHeroImage(){
-  const box = document.getElementById('heroBanner');
-  const imgEl = document.getElementById('heroBannerImg');
-  if(!box || !imgEl || !window.fdb) return;
-  window.fdb.ref('heroImage').once('value').then(snap=>{
-    const url = snap.val();
-    if(!url) return;
-    box.classList.add('has-img');
-    /* image full download hoyar por smooth fade-in — hothat "pop" kore
-       dekha jaoar bodole nice transition, load-e kono delay dekhay na */
-    imgEl.onload = () => imgEl.classList.add('loaded');
-    imgEl.src = url;
-  }).catch(()=>{});
+/* =========================================================================
+   HOMEPAGE — sob section product + Firebase banner theke render hoy
+   ========================================================================= */
+const has = (p,t) => (p.tags || []).includes(t);
+const bestFirst = (a,b) => stockFirst(a,b) || (has(b,'best') - has(a,'best')) || ((b.rating||0) - (a.rating||0)) || ((b.reviews||0) - (a.reviews||0));
+let HERO_IMG = '', BANNERS = [], bannersLoaded = false;
+
+/* Firebase theke ekbar (hero image + banner) — tarpor initPage abar render kore */
+function loadBanners(){
+  if(!window.fdb){ bannersLoaded = true; return Promise.resolve(); }
+  const get = path => window.fdb.ref(path).once('value').then(s=>s.val(), ()=>null);
+  return Promise.all([get('heroImage'), get('banners')]).then(([hero, banners])=>{
+    HERO_IMG = typeof hero === 'string' ? hero : '';
+    BANNERS = banners ? Object.values(banners).filter(b=>b && b.active!==false).sort((a,b)=>(a.order||0)-(b.order||0)) : [];
+    bannersLoaded = true;
+  });
 }
 
-/* Hero banner-gula (age hardcoded chilo) ekhon admin panel > Banners theke
-   maintain kora jay — Firebase 'banners' node theke pore, khali thakle ei
-   default duita dekhay (fallback, jate hero-side kokhono khali na thake). */
-const DEFAULT_BANNERS = [
-  { title:"Protein Festival", subtitle:"Whey, mass gainer & BCAA", bigText:"Up to 35% OFF", link:"category.html?goal=muscle", theme:"a" },
-  { title:"First order?", subtitle:"Use code HEALTH10", bigText:"Extra 10% OFF", link:"", theme:"b" },
-];
-const BANNER_ICONS = {
-  a: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 9-9 9-9-9V4a2 2 0 0 1 2-2h7z"/><circle cx="7.5" cy="7.5" r="1.3"/></svg>`,
-  b: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="4" rx="1"/><rect x="4" y="13" width="16" height="8" rx="1"/><path d="M12 9v12M12 9c-1.5-4-6-4-6-1.5S9 9 12 9zM12 9c1.5-4 6-4 6-1.5S15 9 12 9z"/></svg>`,
-};
-function renderHeroBanners(list){
-  const box = document.getElementById('heroBanners');
-  if(!box) return;
-  const slides = list.slice(0,2);
+/* ---------------- HERO SLIDER ---------------- */
+let heroIdx = 0, heroTimer = null;
+function renderHero(){
+  const box = document.getElementById('heroSlider');
+  const slides = [];
+  if(HERO_IMG) slides.push({ img:HERO_IMG, link:'', title:CONFIG.brand });
+  BANNERS.filter(b=>b.placement==='hero' && b.img).forEach(b=>slides.push({ img:b.img, link:b.link||'', title:b.title||'' }));
+  clearInterval(heroTimer);
 
-  const slideHTML = slides.map(b=>{
-    const tag = b.link ? 'a' : 'div';
-    const hrefAttr = b.link ? ` href="${b.link}"` : '';
-    /* admin nijer banayano chobi dile — pura image-i banner hoye jay (nijer
-       design/text soho), text+color card ar dekhabe na */
-    if(b.img){
-      return `<${tag} class="promo-img promo-slide"${hrefAttr}><img src="${b.img}" alt="${(b.title||'').replace(/"/g,'&quot;')}" loading="lazy"></${tag}>`;
-    }
-    const theme = b.theme==='b' ? 'b' : 'a';
-    return `<${tag} class="promo ${theme} promo-slide"${hrefAttr}>
-      <span class="promo-badge">${BANNER_ICONS[theme]}</span>
-      <div class="promo-text"><h3>${b.title||''}</h3><div class="big">${b.bigText||''}</div><span>${b.subtitle||''}</span></div>
-      ${b.link ? `<span class="promo-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>` : ''}
-    </${tag}>`;
-  }).join('');
+  if(!slides.length){
+    // designed text hero — best seller-er 3 ta chobi diye collage
+    const pics = PRODUCTS.filter(p=>p.img && inStock(p)).sort(bestFirst).slice(0,3);
+    const maxOff = Math.max(0, ...PRODUCTS.map(discountPct));
+    box.innerHTML = `
+      <div class="hs-text">
+        <div class="hs-copy">
+          <span class="hs-chip">${ICO.shield} 100% Authentic · Quality checked</span>
+          <h1>Everything for your <em>health &amp; beauty</em></h1>
+          <p>Genuine supplements, skincare, haircare and mother &amp; baby essentials — honest prices, delivered fast across Bangladesh.</p>
+          <div class="hs-ctas">
+            <a class="btn btn-green" href="category.html?goal=all">${ICO.cart} Shop now</a>
+            <a class="btn btn-outline-dark" href="#aiSection">${ICO.spark} Ask AI assistant</a>
+          </div>
+        </div>
+        <div class="hs-art">
+          ${pics.map(p=>`<a class="pic" href="product.html?id=${p.id}"><img src="${esc(p.img)}" alt="${esc(p.name)}"></a>`).join('')}
+          ${maxOff ? `<span class="tag t1">Up to <b>${maxOff}% OFF</b></span>` : ''}
+          <span class="tag t2">Cash on Delivery</span>
+        </div>
+      </div>`;
+    box.style.height = '';
+    return;
+  }
 
+  heroIdx = Math.min(heroIdx, slides.length - 1);
+  box.innerHTML = `
+    <div class="hs-track" id="hsTrack">
+      ${slides.map((s,i)=>{
+        const inner = `<img src="${esc(s.img)}" alt="${esc(s.title)}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'}>`;
+        return s.link ? `<a class="hs-slide" href="${esc(s.link)}">${inner}</a>` : `<div class="hs-slide">${inner}</div>`;
+      }).join('')}
+    </div>
+    ${slides.length > 1 ? `
+      <button class="hs-arrow hs-prev" onclick="heroGo(heroIdx-1,true)" aria-label="Previous slide">${ICO.left}</button>
+      <button class="hs-arrow hs-next" onclick="heroGo(heroIdx+1,true)" aria-label="Next slide">${ICO.right}</button>
+      <div class="hs-dots">${slides.map((_,i)=>`<button class="${i===heroIdx?'on':''}" onclick="heroGo(${i},true)" aria-label="Slide ${i+1}"></button>`).join('')}</div>` : ''}`;
+  box.querySelectorAll('.hs-slide img').forEach(img=> img.addEventListener('load', heroSize));
+  heroGo(heroIdx, false);
   if(slides.length > 1){
-    // 2 banners: same row space, but sliding 1-at-a-time with dots
-    const dots = slides.map((_,i)=>`<button class="promo-dot${i===0?' active':''}" data-i="${i}" aria-label="Show banner ${i+1}"></button>`).join('');
-    box.innerHTML = `<div class="promo-slider"><div class="promo-track">${slideHTML}</div><div class="promo-dots">${dots}</div></div>`;
-    sizePromoSlider();
-    initPromoSlider(slides.length);
-  } else {
-    // Only 1 banner active — no need for a slider
-    box.innerHTML = `<div class="promo-slider promo-single"><div class="promo-track">${slideHTML}</div></div>`;
-    sizePromoSlider();
+    heroTimer = setInterval(()=> heroGo(heroIdx+1, false), 5500);
+    // mobile swipe
+    let x0 = null;
+    box.ontouchstart = e => { x0 = e.touches[0].clientX; };
+    box.ontouchend = e => { if(x0==null) return; const dx = e.changedTouches[0].clientX - x0; if(Math.abs(dx) > 40) heroGo(heroIdx + (dx < 0 ? 1 : -1), true); x0 = null; };
+    box.onmouseenter = () => clearInterval(heroTimer);
+    box.onmouseleave = () => { clearInterval(heroTimer); heroTimer = setInterval(()=> heroGo(heroIdx+1, false), 5500); };
   }
 }
-
-/* Sizes the slider box to match WHATEVER image the admin actually uploaded —
-   no guessed/fixed ratio. For an image slide, it reads the real
-   naturalWidth/naturalHeight once the image has actually finished loading
-   (this is the part that was broken before: measuring offsetHeight before
-   the image painted locked in a wrong, too-short height, and cover then
-   cropped the picture to fill it). For a text slide (title/price/subtitle),
-   there's no image to measure, so it uses a comfortable fixed height that
-   fits that layout. The slider height becomes the max needed across all
-   current slides, so nothing — image or text — is ever clipped. */
-function sizePromoSlider(){
-  const slider = document.querySelector('#heroBanners .promo-slider');
-  const slides = document.querySelectorAll('#heroBanners .promo-slide');
-  if(!slider || !slides.length) return;
-
-  const trackWidth = slider.offsetWidth;
-  let maxH = window.innerWidth <= 640 ? 130 : 140; // baseline for text-promo slides
-
-  const waitFor = [];
-  slides.forEach(s=>{
-    const img = s.querySelector('img');
-    if(!img) return; // text promo — baseline height above already covers it
-    const useNaturalSize = () => {
-      if(img.naturalWidth && img.naturalHeight){
-        maxH = Math.max(maxH, trackWidth * (img.naturalHeight / img.naturalWidth));
-      }
-    };
-    if(img.complete && img.naturalWidth){
-      useNaturalSize();
-    } else {
-      waitFor.push(new Promise(resolve=>{
-        img.addEventListener('load', ()=>{ useNaturalSize(); resolve(); }, { once:true });
-        img.addEventListener('error', resolve, { once:true });
-      }));
-    }
-  });
-
-  const applyHeight = () => { slider.style.height = Math.round(maxH) + 'px'; };
-  applyHeight(); // apply what we know immediately, avoids a layout flash
-  if(waitFor.length) Promise.all(waitFor).then(applyHeight);
+function heroGo(i, manual){
+  const track = document.getElementById('hsTrack'); if(!track) return;
+  const n = track.children.length;
+  heroIdx = (i + n) % n;
+  track.style.transform = `translateX(-${heroIdx*100}%)`;
+  document.querySelectorAll('.hs-dots button').forEach((d,j)=>d.classList.toggle('on', j===heroIdx));
+  heroSize();
+  if(manual){ clearInterval(heroTimer); heroTimer = setInterval(()=> heroGo(heroIdx+1, false), 5500); }
 }
-
-let promoSlideTimer = null;
-function initPromoSlider(count){
-  const track = document.querySelector('#heroBanners .promo-track');
-  const dots  = document.querySelectorAll('#heroBanners .promo-dot');
-  if(!track || count < 2) return;
-
-  let i = 0;
-  const AUTOPLAY_MS = 4000;
-
-  function goTo(idx){
-    i = idx;
-    track.style.transform = `translateX(-${i * 100}%)`;
-    dots.forEach((d,j)=> d.classList.toggle('active', j===i));
-  }
-
-  function restartAutoplay(){
-    clearInterval(promoSlideTimer);
-    promoSlideTimer = setInterval(()=> goTo((i+1) % count), AUTOPLAY_MS);
-  }
-
-  dots.forEach(d=>{
-    d.addEventListener('click', ()=>{
-      goTo(parseInt(d.dataset.i,10));
-      restartAutoplay();
-    });
-  });
-
-  // pause on hover/touch so people can actually read it
-  const slider = document.querySelector('#heroBanners .promo-slider');
-  if(slider){
-    slider.addEventListener('mouseenter', ()=> clearInterval(promoSlideTimer));
-    slider.addEventListener('mouseleave', restartAutoplay);
-  }
-
-  restartAutoplay();
+/* slider-er uchchota = active chobir uchchota (kono chobi kata pore na) */
+function heroSize(){
+  const track = document.getElementById('hsTrack'); if(!track) return;
+  const img = track.children[heroIdx]?.querySelector('img');
+  if(img && img.naturalWidth) document.getElementById('heroSlider').style.height = img.offsetHeight + 'px';
 }
+/* slider-er width bodlale (resize, phone ghurano, sidebar) abar mapi */
+if(window.ResizeObserver) new ResizeObserver(()=> heroSize()).observe(document.getElementById('heroSlider'));
+else window.addEventListener('resize', ()=>{ clearTimeout(window._hsT); window._hsT = setTimeout(heroSize, 150); });
 
-function debounce(fn, ms){
-  let t;
-  return function(...args){ clearTimeout(t); t = setTimeout(()=> fn.apply(this,args), ms); };
-}
-// image's needed height depends on track width, so re-measure on resize
-window.addEventListener('resize', debounce(sizePromoSlider, 200));
-
-/* ---- Category quick-nav chip row (homepage) ----
-   Shudhu simple chip — kono SVG icon nei. Admin panel > Banners > Category
-   Images theke chobi upload korle chip-e sei chobi dekhabe (nahole shudhu text). */
-function renderCategoryChips(images){
-  const box = document.getElementById('catIconsRow');
-  if(!box) return;
-  box.innerHTML = CATEGORIES.map(c=>`
-    <a class="cat-chip" href="category.html?goal=${encodeURIComponent(c.id)}">
-      <span class="cc-img">${images && images[c.id] ? `<img src="${esc(images[c.id])}" alt="" loading="lazy">` : `<span class="cc-initial">${esc(c.label.charAt(0))}</span>`}</span>
-      <span>${esc(c.label)}</span>
+/* ---------------- SERVICE CARDS ---------------- */
+function renderServices(){
+  const wa = waNumber();
+  const cards = [
+    { ico:ICO.spark,  t:'Ask our AI Assistant', s:'Product advice in seconds', href:'#aiSection' },
+    { ico:ICO.route,  t:'Track Your Order',     s:'Live status with Order ID',  href:'track.html' },
+    { ico:ICO.box,    t:'Bulk / Wholesale',     s:'Special prices for resellers', href: wa ? waLink('Hi! I want to place a bulk / wholesale order.') : 'page.html?p=contact', ext:!!wa },
+    { ico:ICO.shield, t:'100% Authentic',       s:'Direct from brands & importers', href:'page.html?p=about' },
+  ];
+  document.getElementById('svcRow').innerHTML = cards.map(c=>`
+    <a class="svc-card" href="${esc(c.href)}" ${c.ext?'target="_blank" rel="noopener"':''}>
+      <span class="svc-ico">${c.ico}</span>
+      <span class="svc-txt"><b>${c.t}</b><small>${c.s}</small></span>
+      <span class="svc-go">${ICO.right}</span>
     </a>`).join('');
 }
-function loadCategoryChips(){
-  if(!window.fdb){ renderCategoryChips(null); return; }
-  window.fdb.ref('categoryImages').once('value')
-    .then(snap=> renderCategoryChips(snap.val()))
-    .catch(()=> renderCategoryChips(null));
+
+/* ---------------- FEATURED CATEGORIES ---------------- */
+function renderFeatured(){
+  const tiles = CATEGORIES.map((c,i)=>({ c, i, n: PRODUCTS.filter(p=>productInCat(p, c.id)).length }));
+  document.getElementById('catSlider').innerHTML = tiles.map(({c,i,n})=>{
+    const th = catThumb(c);
+    return `<a class="fc-tile" href="category.html?goal=${encodeURIComponent(c.id)}" style="background:${PASTELS[i%PASTELS.length]}">
+      <span class="fc-img">${th.startsWith('<img') ? th : `<span class="fc-init">${th}</span>`}</span>
+      <b>${esc(c.label)}</b><small>${n} item${n!==1?'s':''}</small>
+    </a>`;
+  }).join('');
+  document.getElementById('featLinks').innerHTML = tiles.filter(t=>t.n).slice(0,5)
+    .map(({c})=>`<a href="category.html?goal=${encodeURIComponent(c.id)}">${esc(c.label)}</a>`).join('');
 }
-function loadHeroBanners(){
-  if(!window.fdb){ renderHeroBanners(DEFAULT_BANNERS); return; }
-  window.fdb.ref('banners').once('value').then(snap=>{
-    const val = snap.val();
-    const list = val ? Object.values(val).filter(b=>b && b.active!==false).sort((a,b)=>(a.order||0)-(b.order||0)) : [];
-    renderHeroBanners(list.length ? list : DEFAULT_BANNERS);
-  }).catch(()=> renderHeroBanners(DEFAULT_BANNERS));
+
+/* ---------------- 3 PROMO BANNERS ---------------- */
+const DEFAULT_PROMOS = [
+  { title:'Protein Festival', subtitle:'Whey, mass gainer & BCAA', bigText:'Up to 35% OFF', link:'category.html?goal=muscle' },
+  { title:'First order? Use code HEALTH10', subtitle:'Valid on everything in store', bigText:'Extra 10% OFF', link:'category.html?goal=all' },
+  { title:'Glow-up skincare', subtitle:'Cleansers, serums & sunscreen', bigText:'New arrivals', link:'category.html?goal=facecare' },
+];
+function renderPromos(){
+  const mine = BANNERS.filter(b=>b.placement!=='hero').slice(0,3);
+  const list = [...mine, ...DEFAULT_PROMOS].slice(0,3);
+  const bgs = ['var(--p1)','var(--p5)','var(--p7)'];
+  document.getElementById('promoRow').innerHTML = list.map((b,i)=>{
+    const href = b.link ? esc(b.link) : 'category.html?goal=all';
+    if(b.img) return `<a class="pb-card has-img" href="${href}"><img src="${esc(b.img)}" alt="${esc(b.title||'')}" loading="lazy"><span class="pb-btn">Shop Now ${ICO.arrow}</span></a>`;
+    let goal = 'all'; try{ goal = new URL(b.link||'', location.href).searchParams.get('goal') || 'all'; }catch(e){}
+    const pic = PRODUCTS.filter(p=>p.img && inStock(p) && productInCat(p, goal)).sort(bestFirst)[0];
+    return `<a class="pb-card" href="${href}" style="background:${bgs[i]}">
+      <div class="pb-text">${b.subtitle ? `<small>${esc(b.subtitle)}</small>` : ''}<h3>${esc(b.title||'')}</h3>${b.bigText ? `<div class="big">${esc(b.bigText)}</div>` : ''}<span class="pb-btn">Shop Now ${ICO.arrow}</span></div>
+      ${pic ? `<span class="pb-pic"><img src="${esc(pic.img)}" alt="" loading="lazy"></span>` : ''}
+    </a>`;
+  }).join('');
+}
+
+/* ---------------- FLASH SALE + countdown (raat 12 ta porjonto) ---------------- */
+let cdTimer = null;
+function renderFlash(){
+  const list = PRODUCTS.filter(p=>has(p,'flash') && inStock(p)).sort((a,b)=>discountPct(b)-discountPct(a)).slice(0,14);
+  const sec = document.getElementById('flashSec');
+  sec.style.display = list.length ? '' : 'none';
+  if(!list.length) return;
+  document.getElementById('flashIco').innerHTML = ICO.bolt;
+  document.getElementById('flashRow').innerHTML = list.map(productCard).join('');
+  const tick = () => {
+    const now = new Date(), end = new Date(now); end.setHours(24,0,0,0);
+    let s = Math.max(0, Math.floor((end - now)/1000));
+    const pad = n => String(n).padStart(2,'0');
+    document.getElementById('cdH').textContent = pad(Math.floor(s/3600));
+    document.getElementById('cdM').textContent = pad(Math.floor(s%3600/60));
+    document.getElementById('cdS').textContent = pad(s%60);
+  };
+  clearInterval(cdTimer); tick(); cdTimer = setInterval(tick, 1000);
+}
+
+/* ---------------- POPULAR PRODUCTS (tab) ---------------- */
+let popTab = 'all';
+function renderPopular(){
+  const cats = CATEGORIES.filter(c=>PRODUCTS.some(p=>productInCat(p, c.id))).slice(0,7);
+  if(popTab !== 'all' && !cats.some(c=>c.id===popTab)) popTab = 'all';
+  document.getElementById('popTabs').innerHTML = [{id:'all', label:'All'}, ...cats]
+    .map(c=>`<button class="${c.id===popTab?'on':''}" onclick="popTab=${esc(JSON.stringify(c.id))};renderPopular()">${esc(c.label)}</button>`).join('');
+  const list = PRODUCTS.filter(p=>productInCat(p, popTab)).sort(bestFirst).slice(0,12);
+  document.getElementById('popGrid').innerHTML = list.map(productCard).join('')
+    || `<p style="color:var(--muted);padding:14px">No products yet — add some from the admin panel.</p>`;
+}
+
+/* ---------------- SHOP BY CATEGORY boxes ---------------- */
+function renderCatBoxes(){
+  document.getElementById('categoryRows').innerHTML = CATEGORIES.map((c,i)=>{
+    const list = PRODUCTS.filter(p=>productInCat(p, c.id)).sort(bestFirst);
+    if(!list.length) return '';
+    const th = catThumb(c), rid = 'cbRow' + i;
+    return `
+    <div class="catbox">
+      <div class="catbox-head">
+        <span class="cb-ico">${th}</span>
+        <h3>${esc(c.label)}<span class="sub">${list.length} product${list.length!==1?'s':''}</span></h3>
+        <a class="seeall" href="category.html?goal=${encodeURIComponent(c.id)}">View all →</a>
+        <div class="sl-btns"><button class="sl-btn" onclick="scrollRow('${rid}',-1)" aria-label="Previous">${ICO.left}</button><button class="sl-btn" onclick="scrollRow('${rid}',1)" aria-label="Next">${ICO.right}</button></div>
+      </div>
+      <div class="carousel" id="${rid}">${list.slice(0,12).map(productCard).join('')}</div>
+    </div>`;
+  }).join('');
 }
 
 function initPage(){
-  loadHeroImage();
-  loadHeroBanners();
-  loadCategoryChips();
+  document.querySelectorAll('.sl-btn:empty').forEach((b,i)=> b.innerHTML = b.getAttribute('aria-label')==='Previous' ? ICO.left : ICO.right);
+  renderServices();
+  renderFeatured();
+  renderFlash();
+  renderPopular();
+  renderCatBoxes();
+  if(bannersLoaded){ renderHero(); renderPromos(); }
+  else loadBanners().then(()=>{ renderHero(); renderPromos(); });
 
-  /* tag thakle tag onujayi, na thakle automatic fallback —
-     ei jonno admin diye add kora product (jeguloy tag set kora nei) o
-     homepage e dekha jabe, ar tags undefined hole crash hobe na. */
-  const has = (p,t) => (p.tags || []).includes(t);
-
-  let best = PRODUCTS.filter(p => has(p,'best'));
-  if(best.length < 4) best = [...PRODUCTS].sort((a,b)=> (b.rating-a.rating) || (b.reviews-a.reviews));
-  best.sort(stockFirst);
-  document.getElementById('bestRow').innerHTML =
-    best.slice(0,12).map(productCard).join('') ||
-    `<p style="color:var(--muted); padding:14px">No products yet — add some from the admin panel.</p>`;
-
-  /* protita category-r nijer color banner + product row — jei category-te
-     kono product nei, oita skip hoy. Multi-category product sob row-e dekhay. */
-  const rows = document.getElementById('categoryRows');
-  rows.innerHTML = CATEGORIES.map(c=>{
-    const list = PRODUCTS.filter(p => productInCat(p, c.id))
-      .sort((a,b)=> stockFirst(a,b) || (has(b,'best')-has(a,'best')) || (b.rating-a.rating));
-    if(!list.length) return '';
-    return `
-    <section class="section cat-row">
-      <a class="cat-band" href="category.html?goal=${encodeURIComponent(c.id)}">
-        <span class="cat-band-spacer"></span>
-        <h2>${esc(c.label)}</h2>
-        <span class="cat-band-see">See all →</span>
-      </a>
-      <div class="carousel">${list.slice(0,12).map(productCard).join('')}</div>
-    </section>`;
-  }).join('');
-
-  /* recently viewed (product page dekhle localStorage-e jome) */
   const recent = getRecent().map(findP).filter(Boolean);
-  const recentSec = document.getElementById('recentSec');
-  if(recentSec){
-    recentSec.style.display = recent.length ? '' : 'none';
-    document.getElementById('recentRow').innerHTML = recent.map(productCard).join('');
-  }
+  document.getElementById('recentSec').style.display = recent.length ? '' : 'none';
+  document.getElementById('recentRow').innerHTML = recent.map(productCard).join('');
 
   initReviewSlider();
 }

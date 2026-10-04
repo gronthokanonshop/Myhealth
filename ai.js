@@ -393,14 +393,34 @@ function aiMountInline(){
   const box = host.querySelector('.ai-msgs'); if(box) box.scrollTop = box.scrollHeight;
 }
 
-/* ---- onno page-e floating button + panel ---- */
+/* ---- floating "Ask AI" button — homepage-e AI section-e scroll kore, onno page-e chat panel khole ---- */
+let aiFabObserver = null;
 function aiMountFloating(){
   document.getElementById('aiFab')?.remove();
   document.getElementById('aiFloat')?.remove();
-  if(!AI_CFG.enabled || !AI_CFG.floatingButton || document.getElementById('aiInline')) return;
+  aiFabObserver?.disconnect();
+  if(!AI_CFG.enabled || !AI_CFG.floatingButton) return;
+  const inline = document.getElementById('aiInline');
   document.body.insertAdjacentHTML('beforeend', `
     <button class="ai-fab${waNumber() ? ' has-wa' : ''}" id="aiFab" aria-label="Ask our ${esc(AI_CFG.assistantName)}">${AI_SPARK}<span>Ask AI</span></button>
     <div class="ai-float" id="aiFloat" role="dialog" aria-label="${esc(AI_CFG.assistantName)}">${aiShellHTML(true)}</div>`);
+  // homepage: AI section screen-e thakle button lukai
+  const sec = document.getElementById('aiSection');
+  if(inline && sec && window.IntersectionObserver){
+    aiFabObserver = new IntersectionObserver(([en])=> document.getElementById('aiFab')?.classList.toggle('hide', en.isIntersecting), { threshold:.25 });
+    aiFabObserver.observe(sec);
+  }
+}
+/* sob "Ask AI" link/button eta-i dake */
+function openAI(){
+  const sec = document.getElementById('aiSection'), inline = document.getElementById('aiInline');
+  if(inline && sec && sec.style.display !== 'none'){
+    sec.scrollIntoView({ behavior:'smooth', block:'start' });
+    setTimeout(()=> inline.querySelector('.ai-form input')?.focus({ preventScroll:true }), 700);
+    return;
+  }
+  if(document.getElementById('aiFloat')){ aiOpenFloat(); return; }
+  location.href = 'index.html#aiSection';
 }
 function aiOpenFloat(){
   const f = document.getElementById('aiFloat'); if(!f) return;
@@ -414,7 +434,11 @@ function aiCloseFloat(){
   document.getElementById('aiFab')?.classList.remove('hide');
   document.body.classList.remove('ai-open');
 }
-function aiMountAll(){ aiMountInline(); aiMountFloating(); }
+function aiMountAll(){
+  aiMountInline(); aiMountFloating();
+  // AI bondho thakle menu-r "Ask AI" link o lukai
+  document.querySelectorAll('[data-ai-link]').forEach(a=> a.style.display = AI_CFG.enabled ? '' : 'none');
+}
 
 /* ---- voice input (Bangla) ---- */
 let aiRec = null;
@@ -449,7 +473,7 @@ document.addEventListener('click', e=>{
   if(add){ addToCart(Number(add.dataset.aiAdd)); add.classList.add('in'); add.textContent = '✓ Added'; return; }
   if(e.target.closest('[data-ai-reset]')){ aiResetChat(); return; }
   if(e.target.closest('[data-ai-close]')){ aiCloseFloat(); return; }
-  if(e.target.closest('#aiFab')){ aiOpenFloat(); return; }
+  if(e.target.closest('#aiFab')){ aiOpenFloat(); return; }   // sob page-e chat window khole
   const mic = e.target.closest('[data-ai-mic]'); if(mic){ aiToggleMic(mic); return; }
 });
 document.addEventListener('keydown', e=>{ if(e.key === 'Escape') aiCloseFloat(); });

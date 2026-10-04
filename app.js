@@ -22,6 +22,7 @@ const CONFIG = {
   email:            "support@YOUR-DOMAIN.com",
   address:          "Dhaka, Bangladesh",
   tradeLicense:     "",
+  themeColor:       "#3BB77E",          // site-er main color (admin > Store Settings > Theme color)
   announcement:     "",                 // utilbar-e custom offer line (khali = free delivery line)
   footerAbout:      "Bangladesh's trusted store for authentic health, beauty & wellness products. Delivered to all 64 districts.",
   /* manual mobile payment — number boshale checkout-e number + TrxID field dekhabe */
@@ -34,6 +35,7 @@ const CONFIG = {
   fbPixel:          "",   // Facebook Pixel ID
   deliveryFee:      60,        // Dhaka-r bhitore (৳)
   deliveryFeeOuter: 120,       // Dhaka-r baire (৳)
+  usdRate:          0,         // ৳ per $1 — 0 hole USD dam dekhabe na (e.g. 123)
   freeDeliveryOver: 1500,      // ei amount er beshi hole free delivery (0 = free delivery off)
   storageKey:       "myhealth_cart",
   /* LEGACY coupon fallback — admin > Coupons e banano coupon age check hoy.
@@ -236,7 +238,14 @@ const TIMING  = { morning:"Morning", postworkout:"Post-workout", night:"Before b
 const param   = key => new URLSearchParams(location.search).get(key);
 const esc     = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 /* stock:false = out of stock. Field na thakle in-stock dhora hoy (admin e notun product jate hariye na jay). */
-const inStock = p => !!p && p.stock !== false;
+const inStock = p => !!p && p.stock !== false && !(typeof p.qty === 'number' && p.qty <= 0);
+/* stock quantity (admin e deya thakle) — cart-e er beshi neya jabe na */
+const hasQty = p => !!p && typeof p.qty === 'number';
+const maxQty = p => hasQty(p) ? Math.max(0, Math.min(99, p.qty)) : 99;
+/* optional USD price (admin > Settings e rate deya thakle) */
+const usdText = n => Number(CONFIG.usdRate) > 0 ? `($${(Number(n)/Number(CONFIG.usdRate)).toFixed(2)})` : '';
+/* SKU — admin e deya thakle oita, na hole id theke */
+const skuOf = p => p.sku || ('MH-' + String(p.id).padStart(5,'0'));
 /* product-er sob category id — notun `cats` array, na thakle purono `goal` */
 const getCats = p => (Array.isArray(p?.cats) && p.cats.length) ? p.cats : (p?.goal ? [p.goal] : []);
 /* product ki ei filter (sub id / top-level id / 'all') er moddhe pore? */
@@ -288,15 +297,15 @@ function bootProducts(done){
    Prothome localStorage cache diye render (instant), tarpor Firebase theke
    fresh value ene — bodlale header/footer abar render hoy.
    ========================================================================= */
-const SETTING_TEXT = ['brand','tagline','siteUrl','hotline','whatsapp','email','address','tradeLicense','announcement',
+const SETTING_TEXT = ['brand','tagline','siteUrl','hotline','whatsapp','email','address','tradeLicense','themeColor','announcement',
   'footerAbout','bkash','bkashType','nagad','nagadType','facebook','instagram','youtube','tiktok','gaId','fbPixel'];
-const SETTING_NUM  = ['deliveryFee','deliveryFeeOuter','freeDeliveryOver'];
+const SETTING_NUM  = ['deliveryFee','deliveryFeeOuter','freeDeliveryOver','usdRate'];
 const STORE_CACHE  = 'myhealth_store';
 let STORE_SIG = '';
 
 function applySettings(s){
   Object.keys(CONFIG_DEFAULTS).forEach(k=>{ CONFIG[k] = JSON.parse(JSON.stringify(CONFIG_DEFAULTS[k])); });
-  if(!s || typeof s !== 'object') return;
+  if(!s || typeof s !== 'object'){ applyTheme(CONFIG.themeColor); return; }
   SETTING_TEXT.forEach(k=>{
     if(typeof s[k] !== 'string') return;
     const v = s[k].trim();
@@ -309,6 +318,22 @@ function applySettings(s){
     if(isFinite(n) && n >= 0) CONFIG[k] = n;
   });
   CONFIG.siteUrl = CONFIG.siteUrl.replace(/\/+$/,'');
+  applyTheme(CONFIG.themeColor);
+}
+/* theme color -> --leaf, --leaf-d (gaarho), --leaf-l (halka) ityadi CSS variable */
+function applyTheme(hex){
+  const m = /^#?([0-9a-f]{6})$/i.exec(String(hex||'').trim());
+  if(!m) return;
+  const n = parseInt(m[1], 16), rgb = [n >> 16 & 255, n >> 8 & 255, n & 255];
+  const mix = (t, w) => '#' + rgb.map(c => Math.round(c + (t - c) * w).toString(16).padStart(2,'0')).join('');
+  const root = document.documentElement.style;
+  root.setProperty('--leaf', '#' + m[1]);
+  root.setProperty('--leaf-d', mix(0, .14));
+  root.setProperty('--leaf-dd', mix(0, .38));
+  root.setProperty('--leaf-l', mix(255, .84));
+  root.setProperty('--leaf-ll', mix(255, .94));
+  root.setProperty('--brand-rgb', rgb.join(','));
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#' + m[1]);
 }
 function applyCategories(list){
   const restore = () => { CATEGORIES.length = 0; JSON.parse(JSON.stringify(CATEGORIES_DEFAULTS)).forEach(c=>CATEGORIES.push(c)); rebuildGoals(); };
@@ -350,11 +375,14 @@ function loadStoreConfig(){
   }).catch(()=>false);
 }
 
+/* -------- logo mark (heart + pulse) — ASOL logo-r rong (orange), theme color bodlaleo eta bodlay na -------- */
+const BRAND_MARK = `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#ffffff"/><path d="M50 76C31 59 21 47 21 37.5 21 29 27.5 23.5 35 23.5c6 0 11 4 15 10 4-6 9-10 15-10 7.5 0 14 5.5 14 14 0 9.5-10 21.5-29 38.5z" fill="#EA7317"/><polyline points="27,49 40,49 44,40 50,59 55,35 60,49 73,49" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+
 /* -------- Branded placeholder (photo nai / load fail) -------- */
 function placeholderHTML(){
   const parts = (CONFIG.brand||'My Health').split(' ');
   return `<span class="img-ph" aria-hidden="true">
-    <span class="mark ph-mark"></span>
+    <span class="ph-mark">${BRAND_MARK}</span>
     <span class="ph-brand"><span class="ph-name"><span class="o">${esc(parts[0])}</span>${parts.length>1?' '+esc(parts.slice(1).join(' ')):''}</span><span class="ph-sub">${esc(CONFIG.tagline)}</span></span>
   </span>`;
 }
@@ -454,14 +482,19 @@ function addToCart(id, qty){
   const p = findP(id);
   if(!p) return;
   if(!inStock(p)){ toast("Sorry, this item is out of stock"); return; }
-  cart[id] = Math.min(99, (cart[id]||0) + qty);
+  const max = maxQty(p);
+  if((cart[id]||0) >= max){ toast(`Only ${max} available — already in your cart`); return; }
+  const want = (cart[id]||0) + qty;
+  cart[id] = Math.min(max, want);
   saveCart(); updateCartUI(); refreshAddButtons();
-  toast("Added to cart ✓");
+  toast(want > max ? `Only ${max} available — added ${max}` : "Added to cart ✓");
   trackEvent('AddToCart', { content_ids:[id], content_type:'product', value: p.price*qty });
 }
 function changeQty(id, delta){
   id = Number(id);
-  cart[id] = Math.min(99, (cart[id]||0) + delta);
+  const max = maxQty(findP(id));
+  if(delta > 0 && (cart[id]||0) >= max){ toast(`Only ${max} available`); return; }
+  cart[id] = Math.min(max, (cart[id]||0) + delta);
   if(cart[id] <= 0) delete cart[id];
   saveCart(); updateCartUI(); refreshAddButtons();
 }
@@ -482,12 +515,49 @@ function refreshAddButtons(){
     const id = Number(btn.dataset.add);
     if(btn.disabled) return;
     const q = cart[id];
-    if(btn.classList.contains('add')){
+    if(btn.classList.contains('pc-add')){
       btn.classList.toggle('in', !!q);
-      btn.innerHTML = q ? `✓ In cart (${q})` : "Add to cart";
+      btn.innerHTML = q ? `✓ Added (${q})` : `${ICO.cart} Add`;
     }
   });
 }
+
+/* =========================================================================
+   ICONS (inline SVG — sob jaygay ek style)
+   ========================================================================= */
+const ICO = {
+  cart:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M6 6 5 3H2"/></svg>`,
+  bolt:   `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>`,
+  heart:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.6-9.3-9C1 8.5 2.5 5.5 5.5 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3 0 4.5 3 2.8 6.5C19 16.4 12 21 12 21z"/></svg>`,
+  eye:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>`,
+  user:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>`,
+  search: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>`,
+  menu:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>`,
+  grid:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>`,
+  chev:   `<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`,
+  left:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>`,
+  right:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>`,
+  arrow:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`,
+  up:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg>`,
+  phone:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>`,
+  pin:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>`,
+  mail:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>`,
+  clock:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`,
+  tag:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>`,
+  truck:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="13" height="10" rx="1"/><path d="M14 9h4l4 4v3h-8z"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>`,
+  cash:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4M18 10v4"/></svg>`,
+  shield: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3.5v6c0 4.5-3.4 7.6-8 9-4.6-1.4-8-4.5-8-9v-6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>`,
+  ret:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>`,
+  spark:  `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9L12 2zm7 11l.95 2.55L22.5 16.5l-2.55.95L19 20l-.95-2.55L15.5 16.5l2.55-.95L19 13z"/></svg>`,
+  compare:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>`,
+  bell:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`,
+  home:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>`,
+  bag:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 14H5z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>`,
+  share:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>`,
+  box:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>`,
+  route:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3.5 3.5 0 0 0 0-7H8a3.5 3.5 0 0 1 0-7h7.5"/></svg>`,
+  star:   `<svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3 6.6 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21.2l1.5-7L2 9.4l7-.8z"/></svg>`,
+};
 
 /* =========================================================================
    PRODUCT CARD (shared markup) — links to product.html?id=
@@ -496,30 +566,77 @@ function productCard(p){
   const off = discountPct(p);
   const q = cart[p.id];
   const oos = !inStock(p);
-  const img = imgHTML(p, p.name);
+  const mainCat = getCats(p)[0];
+  const tags = p.tags || [];
+  const badge = oos ? `<span class="pc-badge oos">Sold out</span>`
+    : off > 0 ? `<span class="pc-badge">-${off}%</span>`
+    : tags.includes('new') ? `<span class="pc-badge new">New</span>`
+    : tags.includes('best') ? `<span class="pc-badge hot">Hot</span>` : '';
+  const r = Number(p.rating) || 0;
   return `
-  <article class="card${oos?' is-oos':''}">
-    <div class="card-img">
-      ${oos ? `<span class="disc oos">Out of stock</span>` : (off>0 ? `<span class="disc">${off}% OFF</span>` : "")}
-      <button class="wish ${wishlist.has(p.id)?'on':''}" data-wish="${p.id}" onclick="toggleWish(${p.id},this)" aria-label="Wishlist">♥</button>
-      <a href="product.html?id=${p.id}">${img}</a>
-      <button class="qv-btn" onclick="openQuickView(${p.id})">Quick View</button>
-    </div>
-    <div class="card-body">
-      ${p.brand ? `<span class="card-brand">${esc(p.brand)}</span>` : ""}
-      <div class="card-name"><a href="product.html?id=${p.id}">${esc(p.name)}</a></div>
-      <div class="price-row">
-        <span class="price">${money(p.price)}</span>
-        ${p.oldPrice>p.price ? `<span class="old">${money(p.oldPrice)}</span>` : ""}
+  <article class="pcard${oos?' is-oos':''}">
+    <div class="pc-media">
+      ${badge}
+      <a class="pc-img" href="product.html?id=${p.id}" aria-label="${esc(p.name)}">${imgHTML(p, p.name)}</a>
+      <div class="pc-actions">
+        <button class="pc-act ${wishlist.has(p.id)?'on':''}" data-wish="${p.id}" onclick="toggleWish(${p.id})" aria-label="Add to wishlist" title="Wishlist">${ICO.heart}</button>
+        <button class="pc-act ${compareList.includes(p.id)?'on':''}" data-cmp="${p.id}" onclick="toggleCompare(${p.id})" aria-label="Add to compare" title="Compare">${ICO.compare}</button>
+        <button class="pc-act pc-qv" onclick="openQuickView(${p.id})" aria-label="Quick view" title="Quick view">${ICO.eye}</button>
       </div>
-      <button class="add ${q?'in':''}" data-add="${p.id}" ${oos?'disabled':''} onclick="${oos?'':`addToCart(${p.id})`}">
-        ${oos ? "Out of stock" : (q ? `✓ In cart (${q})` : "Add to cart")}
-      </button>
+      ${!oos && hasQty(p) && p.qty <= 5 ? `<span class="pc-low">Only ${p.qty} left</span>` : ''}
+    </div>
+    <div class="pc-body">
+      ${mainCat ? `<a class="pc-cat" href="category.html?goal=${encodeURIComponent(mainCat)}">${esc(goalLabel(mainCat))}</a>` : ''}
+      <h3 class="pc-name"><a href="product.html?id=${p.id}">${esc(p.name)}</a></h3>
+      ${r ? `<div class="pc-rating"><span class="stars">${stars(r)}</span> (${r.toFixed(1)})</div>` : ''}
+      ${p.brand ? `<div class="pc-brand">By <b>${esc(p.brand)}</b></div>` : ''}
+      <div class="pc-foot">
+        <div class="pc-price"><b>${money(p.price)}</b>${p.oldPrice>p.price ? `<s>${money(p.oldPrice)}</s>` : ''}${usdText(p.price) ? `<small class="pc-usd">${usdText(p.price)}</small>` : ''}</div>
+        <div class="pc-btns">
+          <button class="pc-add ${q?'in':''}" data-add="${p.id}" ${oos?'disabled':''} onclick="addToCart(${p.id})">${oos ? 'Sold out' : (q ? `✓ Added (${q})` : `${ICO.cart} Add`)}</button>
+          <button class="pc-buy" ${oos?'disabled':''} onclick="quickBuy(${p.id})">${ICO.bolt} Buy</button>
+        </div>
+      </div>
     </div>
   </article>`;
 }
+/* "Buy" — cart-e na thakle 1 ta add kore sorasori checkout */
+function quickBuy(id){
+  const p = findP(id);
+  if(!p || !inStock(p)){ toast('Sorry, this item is out of stock'); return; }
+  if(!cart[p.id]){ cart[p.id] = 1; saveCart(); trackEvent('AddToCart', { content_ids:[p.id], content_type:'product', value:p.price }); }
+  location.href = 'checkout.html';
+}
+/* horizontal row-er arrow button */
+function scrollRow(id, dir){
+  const el = document.getElementById(id); if(!el) return;
+  el.scrollBy({ left: dir * Math.max(240, el.clientWidth * .8), behavior:'smooth' });
+}
 /* listing e out-of-stock product sobar sheshe */
 const stockFirst = (a,b) => (inStock(b) - inStock(a));
+
+/* =========================================================================
+   COMPARE — sorbochcho 4 ta product pasapasi (compare.html)
+   ========================================================================= */
+let compareList = (()=>{ try{ return (JSON.parse(localStorage.getItem('myhealth_compare'))||[]).map(Number).filter(Boolean).slice(0,4); }catch(e){ return []; } })();
+function saveCompare(){ try{ localStorage.setItem('myhealth_compare', JSON.stringify(compareList)); }catch(e){} }
+function toggleCompare(id){
+  id = Number(id);
+  if(compareList.includes(id)){
+    compareList = compareList.filter(x=>x!==id);
+    toast('Removed from compare');
+  } else {
+    if(compareList.length >= 4){ toastAction('You can compare up to 4 products', 'compare.html', 'Open compare'); return; }
+    compareList.push(id);
+    toastAction(`Added to compare (${compareList.length}/4)`, 'compare.html', 'Compare now →');
+  }
+  saveCompare(); refreshCompareUI();
+  if(typeof onCompareChange === 'function') onCompareChange();
+}
+function refreshCompareUI(){
+  const b = document.getElementById('cmpBadge'); if(b) b.textContent = compareList.length;
+  document.querySelectorAll('[data-cmp]').forEach(el=> el.classList.toggle('on', compareList.includes(Number(el.dataset.cmp))));
+}
 
 function toggleWish(id){
   id = Number(id);
@@ -540,69 +657,86 @@ function removeWish(id){ wishlist.delete(Number(id)); saveWishlist(); refreshWis
 /* =========================================================================
    SHARED CHROME — header + nav + cart drawer + toast (inject into every page)
    ========================================================================= */
-function utilbarLeft(){
+function topbarMsg(){
   if(CONFIG.announcement) return esc(CONFIG.announcement);
   return freeDeliveryOn()
-    ? `<b>Free delivery</b> over <span class="lime">${money(CONFIG.freeDeliveryOver)}</span> &nbsp;·&nbsp; Same-day in Dhaka`
-    : `<b>Fast delivery</b> across Bangladesh &nbsp;·&nbsp; Same-day in Dhaka`;
+    ? `🚚 <b>Free delivery</b> on orders over <b>${money(CONFIG.freeDeliveryOver)}</b> · Same-day in Dhaka`
+    : `🚚 <b>Fast delivery</b> across Bangladesh · Same-day in Dhaka`;
 }
+/* category-r chobi: admin-er upload kora > oi category-r prothom product-er chobi > prothom okkhor */
+let CAT_IMAGES = {};
+function catThumb(c){
+  if(CAT_IMAGES[c.id]) return `<img src="${esc(CAT_IMAGES[c.id])}" alt="" loading="lazy">`;
+  const p = PRODUCTS.find(p=>p.img && productInCat(p, c.id));
+  return p ? `<img src="${esc(p.img)}" alt="" loading="lazy">` : esc((c.label||'?').charAt(0));
+}
+const PASTELS = ['var(--p1)','var(--p2)','var(--p3)','var(--p4)','var(--p5)','var(--p6)','var(--p7)','var(--p8)'];
+function browseDropHTML(){
+  return CATEGORIES.map((c,i)=>`
+    <div class="bd-cat">
+      <a href="category.html?goal=${encodeURIComponent(c.id)}"><span class="bd-ico" style="background:${PASTELS[i%PASTELS.length]}">${catThumb(c)}</span>${esc(c.label)}</a>
+      ${(c.subs||[]).length ? `<div class="bd-subs">${c.subs.map(s=>`<a href="category.html?goal=${encodeURIComponent(s.id)}">${esc(s.label)}</a>`).join('')}</div>` : ''}
+    </div>`).join('') + `<a class="bd-all" href="category.html?goal=all">Browse all products →</a>`;
+}
+function fillBrowse(){ const d = document.getElementById('browseDrop'); if(d) d.innerHTML = browseDropHTML(); }
+function toggleBrowse(e){
+  e && e.stopPropagation();
+  const b = document.getElementById('browse'); if(!b) return;
+  const open = b.classList.toggle('open');
+  b.querySelector('.browse-btn')?.setAttribute('aria-expanded', open);
+}
+document.addEventListener('click', e=>{ if(!e.target.closest('.browse')) document.getElementById('browse')?.classList.remove('open'); });
+
 function buildHeader(){
   const user = window.currentUser;
+  const hot = CONFIG.hotline ? esc(CONFIG.hotline) : '';
   return `
-  <div class="utilbar">
+  <div class="topbar">
     <div class="wrap">
-      <div class="u-left">${utilbarLeft()}</div>
-      <div class="u-right">${CONFIG.hotline ? `Hotline: <a href="tel:${esc(CONFIG.hotline)}"><b>${esc(CONFIG.hotline)}</b></a> &nbsp;·&nbsp; ` : ''}<a href="track.html">Track order</a></div>
+      <nav class="tb-links" aria-label="Quick links">
+        <a href="page.html?p=about">About Us</a><a href="account.html">My Account</a><button onclick="openWish()">Wishlist</button><a href="track.html">Order Tracking</a>
+      </nav>
+      <div class="tb-msg">${topbarMsg()}</div>
+      ${hot ? `<div class="tb-help">Need help? Call us: <a href="tel:${hot}">${hot}</a></div>` : ''}
     </div>
   </div>
   <header class="site">
     <div class="wrap head-main">
+      <button class="menu-btn" onclick="openMenu()" aria-label="Open menu">${ICO.menu}</button>
       <a class="logo" href="index.html" aria-label="${esc(CONFIG.brand)} home">
-        <span class="mark"></span>
+        <span class="mark">${BRAND_MARK}</span>
         ${brandWordmark()}
       </a>
       <div class="search" role="search">
-        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></span>
-        <input id="globalSearch" type="search" autocomplete="off" placeholder="Search products, brands, categories…" aria-label="Search products"
+        <input id="globalSearch" type="search" autocomplete="off" placeholder="Search for products, brands, problems…" aria-label="Search products"
           oninput="liveSearch(this.value)"
           onkeydown="if(event.key==='Enter') goSearch(this.value); if(event.key==='Escape') closeSearch();" />
+        <button class="search-go" onclick="goSearch(document.getElementById('globalSearch').value)" aria-label="Search">${ICO.search}</button>
         <div class="search-results" id="searchResults"></div>
       </div>
       <div class="head-actions">
-        <button class="iconbtn" onclick="openMenu()" aria-label="Menu">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Menu
-        </button>
-        <a class="iconbtn" href="account.html" aria-label="Account">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
-          <span id="acctLabel">${user ? esc(user.displayName || 'My Account') : 'Account'}</span>
-        </a>
-        <button class="iconbtn" onclick="openWish()" aria-label="Wishlist">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.6-9.3-9C1 8.5 2.5 5.5 5.5 5.5c2 0 3.2 1.2 4 2.3.8-1.1 2-2.3 4-2.3 3 0 4.5 3 2.8 6.5C19 16.4 12 21 12 21z"/></svg>
-          Wishlist<span class="badge" id="wishBadge">${wishlist.size}</span>
-        </button>
-        <button class="iconbtn" onclick="openCart()" aria-label="Cart">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M6 6 5 3H2"/></svg>
-          Cart<span class="badge" id="cartBadge">0</span>
-        </button>
+        <button class="iconbtn" onclick="openWish()" aria-label="Wishlist">${ICO.heart}<span class="badge" id="wishBadge">${wishlist.size}</span><span class="lbl">Wishlist</span></button>
+        <button class="iconbtn" onclick="openCart()" aria-label="Cart">${ICO.cart}<span class="badge" id="cartBadge">0</span><span class="lbl">Cart</span></button>
+        <a class="iconbtn" href="account.html" aria-label="Account">${ICO.user}<span class="lbl" id="acctLabel">${user ? esc(user.displayName || 'My Account') : 'Account'}</span></a>
       </div>
     </div>
   </header>
-  ${buildCatNav()}`;
-}
-/* desktop category bar (hover-e subcategory dropdown) — mobile e Menu drawer */
-function buildCatNav(){
-  return `
-  <nav class="catnav" aria-label="Categories">
-    <div class="wrap catnav-in">
-      ${CATEGORIES.map(c=>`
-        <div class="cn-item">
-          <a href="category.html?goal=${encodeURIComponent(c.id)}">${esc(c.label)}</a>
-          ${(c.subs||[]).length ? `<div class="cn-drop">
-            ${c.subs.map(s=>`<a href="category.html?goal=${encodeURIComponent(s.id)}"><b>${esc(s.label)}</b>${s.note?`<small>${esc(s.note)}</small>`:''}</a>`).join('')}
-            <a class="cn-all" href="category.html?goal=${encodeURIComponent(c.id)}">View all ${esc(c.label)} →</a>
-          </div>` : ''}
-        </div>`).join('')}
-      <a class="cn-flash" href="category.html?goal=all&tag=flash">Offers</a>
+  <nav class="mainnav" id="mainNav" aria-label="Main">
+    <div class="wrap">
+      <div class="browse" id="browse">
+        <button class="browse-btn" onclick="toggleBrowse(event)" aria-expanded="false">${ICO.grid} Browse All Categories ${ICO.chev}</button>
+        <div class="browse-drop" id="browseDrop">${browseDropHTML()}</div>
+      </div>
+      <div class="nav-links">
+        <a href="index.html" data-nav="index">Home</a>
+        <a class="nav-ai" href="index.html#aiSection" data-ai-link onclick="if(window.openAI){event.preventDefault();openAI();}">${ICO.spark} Ask AI</a>
+        <a class="nav-flash" href="category.html?goal=all&tag=flash">${ICO.bolt} Flash Sales</a>
+        <a href="category.html?goal=all" data-nav="category">Shop</a>
+        <a href="category.html?goal=all&tag=new">New Arrivals</a>
+        <a href="track.html" data-nav="track">Track Order</a>
+        <a href="page.html?p=contact">Contact Us</a>
+      </div>
+      ${hot ? `<a class="nav-hot" href="tel:${hot}">${ICO.phone}<div><b>${hot}</b><small>24/7 Support Center</small></div></a>` : ''}
     </div>
   </nav>`;
 }
@@ -617,41 +751,62 @@ function payBadges(){ return ['COD','bKash','Nagad']; }
 function buildFooter(){
   const socials = ['facebook','instagram','youtube','tiktok'].filter(k=>CONFIG[k] && /^https?:\/\//i.test(CONFIG[k]));
   const wa = waNumber();
+  const hot = CONFIG.hotline ? esc(CONFIG.hotline) : '';
+  const feats = [
+    [ICO.tag,    'Best prices & offers', 'Coupons & daily deals'],
+    [ICO.truck,  freeDeliveryOn() ? 'Free delivery' : 'Fast delivery', freeDeliveryOn() ? `On orders over ${money(CONFIG.freeDeliveryOver)}` : 'To all 64 districts'],
+    [ICO.cash,   'Cash on Delivery', 'Pay when you receive'],
+    [ICO.shield, '100% Authentic', 'Direct from brands'],
+    [ICO.ret,    'Easy returns', 'Hassle-free policy'],
+  ];
   return `
   <div class="wrap">
-    <div class="foot-grid">
+    <div class="foot-feats">${feats.map(([ic,t,s])=>`<div class="ff-item"><span class="ff-ico">${ic}</span><div><b>${t}</b><small>${s}</small></div></div>`).join('')}</div>
+  </div>
+  <div class="foot-main">
+    <div class="wrap foot-grid">
       <div>
-        <a class="logo" href="index.html"><span class="mark"></span>${brandWordmark()}</a>
-        <p style="font-size:14px; max-width:300px;">${esc(CONFIG.footerAbout)}</p>
+        <a class="logo" href="index.html"><span class="mark">${BRAND_MARK}</span>${brandWordmark()}</a>
+        <p class="foot-about">${esc(CONFIG.footerAbout)}</p>
         <div class="foot-contact">
-          ${CONFIG.hotline ? `<a href="tel:${esc(CONFIG.hotline)}">${esc(CONFIG.hotline)}</a>` : ''}
-          ${CONFIG.email ? `<a href="mailto:${esc(CONFIG.email)}">${esc(CONFIG.email)}</a>` : ''}
-          ${CONFIG.address ? `<span>${esc(CONFIG.address)}</span>` : ''}
-          ${CONFIG.tradeLicense ? `<span>Trade Licence: ${esc(CONFIG.tradeLicense)}</span>` : ''}
+          ${CONFIG.address ? `<div>${ICO.pin}<span><b>Address:</b> ${esc(CONFIG.address)}</span></div>` : ''}
+          ${hot ? `<div>${ICO.phone}<span><b>Call us:</b> <a href="tel:${hot}">${hot}</a></span></div>` : ''}
+          ${CONFIG.email ? `<div>${ICO.mail}<span><b>Email:</b> <a href="mailto:${esc(CONFIG.email)}">${esc(CONFIG.email)}</a></span></div>` : ''}
+          <div>${ICO.clock}<span><b>Hours:</b> 9:00 AM – 10:00 PM, every day</span></div>
         </div>
-        <div class="foot-pay">${payBadges().map(b=>`<span>${b}</span>`).join('')}</div>
       </div>
-      <div><h4>Shop</h4><ul>
-        <li><a href="category.html?goal=all">All Products</a></li>
-        ${CATEGORIES.slice(0,5).map(c=>`<li><a href="category.html?goal=${encodeURIComponent(c.id)}">${esc(c.label)}</a></li>`).join('')}
-        <li><a href="category.html?goal=all&tag=flash">Offers</a></li>
-      </ul></div>
-      <div><h4>Help</h4><ul>
-        <li><a href="track.html">Track Order</a></li><li><a href="page.html?p=delivery">Delivery Info</a></li>
-        <li><a href="page.html?p=return">Return Policy</a></li><li><a href="page.html?p=faq">FAQ</a></li>
-      </ul></div>
       <div><h4>Company</h4><ul>
-        <li><a href="page.html?p=about">About Us</a></li><li><a href="page.html?p=privacy">Privacy Policy</a></li>
-        <li><a href="page.html?p=terms">Terms & Conditions</a></li><li><a href="page.html?p=contact">Contact Us</a></li>
+        <li><a href="page.html?p=about">About Us</a></li>
+        <li><a href="page.html?p=delivery">Delivery Information</a></li>
+        <li><a href="page.html?p=privacy">Privacy Policy</a></li>
+        <li><a href="page.html?p=terms">Terms &amp; Conditions</a></li>
+        <li><a href="page.html?p=contact">Contact Us</a></li>
+        <li><a href="page.html?p=faq">FAQ</a></li>
       </ul></div>
+      <div><h4>Account</h4><ul>
+        <li><a href="account.html">Sign In</a></li>
+        <li><button onclick="openCart()">View Cart</button></li>
+        <li><button onclick="openWish()">My Wishlist</button></li>
+        <li><a href="track.html">Track My Order</a></li>
+        <li><a href="page.html?p=return">Return Policy</a></li>
+      </ul></div>
+      <div><h4>Popular</h4><ul>
+        ${CATEGORIES.slice(0,6).map(c=>`<li><a href="category.html?goal=${encodeURIComponent(c.id)}">${esc(c.label)}</a></li>`).join('')}
+      </ul></div>
+      <div><h4>Secure Payment</h4>
+        <p style="font-size:14px;margin:0 0 4px">Pay the way you like — cash when the parcel arrives, or bKash / Nagad.</p>
+        <div class="foot-pay"><span>💵 COD</span><span class="bk">bKash</span><span class="ng">Nagad</span></div>
+        ${CONFIG.tradeLicense ? `<p class="tag-mini" style="margin-top:14px">Trade Licence: ${esc(CONFIG.tradeLicense)}</p>` : ''}
+      </div>
     </div>
-    <div class="foot-bottom">
-      <span>© ${new Date().getFullYear()} ${esc(CONFIG.brand)}. All rights reserved.</span>
-      ${socials.length || wa ? `<div class="socials">
-        ${socials.map(k=>`<a href="${esc(CONFIG[k])}" target="_blank" rel="noopener" aria-label="${k}">${SOCIAL_ICONS[k]}</a>`).join('')}
-        ${wa ? `<a href="${waLink('Hi!')}" target="_blank" rel="noopener" aria-label="WhatsApp">${WA_ICON}</a>` : ''}
-      </div>` : ''}
-    </div>
+  </div>
+  <div class="wrap foot-bottom">
+    <span>© ${new Date().getFullYear()} <b style="color:var(--leaf)">${esc(CONFIG.brand)}</b>. All rights reserved.</span>
+    ${hot ? `<a class="foot-hot" href="tel:${hot}">${ICO.phone}<div><b>${hot}</b><small>24/7 Support Center</small></div></a>` : ''}
+    ${socials.length || wa ? `<div class="socials"><span>Follow us</span>
+      ${socials.map(k=>`<a href="${esc(CONFIG[k])}" target="_blank" rel="noopener" aria-label="${k}">${SOCIAL_ICONS[k]}</a>`).join('')}
+      ${wa ? `<a href="${waLink('Hi!')}" target="_blank" rel="noopener" aria-label="WhatsApp">${WA_ICON}</a>` : ''}
+    </div>` : ''}
   </div>`;
 }
 
@@ -688,11 +843,12 @@ function buildMenu(){
   <div class="overlay" id="menuOverlay" onclick="closeMenu()"></div>
   <aside class="menu-drawer" id="menuDrawer" aria-label="Main menu">
     <div class="menu-head">
-      <a class="logo" href="index.html"><span class="mark"></span>${brandWordmark()}</a>
+      <a class="logo" href="index.html"><span class="mark">${BRAND_MARK}</span>${brandWordmark()}</a>
       <button onclick="closeMenu()" aria-label="Close">×</button>
     </div>
     <nav class="menu-nav">
       <a href="index.html">Home</a>
+      <a class="menu-ai" href="index.html#aiSection" data-ai-link onclick="if(window.openAI){event.preventDefault();closeMenu();openAI();}">✦ Ask AI Health Assistant</a>
       <a href="category.html?goal=all">All Products</a>
       <a class="menu-flash" href="category.html?goal=all&tag=flash">Offers &amp; Flash Sale</a>
       <a href="category.html?goal=all&tag=new">New Arrivals</a>
@@ -996,6 +1152,61 @@ function toast(msg, ms){
   t.textContent = msg; t.classList.add('show');
   clearTimeout(toastTimer); toastTimer = setTimeout(()=> t.classList.remove('show'), ms || 2000);
 }
+/* toast + link (e.g. "Added to compare — Compare now →") */
+function toastAction(msg, href, label){
+  const t = document.getElementById('toast'); if(!t) return;
+  t.innerHTML = `${esc(msg)} <a href="${esc(href)}" class="toast-link">${esc(label)}</a>`;
+  t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=> t.classList.remove('show'), 3200);
+}
+
+/* =========================================================================
+   NOTIFICATION BELL — admin > Banners > "Notifications" theke (Firebase 'notices')
+   ========================================================================= */
+let NOTICES = [];
+const NOTICE_SEEN = 'myhealth_notice_seen';
+function loadNotices(){
+  if(!window.fdb) return Promise.resolve();
+  return window.fdb.ref('notices').once('value').then(s=>{
+    const v = s.val() || {};
+    NOTICES = Object.values(v).filter(n=>n && n.title && n.active !== false).sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,12);
+    renderNotices();
+  }, ()=>{});
+}
+function timeAgo(ts){
+  const s = Math.max(1, (Date.now() - Number(ts||0)) / 1000);
+  if(s < 3600) return Math.round(s/60) + ' min ago';
+  if(s < 86400) return Math.round(s/3600) + ' h ago';
+  return Math.round(s/86400) + ' d ago';
+}
+function renderNotices(){
+  let seen = 0; try{ seen = Number(localStorage.getItem(NOTICE_SEEN)) || 0; }catch(e){}
+  const unread = NOTICES.filter(n=>(n.ts||0) > seen).length;
+  const b = document.getElementById('ntBadge');
+  if(b){ b.textContent = unread; b.style.display = unread ? '' : 'none'; }
+  const d = document.getElementById('ntDrop'); if(!d) return;
+  d.innerHTML = `<div class="nt-head">Notifications</div>` + (NOTICES.length ? NOTICES.map(n=>{
+    const inner = `<b>${esc(n.title)}</b>${n.text ? `<span>${esc(n.text)}</span>` : ''}<small>${timeAgo(n.ts)}</small>`;
+    return /^(https?:\/\/|[a-z0-9_-]+\.html)/i.test(n.link||'') ? `<a class="nt-item${(n.ts||0)>seen?' new':''}" href="${esc(n.link)}">${inner}</a>` : `<div class="nt-item${(n.ts||0)>seen?' new':''}">${inner}</div>`;
+  }).join('') : `<div class="nt-empty">No notifications yet — offers and news will show up here.</div>`);
+}
+function toggleNotify(e){
+  e && e.stopPropagation();
+  const w = document.getElementById('notify'); if(!w) return;
+  const open = w.classList.toggle('open');
+  if(open){
+    renderNotices();
+    try{ localStorage.setItem(NOTICE_SEEN, String(Date.now())); }catch(e){}
+    const b = document.getElementById('ntBadge'); if(b) b.style.display = 'none';
+  }
+}
+document.addEventListener('click', e=>{ if(!e.target.closest('#notify')) document.getElementById('notify')?.classList.remove('open'); });
+
+/* mobile bottom bar-er Search — upore search box-e focus */
+function mobileSearch(){
+  window.scrollTo({ top:0, behavior:'smooth' });
+  setTimeout(()=> document.getElementById('globalSearch')?.focus(), 350);
+}
 
 /* =========================================================================
    NEWSLETTER — Firebase 'subscribers' e email save (admin > Customers e dekha jay)
@@ -1083,17 +1294,41 @@ function renderChrome(){
   const m = document.getElementById('chrome-menu'); if(m) m.innerHTML = buildMenu();
   const w = document.getElementById('chrome-wa'); if(w) w.innerHTML = buildWhatsApp();
   const pn = document.getElementById('drawerPayNote'); if(pn) pn.textContent = payBadges().join(' · ');
+  // current page-er nav link highlight
+  const page = (location.pathname.split('/').pop() || 'index.html').replace('.html','') || 'index';
+  const tag = param('tag');
+  document.querySelectorAll('.nav-links a').forEach(a=>{
+    const on = tag ? a.getAttribute('href').includes('tag='+tag) : a.dataset.nav === page;
+    a.classList.toggle('on', !!on);
+  });
 }
+/* category chobi (admin > Banners > Category Images) — menu + homepage tile */
+function loadCatImages(){
+  if(!window.fdb) return Promise.resolve();
+  return window.fdb.ref('categoryImages').once('value').then(s=>{ CAT_IMAGES = s.val() || {}; }, ()=>{});
+}
+/* scroll: sticky nav-e shadow + back-to-top button */
+let scrollTick = false;
+window.addEventListener('scroll', ()=>{
+  if(scrollTick) return; scrollTick = true;
+  requestAnimationFrame(()=>{
+    scrollTick = false;
+    document.getElementById('mainNav')?.classList.toggle('stuck', scrollY > 160);
+    document.getElementById('toTop')?.classList.toggle('show', scrollY > 700);
+  });
+}, { passive:true });
 document.addEventListener('DOMContentLoaded', ()=>{
   document.body.insertAdjacentHTML('beforeend',
-    buildDrawer() + `<div id="chrome-menu"></div>` + buildWishDrawer() + buildQuickView() + `<div id="chrome-wa"></div>`);
+    buildDrawer() + `<div id="chrome-menu"></div>` + buildWishDrawer() + buildQuickView() + `<div id="chrome-wa"></div>`
+    + `<button class="to-top" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">${ICO.up}</button>`);
   renderChrome();
   injectAnalytics();
   initAccountState();
   updateCartUI();
   updateWishUI();
-  Promise.all([loadStoreConfig(), new Promise(r=>bootProducts(r))]).then(([changed])=>{
+  Promise.all([loadStoreConfig(), new Promise(r=>bootProducts(r)), loadCatImages()]).then(([changed])=>{
     if(changed){ renderChrome(); injectAnalytics(); }
+    else fillBrowse();   // product/chobi ese gele category menu-te chobi
     updateCartUI(); updateWishUI();
     if(typeof initPage === 'function') initPage();
   });

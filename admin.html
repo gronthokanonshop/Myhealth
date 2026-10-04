@@ -6,7 +6,7 @@
 <title>My Health — Admin Panel</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Lato:wght@400;700;900&family=Sora:wght@800&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
 <link rel="stylesheet" href="style.css">
 <style>
@@ -15,19 +15,19 @@ body{ background:#eef3ef; }
 .admin-wrap{ display:flex; min-height:100vh; }
 
 /* ===================== SIDEBAR (desktop) ===================== */
-.side{ width:236px; background:var(--pine); color:#ffe0c4; flex:0 0 auto; display:flex; flex-direction:column;
+.side{ width:236px; background:var(--pine); color:#c9d3db; flex:0 0 auto; display:flex; flex-direction:column;
   position:sticky; top:0; height:100vh; z-index:20; }
 .side .brand{ display:flex; align-items:center; gap:10px; padding:20px 18px; font-family:var(--display);
   font-weight:800; font-size:19px; color:#fff; border-bottom:1px solid rgba(255,255,255,.1); }
 .side .brand .mark{ width:42px; height:42px; flex:0 0 auto; background:url("data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat; }
 .side .brand .mark::after{ content:none; }
-.side .brand small{ display:block; font-family:var(--body); font-weight:500; font-size:10px; color:#e8b98a; letter-spacing:.08em; text-transform:uppercase; }
+.side .brand small{ display:block; font-family:var(--body); font-weight:500; font-size:10px; color:#9fb0bd; letter-spacing:.08em; text-transform:uppercase; }
 .side .brand .bwm{ display:flex; flex-direction:column; gap:1px; }
 .side .brand .bn{ font-family:var(--display); font-weight:800; font-size:20px; line-height:1; color:#fff; }
 .side .brand .bn .o, .login .lg .bn .o{ color:var(--leaf); }
 .login .lg .bn{ font-family:var(--display); font-weight:800; font-size:23px; }
 .side nav{ padding:12px; display:flex; flex-direction:column; gap:3px; flex:1; }
-.side nav button{ display:flex; align-items:center; gap:11px; padding:11px 14px; border-radius:10px; color:#ffe0c4;
+.side nav button{ display:flex; align-items:center; gap:11px; padding:11px 14px; border-radius:10px; color:#c9d3db;
   font-weight:600; font-size:14px; text-align:left; transition:.15s; width:100%; }
 .side nav button:hover{ background:rgba(255,255,255,.08); color:#fff; }
 .side nav button.on{ background:var(--leaf); color:#fff; }
@@ -88,7 +88,7 @@ tr:last-child td{ border-bottom:none; }
 .empty{ text-align:center; padding:40px 20px; color:var(--muted); }
 
 /* ===================== MODAL ===================== */
-.modal-bg{ position:fixed; inset:0; background:rgba(74,34,8,.55); display:none; align-items:flex-start; justify-content:center;
+.modal-bg{ position:fixed; inset:0; background:rgba(40,30,22,.5); display:none; align-items:flex-start; justify-content:center;
   padding:20px 12px; z-index:100; overflow-y:auto; }
 .modal-bg.open{ display:flex; }
 .modal{ background:#fff; border-radius:var(--r-lg); width:100%; max-width:600px; }
@@ -113,7 +113,7 @@ tr:last-child td{ border-bottom:none; }
 
 /* ===================== LOGIN ===================== */
 .login-bg{ min-height:100vh; display:grid; place-items:center; background:
-  radial-gradient(120% 120% at 100% 0%, rgba(255,195,104,.25), transparent 55%), linear-gradient(145deg,var(--pine),#5e2b08); padding:16px; }
+  radial-gradient(120% 120% at 100% 0%, rgba(255,255,255,.12), transparent 55%), linear-gradient(145deg,var(--leaf-d),var(--pine)); padding:16px; }
 .login{ background:#fff; border-radius:var(--r-lg); padding:30px 26px; width:100%; max-width:380px; box-shadow:var(--shadow-h); }
 .login .lg{ display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:800; font-size:22px; color:var(--pine); margin-bottom:6px; }
 .login .lg .mark{ width:48px; height:48px; flex:0 0 auto; background:url("data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat; }
@@ -249,7 +249,7 @@ tr:last-child td{ border-bottom:none; }
   }
   .mob-nav button, .mob-nav a{
     flex:1 0 auto; min-width:62px; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:3px; color:#ffe0c4; font-size:10px; font-weight:600; font-family:inherit;
+    gap:3px; color:#c9d3db; font-size:10px; font-weight:600; font-family:inherit;
     border:none; background:none; cursor:pointer; transition:.15s; padding:6px 4px;
     text-decoration:none; -webkit-tap-highlight-color:transparent;
   }
@@ -458,7 +458,7 @@ const DEFAULT_CATEGORIES = [
 /* Store settings default — app.js er CONFIG er sathe mil */
 const DEFAULT_SETTINGS = {
   brand:'My Health', tagline:'Health, Beauty & Wellness', siteUrl:'https://YOUR-DOMAIN.com',
-  hotline:'16XXX', whatsapp:'8801XXXXXXXXX', email:'support@YOUR-DOMAIN.com', address:'Dhaka, Bangladesh', tradeLicense:'',
+  hotline:'16XXX', whatsapp:'8801XXXXXXXXX', email:'support@YOUR-DOMAIN.com', address:'Dhaka, Bangladesh', tradeLicense:'', themeColor:'#3BB77E',
   announcement:'', footerAbout:"Bangladesh's trusted store for authentic health, beauty & wellness products. Delivered to all 64 districts.",
   bkash:'', bkashType:'Personal', nagad:'', nagadType:'Personal',
   facebook:'', instagram:'', youtube:'', tiktok:'', gaId:'', fbPixel:'',
@@ -638,6 +638,7 @@ function attachListeners(){
   }, ['categories','products','banners']);
   listen('settings', val=>{
     storeSettings = {...DEFAULT_SETTINGS, ...(val||{})};
+    applyAdminTheme(storeSettings.themeColor);
     const parts = (storeSettings.brand||'My Health').split(' ');
     const bn = `<span class="o">${esc(parts[0])}</span>${parts.length>1?' '+esc(parts.slice(1).join(' ')):''}`;
     document.getElementById('sideBrand').innerHTML = bn;
@@ -1390,7 +1391,7 @@ function renderBanners(){
             <td><b>${num(b.order)}</b></td>
             <td><div style="display:flex;gap:11px;align-items:center">
               ${b.img?`<img class="t-img" src="${esc(b.img)}" alt="">`:`<div class="t-emoji">—</div>`}
-              <div><b>${esc(b.title)}</b><div class="tag-mini">${b.img?'Custom image':esc(b.subtitle||'')+' · '+esc(b.bigText||'')}</div></div>
+              <div><b>${esc(b.title)}</b><div class="tag-mini">${b.placement==='hero'?'<b style="color:var(--leaf)">Hero slider</b> · ':'Promo row · '}${b.img?'Custom image':esc(b.subtitle||'')+' · '+esc(b.bigText||'')}</div></div>
             </div></td>
             <td class="tag-mini">${b.link?esc(b.link):'—'}</td>
             <td><button class="stock-toggle ${b.active!==false?'in':'out'}" onclick="toggleBannerActive(${jsq(b._key)},${b.active===false})">${b.active!==false?'Active':'Hidden'}</button></td>
@@ -1419,7 +1420,7 @@ function renderBanners(){
       </div>
       ` : `<div class="empty">No banners yet — the homepage shows 2 default banners until you add your own.</div>`}
     </div>
-    <div class="note-box">Homepage shows the top 2 <b>active</b> banners (sorted by Order) as a slider. Extra banners stay ready as spares.</div>
+    <div class="note-box"><b>Hero slider</b> banners (image required, ~1600×500) rotate at the top of the homepage together with the Hero Banner Image. <b>Promo row</b> shows the first 3 active promo banners (sorted by Order) — text banners automatically get a matching product photo.</div>
 
     <div class="panel" style="margin-top:20px">
       <div class="panel-head"><h2>Category Images</h2></div>
@@ -1483,9 +1484,9 @@ function openBanner(key){
       <div class="fld"><label>Big text</label><input id="bn_big" value="${esc(b?.bigText||'')}" placeholder="e.g. Up to 35% OFF"></div>
       <div class="fld"><label>Link (optional)</label><input id="bn_link" value="${esc(b?.link||'')}" placeholder="e.g. category.html?goal=muscle"></div>
       <div class="g2">
-        <div class="fld"><label>Colour theme</label><select id="bn_theme">
-          <option value="a" ${!b||b.theme==='a'?'selected':''}>Orange</option>
-          <option value="b" ${b?.theme==='b'?'selected':''}>Sage green</option>
+        <div class="fld"><label>Where to show</label><select id="bn_placement">
+          <option value="promo" ${b?.placement!=='hero'?'selected':''}>Promo row (3 banners under categories)</option>
+          <option value="hero" ${b?.placement==='hero'?'selected':''}>Hero slider (big banner at top — image required)</option>
         </select></div>
         <div class="fld"><label>Order</label><input id="bn_order" type="number" value="${b ? num(b.order) : banners.length}"></div>
       </div>
@@ -1503,9 +1504,12 @@ function saveBanner(key){
   if(!title){ alert('Title দিতে হবে।'); return; }
   const link = v('bn_link');
   if(/^\s*javascript:/i.test(link)){ alert('Invalid link.'); return; }
+  const placement = v('bn_placement') === 'hero' ? 'hero' : 'promo';
+  if(placement === 'hero' && !v('bn_img')){ alert('Hero slider banner-er jonno chobi (image) lagbe — Upload korun.'); return; }
+  const old = key ? banners.find(x=>x._key===key) : null;
   const data = {
     title, subtitle: v('bn_subtitle'), bigText: v('bn_big'), link, img: v('bn_img'),
-    theme: v('bn_theme'), order: parseInt(v('bn_order'),10)||0,
+    placement, theme: old?.theme || 'a', order: parseInt(v('bn_order'),10)||0,
     active: document.getElementById('bn_active').checked
   };
   const ref = key ? window.fdb.ref('banners/'+key) : window.fdb.ref('banners').push();
@@ -2486,6 +2490,16 @@ function renderSettings(){
         <div class="form-sec">Contact</div>
         <div class="g2">${f('hotline','Hotline / phone','09XXXXXXXXX')}${f('whatsapp','WhatsApp number','8801XXXXXXXXX','Start with 880, no + sign. Enables the WhatsApp button & "Order on WhatsApp".')}</div>
         <div class="g2">${f('email','Support email','support@yourshop.com')}${f('tradeLicense','Trade licence no.','')}</div>
+
+        <div class="form-sec">Theme color</div>
+        <p style="color:var(--muted);font-size:13px;margin:-4px 0 12px">Website-er button, price, menu ityadir rong. Logo-r rong (orange) bodlabe na.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          ${[['#3BB77E','Fresh green (default)'],['#EA7317','Logo orange'],['#0EA5A4','Teal'],['#2563EB','Blue'],['#7C3AED','Purple'],['#DB2777','Pink']].map(([hex,name])=>`
+            <button type="button" class="b b-ghost b-sm" onclick="document.getElementById('st_themeColor').value='${hex}';applyAdminTheme('${hex}')" title="${name}"
+              style="gap:8px"><span style="width:16px;height:16px;border-radius:50%;background:${hex};display:inline-block"></span>${name}</button>`).join('')}
+          <input type="color" id="st_themeColor" value="${esc(/^#[0-9a-f]{6}$/i.test(s.themeColor||'') ? s.themeColor : '#3BB77E')}" oninput="applyAdminTheme(this.value)"
+            style="width:46px;height:36px;border:1.5px solid var(--line);border-radius:9px;padding:2px;cursor:pointer" title="Custom color">
+        </div>
         ${f('address','Shop address','House, Road, Area, Dhaka')}
 
         <div class="form-sec">Delivery charges (৳)</div>
@@ -2567,6 +2581,15 @@ function renderSettings(){
       </p>
     </div>`;
 }
+/* website-er moto admin-eo theme color (app.js applyTheme er sathe mil) */
+function applyAdminTheme(hex){
+  const m = /^#?([0-9a-f]{6})$/i.exec(String(hex||'').trim()); if(!m) return;
+  const n = parseInt(m[1],16), rgb = [n>>16&255, n>>8&255, n&255];
+  const mix = (t,w) => '#' + rgb.map(c=>Math.round(c+(t-c)*w).toString(16).padStart(2,'0')).join('');
+  const r = document.documentElement.style;
+  r.setProperty('--leaf', '#'+m[1]); r.setProperty('--leaf-d', mix(0,.14)); r.setProperty('--leaf-dd', mix(0,.38));
+  r.setProperty('--leaf-l', mix(255,.84)); r.setProperty('--leaf-ll', mix(255,.94)); r.setProperty('--brand-rgb', rgb.join(','));
+}
 async function saveStoreSettings(){
   const v = id => (document.getElementById('st_'+id)?.value || '').trim();
   const msg = document.getElementById('stMsg');
@@ -2587,6 +2610,7 @@ async function saveStoreSettings(){
   for(const k of ['facebook','instagram','youtube','tiktok']){
     if(data[k] && !/^https?:\/\//i.test(data[k])){ show(`${k} link must start with https://`, false); return; }
   }
+  if(!/^#[0-9a-f]{6}$/i.test(data.themeColor)) data.themeColor = DEFAULT_SETTINGS.themeColor;
   if(data.gaId && !/^G-[A-Z0-9]+$/i.test(data.gaId)){ show('Google Analytics ID must look like G-XXXXXXXXXX', false); return; }
   if(data.fbPixel && !/^[0-9]{6,20}$/.test(data.fbPixel)){ show('Facebook Pixel ID must be numbers only', false); return; }
   for(const k of ['bkash','nagad']){

@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
 <title>Shop All Products — My Health</title>
 <meta name="description" content="Browse supplements, face care, hair care, body care, makeup, mother & baby and more — 100% authentic products delivered across Bangladesh." />
-<meta name="theme-color" content="#0F5132" />
+<meta name="theme-color" content="#3BB77E" />
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Lato:wght@400;700;900&family=Sora:wght@800&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -22,61 +22,65 @@
   <div class="cat-hero">
     <h1 id="catTitle">All Products</h1>
     <p id="catDesc">Browse our full range of authentic products.</p>
+    <div class="cat-pills" id="catPills"></div>
   </div>
 
-  <div class="cat-results">
-    <div class="cat-toolbar">
-      <button class="filter-btn" onclick="openFilterDrawer()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
-        Filter <span class="fcount" id="filterCount" style="display:none"></span>
-      </button>
-      <div class="count" id="resultCount"></div>
-      <select id="sortBy" onchange="resetPaging(); render()" aria-label="Sort products">
-        <option value="pop">Sort: Popular</option>
-        <option value="new">Newest first</option>
-        <option value="low">Price: Low → High</option>
-        <option value="high">Price: High → Low</option>
-        <option value="disc">Biggest discount</option>
-        <option value="rate">Top rated</option>
-      </select>
+  <div class="shop-layout">
+    <div class="cat-results">
+      <div class="cat-toolbar">
+        <button class="filter-btn" onclick="openFilterDrawer()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+          Filter <span class="fcount" id="filterCount" style="display:none"></span>
+        </button>
+        <div class="count" id="resultCount"></div>
+        <select id="sortBy" onchange="resetPaging(); render()" aria-label="Sort products">
+          <option value="pop">Sort: Popular</option>
+          <option value="new">Newest first</option>
+          <option value="low">Price: Low → High</option>
+          <option value="high">Price: High → Low</option>
+          <option value="disc">Biggest discount</option>
+          <option value="rate">Top rated</option>
+        </select>
+      </div>
+
+      <div class="chips" id="activeChips"></div>
+      <div class="grid" id="catGrid"></div>
+      <button class="btn btn-outline-dark load-more" id="loadMore" style="display:none" onclick="pageSize += PAGE; render()">Load more products</button>
     </div>
 
-    <div class="chips" id="activeChips"></div>
-    <div class="grid" id="catGrid"></div>
-    <button class="btn btn-outline-dark load-more" id="loadMore" style="display:none" onclick="pageSize += PAGE; render()">Load more products</button>
+    <!-- Filters: mobile-e drawer, desktop-e bam pasher sidebar (CSS) -->
+    <aside class="drawer filter-drawer" id="filterDrawer" aria-label="Filters">
+      <div class="drawer-head"><h3>Filters</h3><button onclick="closeFilterDrawer()" aria-label="Close">×</button></div>
+      <div class="drawer-body">
+        <h4>Category</h4>
+        <div class="fcat" id="goalFilters"></div>
+        <h4>Quick filters</h4>
+        <div class="fgoal" id="tagFilters">
+          <button onclick="setTag('all')" class="on" data-tag="all">All products</button>
+          <button onclick="setTag('flash')" data-tag="flash">On sale</button>
+          <button onclick="setTag('best')" data-tag="best">Best sellers</button>
+          <button onclick="setTag('new')" data-tag="new">New arrivals</button>
+        </div>
+        <h4>Price (৳)</h4>
+        <div class="fprice">
+          <input id="fMin" type="number" inputmode="numeric" min="0" placeholder="Min" oninput="onPriceInput()">
+          <span>–</span>
+          <input id="fMax" type="number" inputmode="numeric" min="0" placeholder="Max" oninput="onPriceInput()">
+        </div>
+        <h4>Availability</h4>
+        <div class="fbrands" style="max-height:none">
+          <label class="fcheck"><input type="checkbox" id="fStock" onchange="inStockOnly=this.checked; resetPaging(); render()"> In stock only</label>
+        </div>
+        <h4>Brand</h4>
+        <div class="fbrands" id="brandFilters"></div>
+        <button class="fclear" onclick="clearFilters()">Clear all filters</button>
+      </div>
+      <div class="drawer-foot"><button class="btn btn-dark" style="width:100%; justify-content:center" onclick="closeFilterDrawer()" id="showResultsBtn">Show results</button></div>
+    </aside>
   </div>
 </main>
 
-<!-- Filter drawer -->
 <div class="overlay" id="filterOverlay" onclick="closeFilterDrawer()"></div>
-<aside class="drawer filter-drawer" id="filterDrawer" aria-label="Filters">
-  <div class="drawer-head"><h3>Filters</h3><button onclick="closeFilterDrawer()" aria-label="Close">×</button></div>
-  <div class="drawer-body">
-    <h4>Category</h4>
-    <div class="fcat" id="goalFilters"></div>
-    <h4>Quick filters</h4>
-    <div class="fgoal" id="tagFilters">
-      <button onclick="setTag('all')" class="on" data-tag="all">All products</button>
-      <button onclick="setTag('flash')" data-tag="flash">On sale</button>
-      <button onclick="setTag('best')" data-tag="best">Best sellers</button>
-      <button onclick="setTag('new')" data-tag="new">New arrivals</button>
-    </div>
-    <h4>Price (৳)</h4>
-    <div class="fprice">
-      <input id="fMin" type="number" inputmode="numeric" min="0" placeholder="Min" oninput="onPriceInput()">
-      <span>–</span>
-      <input id="fMax" type="number" inputmode="numeric" min="0" placeholder="Max" oninput="onPriceInput()">
-    </div>
-    <h4>Availability</h4>
-    <div class="fbrands" style="max-height:none">
-      <label class="fcheck"><input type="checkbox" id="fStock" onchange="inStockOnly=this.checked; resetPaging(); render()"> In stock only</label>
-    </div>
-    <h4>Brand</h4>
-    <div class="fbrands" id="brandFilters"></div>
-    <button class="fclear" onclick="clearFilters()">Clear all filters</button>
-  </div>
-  <div class="drawer-foot"><button class="btn btn-dark" style="width:100%; justify-content:center" onclick="closeFilterDrawer()" id="showResultsBtn">Show results</button></div>
-</aside>
 
 <footer id="site-footer"></footer>
 
@@ -166,6 +170,11 @@ function applyHero(){
     ? `Curated ${sub.label.toLowerCase()} picks${sub.note ? ' — '+sub.note : ''}.`
     : (cat ? `Browse all ${cat.label.toLowerCase()} products.` : "Browse our full range of authentic products.");
   document.title = title + ' — ' + CONFIG.brand;
+  // hero-r niche quick pill: category hole tar sub, sub hole bhai-bon, na hole sob top category
+  const group = sub ? categoryObj(sub.parent) : cat;
+  const pills = group ? [{ id:group.id, label:'All '+group.label }, ...(group.subs||[])] : CATEGORIES;
+  document.getElementById('catPills').innerHTML = searchQ ? '' : pills.map(p=>
+    `<a href="category.html?goal=${encodeURIComponent(p.id)}" class="${p.id===activeGoal?'on':''}" onclick="event.preventDefault(); setGoal(${esc(JSON.stringify(p.id))})">${esc(p.label)}</a>`).join('');
   document.querySelectorAll('[data-goal]').forEach(b=> b.classList.toggle('on', b.dataset.goal===activeGoal));
   const openGroup = sub ? document.querySelector(`.fcat-group[data-cat="${CSS.escape(sub.parent)}"]`) : document.querySelector(`.fcat-group[data-cat="${CSS.escape(activeGoal)}"]`);
   document.querySelectorAll('.fcat-group').forEach(d=> d.open = (d===openGroup));
@@ -204,7 +213,7 @@ function render(){
   if(sort==='new')  list.sort((a,b)=>(b.id||0)-(a.id||0));
   list.sort(stockFirst);   // stable sort — out of stock sobar sheshe
 
-  document.getElementById('resultCount').textContent = `${list.length} product${list.length!==1?'s':''} found`;
+  document.getElementById('resultCount').innerHTML = `We found <b>${list.length}</b> product${list.length!==1?'s':''} for you`;
   document.getElementById('catGrid').innerHTML = list.length
     ? list.slice(0, pageSize).map(productCard).join('')
     : `<div style="grid-column:1/-1; text-align:center; padding:60px; color:var(--muted)">
