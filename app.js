@@ -15,7 +15,7 @@ const CONFIG = {
   brand:            "My Health",
   tagline:          "Health, Beauty & Wellness",
   /* ⚠️ DOMAIN PLACEHOLDER — domain kena hole ekhane (ba admin > Settings e) real URL boshao (sese / chara). */
-  siteUrl:          "https://YOUR-DOMAIN.com",
+  siteUrl:          "https://gronthokanonshop.github.io/Myhealth",
   currency:         "৳",
   hotline:          "16XXX",
   whatsapp:         "8801XXXXXXXXX",   // WhatsApp number (880 diye, + chara)

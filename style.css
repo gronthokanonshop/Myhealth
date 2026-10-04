@@ -1325,3 +1325,94 @@ body:has(.drawer.open) .toast.show{ transform:translateX(-50%) translateY(0); }
 
 /* screen-reader / Google-er jonno heading (chokhe dekha jay na) */
 .sr-only{ position:absolute!important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+/* =========================================================================
+   v6 — Account icon (phone-e bottom bar-e ache), Free Health Tools highlight
+   ========================================================================= */
+/* phone/tablet-e niche-r bar-e Account ache — upore dorkar nai */
+@media (max-width:760px){
+  body.has-mnav .acct-btn{ display:none; } body.has-mnav .head-actions{ padding-right:10px; }
+  /* product page-e "Add to cart" bar dekhale bottom bar lukay — tokhon Account abar upore */
+  body.has-mnav.has-sticky-buy .acct-btn{ display:flex; } body.has-mnav.has-sticky-buy .head-actions{ padding-right:0; }
+}
+
+/* "ফ্রি" badge (menu) */
+.free-tag{ display:inline-block; font-style:normal; font-family:'Hind Siliguri', var(--body); font-weight:700; font-size:11px; line-height:1;
+  padding:4px 7px 3px; border-radius:999px; background:#EA7317; color:#fff; vertical-align:middle; animation:freePulse 2s ease-in-out infinite; }
+@keyframes freePulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(234,115,23,.45); } 50%{ box-shadow:0 0 0 5px rgba(234,115,23,0); } }
+.nav-links .nav-tools svg{ width:16px; height:16px; color:#E0603A; }
+.nav-links .nav-tools .free-tag{ margin-left:2px; }
+.mm-tools{ display:flex !important; align-items:center; gap:8px; }
+
+/* computer-e bam pashe bhasoman tab */
+.tools-tab{ display:none; }
+@media (min-width:1025px){
+  .tools-tab{ position:fixed; left:0; top:50%; z-index:45; display:flex; flex-direction:column; align-items:center; gap:8px;
+    transform:translateY(-50%); padding:14px 9px; border-radius:0 12px 12px 0; background:linear-gradient(180deg, #EA7317, #F39A3D); color:#fff;
+    box-shadow:0 8px 22px rgba(234,115,23,.35); transition:padding .2s, box-shadow .2s; }
+  .tools-tab svg{ width:20px; height:20px; }
+  .tools-tab span{ writing-mode:vertical-rl; transform:rotate(180deg); font-family:'Hind Siliguri', var(--body); font-weight:700; font-size:14.5px; letter-spacing:.02em; }
+  .tools-tab:hover{ padding-left:14px; box-shadow:0 10px 28px rgba(234,115,23,.5); color:#fff; }
+}
+
+/* service card "ফ্রি" ribbon */
+.svc-card{ position:relative; }
+.svc-hot{ border-color:#FBD3B0; background:linear-gradient(120deg, #FFF7EF, #fff 60%); }
+.svc-hot:hover{ border-color:#EA7317; }
+.svc-ribbon{ position:absolute; top:-9px; right:14px; font-style:normal; font-family:'Hind Siliguri', var(--body); font-weight:700; font-size:12px;
+  line-height:1; padding:5px 10px 4px; border-radius:999px; background:#EA7317; color:#fff; box-shadow:0 4px 10px rgba(234,115,23,.35); animation:freePulse 2s ease-in-out infinite; }
+.svc-hot small{ font-family:'Hind Siliguri', var(--body); font-size:13px; }
+
+/* homepage Bangla health check */
+.hc-band{ position:relative; overflow:hidden; display:grid; grid-template-columns:1.15fr 1fr; gap:28px; align-items:center; margin:26px 0 6px; padding:28px 32px;
+  border-radius:var(--r-lg); border:1.5px solid #FBD3B0; background:linear-gradient(115deg, #FFF3E6 0%, #FFFAF4 45%, var(--leaf-ll) 100%);
+  font-family:'Hind Siliguri', var(--body); }
+.hc-band::after{ content:''; position:absolute; right:-60px; top:-60px; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle, rgba(234,115,23,.14), transparent 70%); pointer-events:none; }
+.hc-chip{ display:inline-block; padding:5px 12px 4px; border-radius:999px; background:#EA7317; color:#fff; font-weight:700; font-size:13px; }
+.hc-band h2{ font-family:'Hind Siliguri', var(--display); font-weight:700; font-size:clamp(23px,2.6vw,32px); line-height:1.3; color:var(--pine); margin:12px 0 8px; }
+.hc-band h2 em{ font-style:normal; color:#E0603A; display:block; }
+.hc-copy p{ color:var(--muted); font-size:15.5px; line-height:1.65; margin:0; max-width:520px; }
+.hc-links{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.hc-links a{ padding:7px 13px 6px; border-radius:999px; background:#fff; border:1px solid var(--line); color:var(--pine); font-weight:600; font-size:14px; transition:.15s; }
+.hc-links a:hover{ border-color:var(--leaf); color:var(--leaf-d); }
+.hc-form{ position:relative; z-index:1; background:#fff; border-radius:16px; padding:20px; box-shadow:0 12px 30px rgba(37,61,78,.08); border:1px solid var(--line); }
+.hc-row{ display:grid; grid-template-columns:1.3fr 1fr; gap:12px; }
+.hc-f{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+.hc-f > span:first-child{ font-weight:700; font-size:14.5px; color:var(--pine); }
+.hc-hw{ display:flex; gap:6px; }
+.hc-form select, .hc-form input{ width:100%; min-width:0; height:48px; border:1.5px solid var(--line); border-radius:10px; padding:0 10px; font-family:inherit; font-size:16px; color:var(--pine); background:#fff; outline:none; }
+.hc-form select:focus, .hc-form input:focus{ border-color:var(--leaf); box-shadow:0 0 0 3px rgba(var(--brand-rgb),.12); }
+.hc-btn{ width:100%; height:50px; margin-top:12px; font-family:inherit; font-size:16.5px; font-weight:700; }
+.hc-out:empty{ display:none; }
+.hc-out{ margin-top:14px; animation:htIn .4s ease; }
+.hc-err{ margin:0; color:#E2445C; font-size:14px; font-weight:600; }
+.hc-res{ display:flex; align-items:center; gap:14px; padding:12px 14px; border-radius:12px; background:var(--leaf-ll); }
+.hc-res > b{ font-size:34px; line-height:1; font-weight:700; color:var(--leaf-d); }
+.hc-res strong{ display:block; font-size:17px; color:var(--pine); }
+.hc-res small{ display:block; font-size:13.5px; color:var(--muted); margin-top:2px; }
+.hc-res.low{ background:#EAF4FD; } .hc-res.low > b{ color:#3A8FD8; }
+.hc-res.mid{ background:#FFF6E0; } .hc-res.mid > b{ color:#D58A0F; }
+.hc-res.high{ background:#FDECEF; } .hc-res.high > b{ color:#E2445C; }
+.hc-more{ display:block; margin-top:10px; padding:11px 14px; border-radius:10px; background:#EA7317; color:#fff; font-weight:700; font-size:15px; text-align:center; transition:.15s; }
+.hc-more:hover{ background:#D6620C; color:#fff; }
+@media (max-width:860px){ .hc-band{ grid-template-columns:1fr; gap:18px; padding:22px 20px; } }
+@media (max-width:620px){
+  .hc-band{ margin:18px 0 4px; padding:18px 14px; }
+  .hc-row{ grid-template-columns:1fr; }
+  .hc-links a{ font-size:13px; padding:6px 11px 5px; }
+}
+
+/* product page: mil rekhe health tool link */
+.pd-tool{ display:flex; align-items:center; gap:12px; margin:14px 0 4px; padding:12px 14px; border-radius:12px; border:1.5px dashed #F4B784;
+  background:#FFF7EF; color:var(--pine); font-family:'Hind Siliguri', var(--body); transition:.15s; }
+.pd-tool:hover{ border-color:#EA7317; background:#FFF0E2; color:var(--pine); }
+.pd-tool-i{ flex:0 0 40px; height:40px; border-radius:10px; background:#fff; display:grid; place-items:center; font-size:21px; }
+.pd-tool b{ display:block; font-size:15px; font-weight:700; }
+.pd-tool small{ display:block; font-size:13px; color:#C55F0D; font-weight:600; }
+.pd-tool i{ margin-left:auto; color:#EA7317; display:grid; }
+.pd-tool i svg{ width:18px; height:18px; }
+/* "ফ্রি" badge-er jonno menu ektu chapa — 1025–1400px screen-e sob link ek line-e */
+@media (min-width:1025px) and (max-width:1400px){ .nav-links a{ padding:8px 8px; gap:5px; } .nav-links .nav-ai{ padding:7px 11px; } }
+/* health tools: uchchota feet + inch dropdown pashapashi */
+.ht-hw{ display:flex; gap:8px; }
+.ht-hw select{ flex:1; min-width:0; }
