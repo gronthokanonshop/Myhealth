@@ -478,7 +478,7 @@ const TABS = [
 ];
 /* AI assistant default — ai.js er AI_DEFAULTS er sathe mil */
 const AI_DEFAULTS = {
-  enabled: true, mode: 'basic', workerUrl: '', model: 'claude-opus-5', floatingButton: true,
+  enabled: true, mode: 'basic', workerUrl: '', model: 'claude-opus-5-5', floatingButton: true,
   assistantName: 'Health Assistant',
   title: 'Tell us your problem — get the right products',
   subtitle: "Describe what's bothering you in Bangla or English. Our assistant suggests suitable products and simple tips in seconds.",
@@ -489,10 +489,11 @@ const AI_DEFAULTS = {
   maxProducts: 4, instructions: '', rules: []
 };
 const AI_MODELS = [
-  ['claude-opus-5',    'Claude Opus 5 — best answers (default)'],
-  ['claude-sonnet-5',  'Claude Sonnet 5 — balanced, ~2.5× cheaper'],
-  ['claude-haiku-4-5', 'Claude Haiku 4.5 — fastest & cheapest (~5×)'],
+  ['claude-opus-5-5',   'Claude Opus 5.5 — best answers (default)'],
+  ['claude-sonnet-5-5', 'Claude Sonnet 5.5 — faster, ~2× cheaper'],
 ];
+/* purono save kora model (Opus 5 / Sonnet 5 / Haiku 4.5) → notun model */
+const AI_LEGACY_MODELS = { 'claude-opus-5':'claude-opus-5-5', 'claude-sonnet-5':'claude-sonnet-5-5', 'claude-haiku-4-5':'claude-sonnet-5-5' };
 
 /* ============================ HELPERS ============================ */
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1986,7 +1987,7 @@ function renderAI(){
         <div class="g2">
           <div class="fld"><label for="ai_mode">Answer mode</label>${sel('ai_mode', [['basic','Basic — free, built-in keyword matching'],['ai','AI — real Claude AI (needs Cloudflare Worker)']], c.mode)}
             <div class="hint">Basic works now with no setup. AI understands any wording, Bangla/Banglish/English, and follow-up questions.</div></div>
-          <div class="fld"><label for="ai_model">AI model</label>${sel('ai_model', AI_MODELS, c.model)}
+          <div class="fld"><label for="ai_model">AI model</label>${sel('ai_model', AI_MODELS, AI_LEGACY_MODELS[c.model] || c.model)}
             <div class="hint">Used only in AI mode. Cost is per question from your Anthropic account.</div></div>
         </div>
         <div class="fld"><label for="ai_workerUrl">Cloudflare Worker URL</label>
@@ -2136,7 +2137,7 @@ async function aiTestQuestion(){
     out.innerHTML = `<div style="background:#fdfaf6;border:1px solid var(--line);border-radius:12px;padding:12px 14px">
       <div>${esc(j.reply).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>')}</div>
       ${(j.products||[]).length ? `<div class="sub-chips">${j.products.map(id=>`<span class="sub-chip" style="padding-right:12px">${esc(products.find(p=>p.id===id)?.name || '#'+id)}</span>`).join('')}</div>` : ''}
-      ${j.seeDoctor ? '<div class="tag-mini" style="margin-top:8px;color:#9a3412">🩺 Marked "see a doctor"</div>' : ''}
+      ${j.seeDoctor ? '<div class="tag-mini" style="margin-top:8px;color:#9a3412">⚠️ Marked "see a doctor"</div>' : ''}
       ${(j.followups||[]).length ? `<div class="tag-mini" style="margin-top:8px">Follow-ups: ${j.followups.map(esc).join(' · ')}</div>` : ''}
     </div>`;
   }catch(e){ out.innerHTML = `<span style="color:#c0392b">Could not reach the Worker: ${esc(e.message)}</span>`; }

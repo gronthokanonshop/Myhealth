@@ -18,8 +18,10 @@
    code paste kore deploy korle npm package bundle kora jay na.
    ========================================================================= */
 
-const MODELS = ['claude-opus-5', 'claude-sonnet-5', 'claude-haiku-4-5'];
-const DEFAULT_MODEL = 'claude-opus-5';
+const MODELS = ['claude-opus-5-5', 'claude-sonnet-5-5'];
+const DEFAULT_MODEL = 'claude-opus-5-5';
+// purono setting-e save kora model → notun model (Haiku 4.5 Oct 2026-er por bondho hote pare)
+const LEGACY_MODELS = { 'claude-opus-5': 'claude-opus-5-5', 'claude-sonnet-5': 'claude-sonnet-5-5', 'claude-haiku-4-5': 'claude-sonnet-5-5' };
 const STORE_TTL_MS = 5 * 60 * 1000;          // Firebase data 5 min cache
 const RATE_LIMIT = 12, RATE_WINDOW_MS = 10 * 60 * 1000;   // IP prati 10 min-e 12 ta prosno
 const MAX_MESSAGES = 12, MAX_CHARS = 1000;
@@ -72,12 +74,13 @@ export default {
     const store = await loadStore(env);
     if (store.cfg.enabled === false) return json({ error: 'disabled' }, 503, cors);
 
-    const model = MODELS.includes(store.cfg.model) ? store.cfg.model : DEFAULT_MODEL;
+    const wanted = LEGACY_MODELS[store.cfg.model] || store.cfg.model;
+    const model = MODELS.includes(wanted) ? wanted : DEFAULT_MODEL;
     const maxProducts = Math.max(2, Math.min(6, Number(store.cfg.maxProducts) || 4));
 
     const req = {
       model,
-      max_tokens: 4000,
+      max_tokens: 8000,   // Opus/Sonnet 5.5-e thinking sob somoy chalu — thinking + uttor duto-i ei limit-er moddhe
       // stable prefix (instructions + catalog) cache hoy — barbar prosno-te kom khoroch
       system: [{ type: 'text', text: buildSystemPrompt(store, maxProducts), cache_control: { type: 'ephemeral' } }],
       messages,
@@ -88,13 +91,11 @@ export default {
       'x-api-key': env.ANTHROPIC_API_KEY,
       'anthropic-version': '2023-06-01'
     };
-    // chat-er moto choto kaj-e low effort-i jotheshto (Haiku 4.5 effort support kore na)
-    if (model !== 'claude-haiku-4-5') req.output_config.effort = 'low';
-    // Opus 5 safety classifier decline korle Anthropic-er recommended model-e auto retry
-    if (model === 'claude-opus-5') {
-      req.fallbacks = 'default';
-      headers['anthropic-beta'] = 'server-side-fallback-2026-07-01';
-    }
+    // chat-er moto choto kaj-e low effort-i jotheshto (kom thinking = kom khoroch, druto uttor)
+    req.output_config.effort = 'low';
+    // safety classifier decline korle Anthropic-er recommended model-e auto retry (Opus 5.5 / Sonnet 5.5 duto-tei)
+    req.fallbacks = 'default';
+    headers['anthropic-beta'] = 'server-side-fallback-2026-07-01';
 
     let res, data;
     try {
