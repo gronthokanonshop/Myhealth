@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#3BB77E" />
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Lato:wght@400;700;900&family=Sora:wght@800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Lato:wght@400;700;900&family=Sora:wght@800&family=Hind+Siliguri:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
 <link rel="stylesheet" href="style.css">
 <!-- ⚠️ DOMAIN PLACEHOLDER: niche "https://YOUR-DOMAIN.com" gulo domain kenar por real URL diye bodlao -->
@@ -50,6 +50,32 @@
 
   <!-- SERVICE CARDS -->
   <section class="svc-row" id="svcRow"></section>
+
+  <!-- FREE HEALTH CHECK — Bangla, chokhe porar moto (health-tools.html-er choto rup: ekhanei BMI) -->
+  <section class="hc-band" aria-labelledby="hcTitle">
+    <div class="hc-copy">
+      <span class="hc-chip">১০০% ফ্রি · কোনো রেজিস্ট্রেশন লাগবে না</span>
+      <h2 id="hcTitle">আপনার শরীর কেমন আছে? <em>১০ সেকেন্ডে জেনে নিন</em></h2>
+      <p>উচ্চতা আর ওজন দিন — সাথে সাথে দেখুন আপনার BMI, আদর্শ ওজন, আর আপনার জন্য মানানসই পরামর্শ ও প্রোডাক্ট।</p>
+      <div class="hc-links">
+        <a href="health-tools.html#water">💧 দিনে কত পানি?</a>
+        <a href="health-tools.html#protein">💪 কত প্রোটিন লাগে?</a>
+        <a href="health-tools.html#cal">🔥 দৈনিক ক্যালোরি</a>
+      </div>
+    </div>
+    <form class="hc-form" onsubmit="event.preventDefault(); quickBMI()">
+      <div class="hc-row">
+        <label class="hc-f"><span>উচ্চতা</span>
+          <span class="hc-hw"><select id="qFt" aria-label="Height in feet"></select><select id="qIn" aria-label="Height in inches"></select></span>
+        </label>
+        <label class="hc-f"><span>ওজন (কেজি)</span>
+          <input id="qW" type="text" inputmode="decimal" maxlength="5" placeholder="যেমন ৬৫" autocomplete="off" aria-label="Weight in kg">
+        </label>
+      </div>
+      <button class="btn btn-green hc-btn" type="submit">⚖️ আমার BMI দেখুন</button>
+      <div class="hc-out" id="qOut" aria-live="polite"></div>
+    </form>
+  </section>
 
   <!-- FEATURED CATEGORIES -->
   <section class="section">
@@ -278,14 +304,48 @@ function renderServices(){
     { ico:ICO.spark,  t:'Ask our AI Assistant', s:'Product advice in seconds', href:'#aiSection' },
     { ico:ICO.route,  t:'Track Your Order',     s:'Live status with Order ID',  href:'track.html' },
     { ico:ICO.box,    t:'Bulk / Wholesale',     s:'Special prices for resellers', href: PRODUCTS.some(p=>has(p,'wholesale')) ? 'category.html?goal=all&tag=wholesale' : (wa ? waLink('Hi! I want to place a bulk / wholesale order.') : 'page.html?p=contact'), ext: !PRODUCTS.some(p=>has(p,'wholesale')) && !!wa },
-    { ico:ICO.heartPulse, t:'Free Health Tools', s:'BMI, water & protein calculators', href:'health-tools.html' },
+    { ico:ICO.heartPulse, t:'Free Health Tools', s:'BMI, পানি ও প্রোটিন — ফ্রি হিসাব', href:'health-tools.html', hot:'ফ্রি' },
   ];
   document.getElementById('svcRow').innerHTML = cards.map(c=>`
-    <a class="svc-card" href="${esc(c.href)}" ${c.ext?'target="_blank" rel="noopener"':''}>
+    <a class="svc-card${c.hot ? ' svc-hot' : ''}" href="${esc(c.href)}" ${c.ext?'target="_blank" rel="noopener"':''}>
+      ${c.hot ? `<i class="svc-ribbon">${c.hot}</i>` : ''}
       <span class="svc-ico">${c.ico}</span>
       <span class="svc-txt"><b>${c.t}</b><small>${c.s}</small></span>
       <span class="svc-go">${ICO.right}</span>
     </a>`).join('');
+}
+
+/* ---------------- QUICK HEALTH CHECK (Bangla BMI) ---------------- */
+const toBn = s => String(s).replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+const fromBn = s => String(s||'').replace(/[০-৯]/g, d => '০১২৩৪৫৬৭৮৯'.indexOf(d)).replace(',', '.').replace(/[^\d.]/g, '');
+(function initQuickBMI(){
+  const ft = document.getElementById('qFt'), inch = document.getElementById('qIn'); if(!ft) return;
+  ft.innerHTML = [4,5,6,7].map(n=>`<option value="${n}">${toBn(n)} ফুট</option>`).join('');
+  inch.innerHTML = [...Array(12).keys()].map(n=>`<option value="${n}">${toBn(n)} ইঞ্চি</option>`).join('');
+  // ager deya uchchota/ojon (health tools page-er sathe share) — na thakle 5'4"
+  let b = {}; try{ b = JSON.parse(localStorage.getItem('myhealth_body')||'{}'); }catch(e){}
+  const totalIn = b.h ? Math.round(b.h / 2.54) : 64;
+  ft.value = Math.min(7, Math.max(4, Math.floor(totalIn / 12))); inch.value = totalIn % 12;
+  if(b.w) document.getElementById('qW').value = toBn(b.w);
+})();
+function quickBMI(){
+  const out = document.getElementById('qOut');
+  const w = parseFloat(fromBn(document.getElementById('qW').value));
+  if(!(w >= 20 && w <= 250)){ out.innerHTML = `<p class="hc-err">দয়া করে সঠিক ওজন লিখুন (কেজিতে, যেমন ৬৫)</p>`; document.getElementById('qW').focus(); return; }
+  const cm = Math.round((Number(document.getElementById('qFt').value) * 12 + Number(document.getElementById('qIn').value)) * 2.54);
+  const m2 = Math.pow(cm / 100, 2), bmi = w / m2;
+  // এশিয়ান মান (WHO): <18.5 কম, 18.5–22.9 স্বাভাবিক, 23–24.9 বেশি, 25+ অনেক বেশি
+  const [label, cls, next] = bmi < 18.5 ? ['ওজন কম', 'low', 'স্বাস্থ্যকর উপায়ে ওজন বাড়ানোর টিপস ও প্রোডাক্ট']
+    : bmi < 23 ? ['স্বাভাবিক ওজন 🎉', 'ok', 'সুস্থ থাকতে দিনে কত পানি ও প্রোটিন লাগে']
+    : bmi < 25 ? ['ওজন একটু বেশি', 'mid', 'ওজন নিয়ন্ত্রণের সহজ টিপস ও প্রোডাক্ট']
+    : ['ওজন অনেক বেশি', 'high', 'ওজন কমানোর সহজ পরিকল্পনা ও প্রোডাক্ট'];
+  try{ const b = JSON.parse(localStorage.getItem('myhealth_body')||'{}'); localStorage.setItem('myhealth_body', JSON.stringify({ ...b, h: cm, w })); }catch(e){}
+  out.innerHTML = `
+    <div class="hc-res ${cls}">
+      <b>${toBn(bmi.toFixed(1))}</b>
+      <span><strong>${label}</strong><small>আপনার উচ্চতায় আদর্শ ওজন ${toBn(Math.round(18.5 * m2))}–${toBn(Math.round(22.9 * m2))} কেজি</small></span>
+    </div>
+    <a class="hc-more" href="health-tools.html#bmi">${next} দেখুন →</a>`;
 }
 
 /* ---------------- FEATURED CATEGORIES ---------------- */

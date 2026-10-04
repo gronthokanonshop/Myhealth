@@ -32,8 +32,8 @@
       <div class="ht-head"><span class="ht-ico">⚖️</span><div><h2>BMI Calculator</h2><small>Body Mass Index — Asian standard (WHO)</small></div></div>
       <form onsubmit="event.preventDefault(); calcBMI()">
         <div class="f2">
-          <div class="field"><label>Height (cm)</label><input id="bH" type="number" min="90" max="230" placeholder="e.g. 165" required><small class="ht-hint">Feet → cm: 5′4″ = 163 · 5′6″ = 168 · 5′8″ = 173</small></div>
-          <div class="field"><label>Weight (kg)</label><input id="bW" type="number" min="20" max="250" step="0.1" placeholder="e.g. 62" required></div>
+          <div class="field"><label>Height</label><span class="ht-hw"><select id="bH_ft" data-ft aria-label="Height in feet"></select><select id="bH_in" data-in aria-label="Height in inches"></select></span></div>
+          <div class="field"><label>Weight (kg)</label><select id="bW" data-kg required></select></div>
         </div>
         <button class="btn btn-green" type="submit">Calculate BMI</button>
       </form>
@@ -45,7 +45,7 @@
       <div class="ht-head"><span class="ht-ico">💧</span><div><h2>Daily Water Intake</h2><small>Adjusted for Bangladesh's warm climate</small></div></div>
       <form onsubmit="event.preventDefault(); calcWater()">
         <div class="f2">
-          <div class="field"><label>Weight (kg)</label><input id="wW" type="number" min="20" max="250" step="0.1" placeholder="e.g. 62" required></div>
+          <div class="field"><label>Weight (kg)</label><select id="wW" data-kg required></select></div>
           <div class="field"><label>Exercise per day</label><select id="wAct"><option value="0">None / little</option><option value="30">~30 minutes</option><option value="60">~1 hour</option><option value="90">1.5 hours +</option></select></div>
         </div>
         <label class="fcheck" style="padding-left:0"><input type="checkbox" id="wHot" checked> I spend time outdoors / in the heat</label>
@@ -59,7 +59,7 @@
       <div class="ht-head"><span class="ht-ico">💪</span><div><h2>Protein Need</h2><small>How many grams of protein you need per day</small></div></div>
       <form onsubmit="event.preventDefault(); calcProtein()">
         <div class="f2">
-          <div class="field"><label>Weight (kg)</label><input id="pW" type="number" min="20" max="250" step="0.1" placeholder="e.g. 62" required></div>
+          <div class="field"><label>Weight (kg)</label><select id="pW" data-kg required></select></div>
           <div class="field"><label>Your goal</label><select id="pGoal"><option value="0.8">Stay healthy (little exercise)</option><option value="1.2">Active lifestyle</option><option value="1.8">Build muscle (gym)</option><option value="1.4">Lose fat, keep muscle</option></select></div>
         </div>
         <button class="btn btn-green" type="submit">Calculate protein</button>
@@ -72,12 +72,12 @@
       <div class="ht-head"><span class="ht-ico">🔥</span><div><h2>Daily Calories</h2><small>Mifflin-St Jeor formula</small></div></div>
       <form onsubmit="event.preventDefault(); calcCal()">
         <div class="f2">
-          <div class="field"><label>Age</label><input id="cA" type="number" min="12" max="100" placeholder="e.g. 28" required></div>
+          <div class="field"><label>Age</label><select id="cA" data-age required></select></div>
           <div class="field"><label>Gender</label><select id="cS"><option value="m">Male</option><option value="f">Female</option></select></div>
         </div>
         <div class="f2">
-          <div class="field"><label>Height (cm)</label><input id="cH" type="number" min="90" max="230" placeholder="e.g. 165" required></div>
-          <div class="field"><label>Weight (kg)</label><input id="cW" type="number" min="20" max="250" step="0.1" placeholder="e.g. 62" required></div>
+          <div class="field"><label>Height</label><span class="ht-hw"><select id="cH_ft" data-ft aria-label="Height in feet"></select><select id="cH_in" data-in aria-label="Height in inches"></select></span></div>
+          <div class="field"><label>Weight (kg)</label><select id="cW" data-kg required></select></div>
         </div>
         <div class="f2">
           <div class="field"><label>Activity</label><select id="cAct"><option value="1.2">Mostly sitting</option><option value="1.375">Light (1–3 days/week)</option><option value="1.55">Moderate (3–5 days)</option><option value="1.725">Very active (6–7 days)</option></select></div>
@@ -110,10 +110,27 @@ window.NO_LIVE_RERENDER = true;
 document.querySelector('.ht-cta .btn').innerHTML = ICO.spark + ' Ask AI assistant';
 const BODY_KEY = 'myhealth_body';
 /* ager deya ojon/uchchota sob tool-e auto boshe */
+/* sob ghor dropdown: ojon 30–160 kg, boyosh 12–90, uchchota feet + inch */
+function fillSelects(){
+  const opt = (v, t) => `<option value="${v}">${t}</option>`;
+  const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+  document.querySelectorAll('select[data-kg]').forEach(s => s.innerHTML = opt('', 'Select weight') + range(30, 160).map(k => opt(k, k + ' kg')).join(''));
+  document.querySelectorAll('select[data-age]').forEach(s => s.innerHTML = opt('', 'Select age') + range(12, 90).map(a => opt(a, a + ' years')).join(''));
+  document.querySelectorAll('select[data-ft]').forEach(s => s.innerHTML = range(4, 7).map(f => opt(f, f + ' ft')).join(''));
+  document.querySelectorAll('select[data-in]').forEach(s => s.innerHTML = range(0, 11).map(i => opt(i, i + ' in')).join(''));
+}
+const hgt = id => Math.round((n(id + '_ft') * 12 + n(id + '_in')) * 2.54);   // feet/inch → cm
+function setHeight(id, cm){
+  const t = Math.round(cm / 2.54);
+  document.getElementById(id + '_ft').value = Math.min(7, Math.max(4, Math.floor(t / 12)));
+  document.getElementById(id + '_in').value = t % 12;
+}
 function loadBody(){
+  if(!document.querySelector('select[data-kg] option')) fillSelects();
   let b = {}; try{ b = JSON.parse(localStorage.getItem(BODY_KEY)||'{}'); }catch(e){}
-  const set = (id, v) => { const el = document.getElementById(id); if(el && v && !el.value) el.value = v; };
-  ['bW','wW','pW','cW'].forEach(id=>set(id, b.w)); ['bH','cH'].forEach(id=>set(id, b.h)); set('cA', b.a);
+  const set = (id, v) => { const el = document.getElementById(id); if(el && v && !el.value) el.value = String(Math.round(v)); };
+  ['bW','wW','pW','cW'].forEach(id=>set(id, b.w)); set('cA', b.a);
+  ['bH','cH'].forEach(id=>setHeight(id, b.h || 163));   // na thakle 5′4″
   if(b.s) document.getElementById('cS').value = b.s;
 }
 function saveBody(o){ let b = {}; try{ b = JSON.parse(localStorage.getItem(BODY_KEY)||'{}'); }catch(e){} try{ localStorage.setItem(BODY_KEY, JSON.stringify({...b, ...o})); }catch(e){} }
@@ -134,7 +151,7 @@ function prodList(catIds, title){
 }
 
 function calcBMI(){
-  const h = n('bH'), w = n('bW'); if(!(h>0 && w>0)) return;
+  const h = hgt('bH'), w = n('bW'); if(!(h>0 && w>0)) return;
   saveBody({ h, w });
   const bmi = w / Math.pow(h/100, 2);
   // Asian cut-off: <18.5 kom, 18.5–22.9 swabhabik, 23–24.9 beshi, 25+ obese
@@ -174,7 +191,7 @@ function calcProtein(){
     ${prodList(muscle ? ['muscle'] : ['muscle','energy'], muscle ? 'Protein supplements' : 'Easy extra protein')}`;
 }
 function calcCal(){
-  const a = n('cA'), h = n('cH'), w = n('cW'), s = document.getElementById('cS').value;
+  const a = n('cA'), h = hgt('cH'), w = n('cW'), s = document.getElementById('cS').value;
   if(!(a>0 && h>0 && w>0)) return;
   saveBody({ a, h, w, s });
   const bmr = 10*w + 6.25*h - 5*a + (s === 'm' ? 5 : -161);
@@ -188,7 +205,11 @@ function calcCal(){
     <p>${goal < 0 ? 'A ~450 kcal daily deficit means roughly 0.4 kg loss per week — slow and steady is best.' : goal > 0 ? 'A ~350 kcal surplus with strength training helps you gain mostly muscle.' : 'Eat around this much to keep your current weight.'} Your body burns <b>${Math.round(bmr)}</b> kcal at rest.</p>
     ${prodList(goal < 0 ? ['weight'] : goal > 0 ? ['muscle'] : ['energy','immunity'], goal < 0 ? 'Support for weight loss' : goal > 0 ? 'For healthy weight gain' : 'Daily essentials')}`;
 }
-function initPage(){ loadBody(); }
+function initPage(){
+  loadBody();
+  // homepage-er "১০ সেকেন্ডে জেনে নিন" theke ashle — ager deya uchchota/ojon diye shorasori report dekhai
+  if(location.hash === '#bmi' && n('bW') > 0 && !document.getElementById('bmiOut').innerHTML.trim()) calcBMI();
+}
 </script>
 </body>
 </html>
