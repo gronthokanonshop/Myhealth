@@ -11,7 +11,7 @@
 <meta property="og:description" content="100% authentic health, beauty & wellness products delivered across Bangladesh." />
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Lato:wght@400;700;900&family=Sora:wght@800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Lato:wght@400;700;900&family=Sora:wght@800&family=Hind+Siliguri:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -185,6 +185,7 @@ function initPage(){
         <button class="pd-act ${wishlist.has(p.id)?'on':''}" data-wish="${p.id}" onclick="toggleWish(${p.id})">${ICO.heart} Wishlist</button>
         <button class="pd-act" onclick="shareProduct()">${ICO.share} Share</button>
       </div>
+      ${toolHint(p)}
       ${wa && !oos ? `<a class="btn btn-wa-order" target="_blank" rel="noopener" href="${waLink(`Hi! I want to order:\n${p.name}\nPrice: ${money(p.price)}\n${pageUrl}`)}">${WA_ICON} Order on WhatsApp</a>` : ''}
 
       <div class="pd-perks">
@@ -407,6 +408,16 @@ function renderEta(){
   const sub = pdProduct.price * pdQty + cartTotals().sub;
   const e = deliveryEstimate(d, sub);
   out.innerHTML = `Arrives <b>${e.from} – ${e.to}</b> · Delivery <b>${e.fee ? money(e.fee) : 'FREE'}</b>${e.fee && freeDeliveryOn() ? `<small>Free over ${money(CONFIG.freeDeliveryOver)}</small>` : ''}`;
+}
+/* ---- product-er sathe mil rekhe ফ্রি হেলথ টুল-er link (protein → protein hisab, weight → BMI ...) ---- */
+function toolHint(p){
+  const cats = getCats(p);
+  const t = cats.includes('muscle') ? ['protein', '💪', 'আপনার দৈনিক কত গ্রাম প্রোটিন লাগে?']
+    : cats.includes('weight') ? ['bmi', '⚖️', 'আপনার BMI ও আদর্শ ওজন কত?']
+    : cats.some(c => ['energy','immunity','skin','sleep','brain'].includes(c)) ? ['water', '💧', 'দিনে কত লিটার পানি খাওয়া উচিত?']
+    : null;
+  if(!t) return '';
+  return `<a class="pd-tool" href="health-tools.html#${t[0]}"><span class="pd-tool-i">${t[1]}</span><span><b>${t[2]}</b><small>ফ্রি হিসাব করুন — ১০ সেকেন্ডে</small></span><i>${ICO.right}</i></a>`;
 }
 /* ---- back-in-stock alert (Firebase stockAlerts/{productId}) ---- */
 function stockAlert(id, form){

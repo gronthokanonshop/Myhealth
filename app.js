@@ -734,7 +734,7 @@ function buildHeader(){
         </div>
         <button class="iconbtn" onclick="openWish()" aria-label="Wishlist">${ICO.heart}<span class="badge" id="wishBadge">${wishlist.size}</span><span class="lbl">Wishlist</span></button>
         <button class="iconbtn" onclick="openCart()" aria-label="Cart">${ICO.cart}<span class="badge" id="cartBadge">0</span><span class="lbl">Cart</span></button>
-        <a class="iconbtn" href="account.html" aria-label="Account">${ICO.user}<span class="lbl" id="acctLabel">${user ? esc(user.displayName || 'My Account') : 'Account'}</span></a>
+        <a class="iconbtn acct-btn" href="account.html" aria-label="Account">${ICO.user}<span class="lbl" id="acctLabel">${user ? esc(user.displayName || 'My Account') : 'Account'}</span></a>
       </div>
     </div>
   </header>
@@ -749,7 +749,7 @@ function buildHeader(){
         <a class="nav-ai" href="index.html#aiSection" data-ai-link onclick="if(window.openAI){event.preventDefault();openAI();}">${ICO.spark} Ask AI</a>
         <a class="nav-flash" href="category.html?goal=all&tag=flash">${ICO.bolt} Flash Sales</a>
         <a href="category.html?goal=all" data-nav="category">Shop</a>
-        <a href="health-tools.html" data-nav="health-tools">Health Tools</a>
+        <a class="nav-tools" href="health-tools.html" data-nav="health-tools">${ICO.heartPulse} Health Tools <i class="free-tag">ফ্রি</i></a>
         <a href="track.html" data-nav="track">Track Order</a>
         <a href="blog.html" data-nav="blog">Blog</a>
         <a href="page.html?p=contact">Contact Us</a>
@@ -879,7 +879,7 @@ function buildMenu(){
       <a href="account.html">My Account</a>
       <a href="track.html">Track Order</a>
       <a href="compare.html">Compare Products</a>
-      <a href="health-tools.html">Health Tools (BMI, water, protein)</a>
+      <a href="health-tools.html" class="mm-tools">Health Tools — BMI, পানি, প্রোটিন <i class="free-tag">ফ্রি</i></a>
       <a href="blog.html">Blog</a>
       <a href="page.html?p=delivery">Delivery Info</a>
       <a href="page.html?p=about">About Us</a>
@@ -1430,6 +1430,11 @@ function renderChrome(){
   refreshCompareUI();
 }
 /* mobile-er niche fixed menu (Home / Shop / Search / Cart / Account) */
+/* computer-e bam pashe bhasoman "ফ্রি হেলথ চেক" tab (phone-e na — okhane Ask AI / WhatsApp / bottom bar ache) */
+function buildToolsTab(){
+  if(/health-tools|checkout|admin/.test(location.pathname)) return '';
+  return `<a class="tools-tab" href="health-tools.html" title="Free BMI, water, protein & calorie calculators">${ICO.heartPulse}<span>ফ্রি হেলথ চেক</span></a>`;
+}
 function buildMobileNav(){
   return `
   <nav class="mnav" aria-label="Mobile navigation">
@@ -1459,7 +1464,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   document.body.insertAdjacentHTML('beforeend',
     buildDrawer() + `<div id="chrome-menu"></div>` + buildWishDrawer() + buildQuickView() + `<div id="chrome-wa"></div>`
     + `<button class="to-top" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">${ICO.up}</button>`
-    + buildMobileNav());
+    + buildMobileNav() + buildToolsTab());
   document.body.classList.add('has-mnav');
   renderChrome();
   injectAnalytics();
