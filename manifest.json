@@ -4,8 +4,8 @@
   "description": "Authentic health, beauty & wellness products delivered across Bangladesh.",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#F8F2E4",
-  "theme_color": "#EA7317",
+  "background_color": "#FFFFFF",
+  "theme_color": "#3BB77E",
   "icons": [
     { "src": "logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ]

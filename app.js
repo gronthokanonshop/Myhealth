@@ -36,7 +36,8 @@ const CONFIG = {
   deliveryFee:      60,        // Dhaka-r bhitore (৳)
   deliveryFeeOuter: 120,       // Dhaka-r baire (৳)
   usdRate:          0,         // ৳ per $1 — 0 hole USD dam dekhabe na (e.g. 123)
-  freeDeliveryOver: 1500,      // ei amount er beshi hole free delivery (0 = free delivery off)
+  socialProof:      'on',      // 'on' = asol order theke "Someone in Sylhet just ordered…" popup
+  freeDeliveryOver: 5000,      // ei amount er beshi hole free delivery (0 = free delivery off)
   storageKey:       "myhealth_cart",
   /* LEGACY coupon fallback — admin > Coupons e banano coupon age check hoy.
      Firebase-e same code thakle oitai cholbe (active/expiry/min order soho). */
@@ -127,6 +128,12 @@ const PAGES = {
     title: "About Us",
     html: `
       <p>{brand} is a trusted online store in Bangladesh for 100% authentic health, beauty and wellness products. Our goal is simple — genuine products at honest prices, delivered right to your door.</p>
+      <div class="about-stats">
+        <div><b>{productCount}+</b><span>Products</span></div>
+        <div><b>{brandCount}+</b><span>Trusted brands</span></div>
+        <div><b>{categoryCount}</b><span>Categories</span></div>
+        <div><b>64</b><span>Districts delivered</span></div>
+      </div>
       <h3>Why choose us?</h3>
       <ul>
         <li><b>100% Authentic</b> — sourced directly from brands and authorized importers.</li>
@@ -297,7 +304,7 @@ function bootProducts(done){
    Prothome localStorage cache diye render (instant), tarpor Firebase theke
    fresh value ene — bodlale header/footer abar render hoy.
    ========================================================================= */
-const SETTING_TEXT = ['brand','tagline','siteUrl','hotline','whatsapp','email','address','tradeLicense','themeColor','announcement',
+const SETTING_TEXT = ['brand','tagline','siteUrl','hotline','whatsapp','email','address','tradeLicense','themeColor','socialProof','announcement',
   'footerAbout','bkash','bkashType','nagad','nagadType','facebook','instagram','youtube','tiktok','gaId','fbPixel'];
 const SETTING_NUM  = ['deliveryFee','deliveryFeeOuter','freeDeliveryOver','usdRate'];
 const STORE_CACHE  = 'myhealth_store';
@@ -554,6 +561,9 @@ const ICO = {
   home:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>`,
   bag:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 14H5z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>`,
   share:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>`,
+  heartPulse:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 12.6 12 20l-7.5-7.4A5 5 0 1 1 12 6a5 5 0 1 1 7.5 6.6z"/><path d="M5 12h3l1.5-3 3 6 1.5-3h5"/></svg>`,
+  mic:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>`,
+  bellOn: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0M4 2 2 4M20 2l2 2"/></svg>`,
   box:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>`,
   route:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3.5 3.5 0 0 0 0-7H8a3.5 3.5 0 0 1 0-7h7.5"/></svg>`,
   star:   `<svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3 6.6 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21.2l1.5-7L2 9.4l7-.8z"/></svg>`,
@@ -594,7 +604,8 @@ function productCard(p){
         <div class="pc-price"><b>${money(p.price)}</b>${p.oldPrice>p.price ? `<s>${money(p.oldPrice)}</s>` : ''}${usdText(p.price) ? `<small class="pc-usd">${usdText(p.price)}</small>` : ''}</div>
         <div class="pc-btns">
           <button class="pc-add ${q?'in':''}" data-add="${p.id}" ${oos?'disabled':''} onclick="addToCart(${p.id})">${oos ? 'Sold out' : (q ? `✓ Added (${q})` : `${ICO.cart} Add`)}</button>
-          <button class="pc-buy" ${oos?'disabled':''} onclick="quickBuy(${p.id})">${ICO.bolt} Buy</button>
+          ${oos ? `<a class="pc-buy pc-notify" href="product.html?id=${p.id}#back-in-stock" title="Get notified when it's back">${ICO.bell} Notify</a>`
+                : `<button class="pc-buy" onclick="quickBuy(${p.id})">${ICO.bolt} Buy</button>`}
         </div>
       </div>
     </div>
@@ -711,10 +722,16 @@ function buildHeader(){
         <input id="globalSearch" type="search" autocomplete="off" placeholder="Search for products, brands, problems…" aria-label="Search products"
           oninput="liveSearch(this.value)"
           onkeydown="if(event.key==='Enter') goSearch(this.value); if(event.key==='Escape') closeSearch();" />
+        ${SPEECH ? `<button class="search-mic" type="button" onclick="voiceSearch(this)" aria-label="Search by voice" title="Search by voice">${ICO.mic}</button>` : ""}
         <button class="search-go" onclick="goSearch(document.getElementById('globalSearch').value)" aria-label="Search">${ICO.search}</button>
         <div class="search-results" id="searchResults"></div>
       </div>
       <div class="head-actions">
+        <a class="iconbtn hide-sm" href="compare.html" aria-label="Compare">${ICO.compare}<span class="badge" id="cmpBadge">${compareList.length}</span><span class="lbl">Compare</span></a>
+        <div class="notify" id="notify">
+          <button class="iconbtn" onclick="toggleNotify(event)" aria-label="Notifications">${ICO.bell}<span class="badge" id="ntBadge" style="display:none">0</span><span class="lbl">Notify</span></button>
+          <div class="nt-drop" id="ntDrop"></div>
+        </div>
         <button class="iconbtn" onclick="openWish()" aria-label="Wishlist">${ICO.heart}<span class="badge" id="wishBadge">${wishlist.size}</span><span class="lbl">Wishlist</span></button>
         <button class="iconbtn" onclick="openCart()" aria-label="Cart">${ICO.cart}<span class="badge" id="cartBadge">0</span><span class="lbl">Cart</span></button>
         <a class="iconbtn" href="account.html" aria-label="Account">${ICO.user}<span class="lbl" id="acctLabel">${user ? esc(user.displayName || 'My Account') : 'Account'}</span></a>
@@ -732,8 +749,9 @@ function buildHeader(){
         <a class="nav-ai" href="index.html#aiSection" data-ai-link onclick="if(window.openAI){event.preventDefault();openAI();}">${ICO.spark} Ask AI</a>
         <a class="nav-flash" href="category.html?goal=all&tag=flash">${ICO.bolt} Flash Sales</a>
         <a href="category.html?goal=all" data-nav="category">Shop</a>
-        <a href="category.html?goal=all&tag=new">New Arrivals</a>
+        <a href="health-tools.html" data-nav="health-tools">Health Tools</a>
         <a href="track.html" data-nav="track">Track Order</a>
+        <a href="blog.html" data-nav="blog">Blog</a>
         <a href="page.html?p=contact">Contact Us</a>
       </div>
       ${hot ? `<a class="nav-hot" href="tel:${hot}">${ICO.phone}<div><b>${hot}</b><small>24/7 Support Center</small></div></a>` : ''}
@@ -782,6 +800,8 @@ function buildFooter(){
         <li><a href="page.html?p=terms">Terms &amp; Conditions</a></li>
         <li><a href="page.html?p=contact">Contact Us</a></li>
         <li><a href="page.html?p=faq">FAQ</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="health-tools.html">Health Tools</a></li>
       </ul></div>
       <div><h4>Account</h4><ul>
         <li><a href="account.html">Sign In</a></li>
@@ -818,12 +838,6 @@ function buildDrawer(){
     <div class="fd-progress" id="fdProg"></div>
     <div class="drawer-body" id="cartBody"></div>
     <div class="drawer-foot" id="cartFoot" style="display:none">
-      <div class="drawer-coupon" id="drawerCouponBox">
-        <input id="drawerCoupon" placeholder="Coupon code" autocomplete="off"
-          onkeydown="if(event.key==='Enter') applyDrawerCoupon()" />
-        <button onclick="applyDrawerCoupon()">Apply</button>
-      </div>
-      <div class="coupon-note" id="dCoupNote"></div>
       <div class="sumline"><span>Subtotal</span><span id="dSub">৳0</span></div>
       <div class="sumline" id="dDiscRow" style="display:none; color:var(--leaf-d)">
         <span>Discount (<span id="dCoupName"></span>) <button class="coup-x" onclick="removeDrawerCoupon()" aria-label="Remove coupon">×</button></span>
@@ -864,6 +878,9 @@ function buildMenu(){
       <div class="menu-label">Help</div>
       <a href="account.html">My Account</a>
       <a href="track.html">Track Order</a>
+      <a href="compare.html">Compare Products</a>
+      <a href="health-tools.html">Health Tools (BMI, water, protein)</a>
+      <a href="blog.html">Blog</a>
       <a href="page.html?p=delivery">Delivery Info</a>
       <a href="page.html?p=about">About Us</a>
       <a href="page.html?p=contact">Contact</a>
@@ -990,24 +1007,13 @@ function updateWishUI(){
 function openWish(){ updateWishUI(); openPanel('wishDrawer','wishOverlay'); }
 function closeWish(){ closePanel('wishDrawer','wishOverlay'); }
 
-function applyDrawerCoupon(){
-  const inp = document.getElementById('drawerCoupon');
-  const code = (inp?.value||'').trim();
-  if(!code) return;
-  validateCoupon(code).then(c=>{
-    setCoupon(c);
-    const sub = cartTotals().sub;
-    toast(c.minOrder && sub < c.minOrder
-      ? `Coupon saved — add ${money(c.minOrder - sub)} more to use it`
-      : `Coupon ${c.code} applied · ${couponText(c)} ✓`, 2600);
-    updateCartUI();
-  }).catch(e=>{ toast(e.message); });
-}
-function removeDrawerCoupon(){ setCoupon(null); const i=document.getElementById('drawerCoupon'); if(i) i.value=''; updateCartUI(); toast("Coupon removed"); }
+/* coupon shudhu checkout page-e deya jay; cart-e age deya coupon thakle shudhu discount line dekhay */
+function removeDrawerCoupon(){ setCoupon(null); updateCartUI(); toast("Coupon removed"); }
 
 function updateCartUI(){
   const {count, sub, coupon, discount, delivery, total} = cartTotals();
   const badge = document.getElementById('cartBadge'); if(badge) badge.textContent = count;
+  const mb = document.getElementById('mnCart'); if(mb){ mb.textContent = count; mb.style.display = count ? '' : 'none'; }
   const cc = document.getElementById('cartCount'); if(cc) cc.textContent = count;
   const body = document.getElementById('cartBody');
   const foot = document.getElementById('cartFoot');
@@ -1046,9 +1052,6 @@ function updateCartUI(){
   set('dDel', delivery===0 ? "FREE" : money(delivery));
   set('dTotal', money(total));
   const dr = document.getElementById('dDiscRow');
-  const note = document.getElementById('dCoupNote');
-  if(note) note.textContent = (coupon && coupon.minOrder && sub < coupon.minOrder)
-    ? `${coupon.code}: add ${money(coupon.minOrder - sub)} more to apply (min order ${money(coupon.minOrder)})` : '';
   if(dr){
     if(coupon && discount>0){
       dr.style.display = 'flex';
@@ -1056,7 +1059,6 @@ function updateCartUI(){
       set('dDisc', "-"+money(discount));
     } else dr.style.display = 'none';
   }
-  const ci = document.getElementById('drawerCoupon'); if(ci && coupon && !ci.value) ci.value = coupon.code;
 }
 
 function openCart(){ updateCartUI(); openPanel('drawer','overlay'); }
@@ -1068,14 +1070,35 @@ function searchText(p){
   const cats = getCats(p);
   return [p.name, p.brand, ...cats.map(goalLabel), ...cats.map(id=>categoryOf(id)?.label)].filter(Boolean).join(' ').toLowerCase();
 }
+/* Bangla / Banglish shobdo → product-er English shobdo ("চুল" → hair, "modhu" → honey) */
+const SEARCH_SYN = {
+  'চুল':'hair','চুলের':'hair','ত্বক':'skin','ত্বকের':'skin','স্কিন':'skin','মুখ':'face','মুখের':'face','ফেস':'face','ভিটামিন':'vitamin',
+  'প্রোটিন':'protein','মধু':'honey','শ্যাম্পু':'shampoo','তেল':'oil','সানস্ক্রিন':'sunscreen','বাচ্চা':'baby','বাচ্চার':'baby','শিশু':'baby',
+  'শিশুর':'baby','ঘুম':'sleep','হাড়':'bone','দাড়ি':'beard','লিপস্টিক':'lip','ঠোঁট':'lip','ক্রিম':'cream','ফেসওয়াশ':'wash','সাবান':'wash',
+  'লোশন':'lotion','ওমেগা':'omega','ক্যালসিয়াম':'calcium','জিঙ্ক':'zinc','বাদাম':'nut','চোখ':'eye','বডি':'body','সিরাম':'serum','মেকআপ':'makeup',
+  'chul':'hair','chuler':'hair','tok':'skin','toker':'skin','mukh':'face','modhu':'honey','tel':'oil','bachcha':'baby','bacha':'baby','dari':'beard'
+};
+/* search: naam/brand/category + Bangla shobdo + shomossa ("chul pore", "ব্রণ", "gastric" — AI-er concern list theke) */
+function searchProducts(q){
+  q = (q||'').toLowerCase().trim();
+  if(!q) return [];
+  const words = q.split(/\s+/).map(w => SEARCH_SYN[w] || w);
+  const direct = PRODUCTS.filter(p => { const t = searchText(p); return words.every(w=>t.includes(w)); });
+  let extra = [];
+  if(typeof AI_CONCERNS !== 'undefined' && typeof aiHas === 'function'){
+    const norm = aiNorm(q);
+    const hits = AI_CONCERNS.filter(c => c.kw.some(k => aiHas(norm, k)));
+    if(hits.length) extra = PRODUCTS.filter(p => hits.some(c =>
+      (c.cats||[]).some(id => productInCat(p, id)) || (c.match||[]).some(w => aiPText(p).includes(w))));
+  }
+  return [...new Set([...direct, ...extra])];
+}
 function liveSearch(q){
   const box = document.getElementById('searchResults');
   if(!box) return;
   q = (q||'').toLowerCase().trim();
   if(q.length < 1){ closeSearch(); return; }
-  const words = q.split(/\s+/);
-  const matches = PRODUCTS.filter(p => { const t = searchText(p); return words.every(w=>t.includes(w)); })
-    .sort(stockFirst).slice(0, 6);
+  const matches = searchProducts(q).sort(stockFirst).slice(0, 6);
   if(!matches.length){
     box.innerHTML = `<div class="sr-empty">No products found for “${esc(q)}”</div>`;
     box.classList.add('open'); return;
@@ -1281,6 +1304,107 @@ function submitReview(productId, data){
 }
 
 /* =========================================================================
+   VOICE SEARCH — search box-er mic (product naam bolle khuje dey)
+   ========================================================================= */
+/* Facebook/Instagram/Messenger-er bhitorer browser (Android WebView) e mic kaj kore na — oikhane button-i dekhai na */
+const IN_APP_BROWSER = /FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger|Line\/|; wv\)/i.test(navigator.userAgent);
+const SPEECH = !IN_APP_BROWSER && (window.SpeechRecognition || window.webkitSpeechRecognition) || null;
+const IS_TOUCH = window.matchMedia && matchMedia('(pointer:coarse)').matches;
+/* kon karone mic kaj korlo na — customer-ke ki korte hobe bole dey */
+function micError(code){
+  return ({
+    'not-allowed':         'Microphone is blocked. Tap the 🔒 icon next to the website address → allow Microphone → try again.',
+    'service-not-allowed': 'Voice input does not work in this browser. Please open the site in Chrome (or turn on Dictation on iPhone).',
+    'no-speech':           "Didn't hear anything — tap the mic and speak clearly.",
+    'audio-capture':       'No microphone found on this device.',
+    'network':             'Voice input needs internet — please check your connection.',
+    'language-not-supported': 'This language is not supported for voice on your phone — please type instead.'
+  })[code] || 'Could not hear you — please type instead.';
+}
+/* result theke lekha (iPhone Safari kokhono ager tukro abar pathay — duplicate bad) */
+function speechText(e){
+  const parts = [...e.results].map(r => (r[0] && r[0].transcript || '').trim()).filter(Boolean);
+  const last = parts[parts.length-1] || '';
+  return (parts.length > 1 && last.startsWith(parts[parts.length-2]) ? last : parts.join(' ')).replace(/[.?!।]+$/,'');
+}
+let searchRec = null;
+function voiceSearch(btn){
+  if(!SPEECH) return;
+  if(searchRec){ searchRec.stop(); return; }
+  const inp = document.getElementById('globalSearch');
+  const ph = inp.placeholder;
+  searchRec = new SPEECH();
+  searchRec.lang = 'en-IN'; searchRec.interimResults = true; searchRec.continuous = false; searchRec.maxAlternatives = 1;
+  btn.classList.add('rec'); inp.value = ''; inp.placeholder = 'Listening… say a product name';
+  searchRec.onresult = e => { inp.value = speechText(e); liveSearch(inp.value); };
+  searchRec.onerror = e => { if(e.error !== 'aborted') toast(micError(e.error), 5500); };
+  searchRec.onend = () => {
+    btn.classList.remove('rec'); searchRec = null; inp.placeholder = ph;
+    if(inp.value.trim()) liveSearch(inp.value);
+    if(!IS_TOUCH) inp.focus();   // phone e keyboard khule result dheke dey — tai focus na
+  };
+  try{ searchRec.start(); }catch(err){ btn.classList.remove('rec'); searchRec = null; inp.placeholder = ph; toast(micError(), 4000); }
+}
+
+/* =========================================================================
+   BANGLADESH DISTRICTS + delivery date (product page "Deliver to")
+   ========================================================================= */
+const BD_DISTRICTS = ['Dhaka','Bagerhat','Bandarban','Barguna','Barishal','Bhola','Bogura','Brahmanbaria','Chandpur','Chapainawabganj','Chattogram','Chuadanga',
+  "Cox's Bazar",'Cumilla','Dinajpur','Faridpur','Feni','Gaibandha','Gazipur','Gopalganj','Habiganj','Jamalpur','Jashore','Jhalokathi','Jhenaidah','Joypurhat',
+  'Khagrachari','Khulna','Kishoreganj','Kurigram','Kushtia','Lakshmipur','Lalmonirhat','Madaripur','Magura','Manikganj','Meherpur','Moulvibazar','Munshiganj',
+  'Mymensingh','Naogaon','Narail','Narayanganj','Narsingdi','Natore','Netrokona','Nilphamari','Noakhali','Pabna','Panchagarh','Patuakhali','Pirojpur','Rajbari',
+  'Rajshahi','Rangamati','Rangpur','Satkhira','Shariatpur','Sherpur','Sirajganj','Sunamganj','Sylhet','Tangail','Thakurgaon'];
+/* Dhaka: 1–2 kaj-er din, baire: 2–4 (shukrobar chuti dhora) */
+function deliveryEstimate(district, subtotal){
+  const inDhaka = district === 'Dhaka';
+  const addDays = n => { const d = new Date(); let left = n; while(left > 0){ d.setDate(d.getDate()+1); if(d.getDay() !== 5) left--; } return d; };
+  const fmt = d => d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' });
+  const [a, b] = inDhaka ? [1, 2] : [2, 4];
+  const free = freeDeliveryOn() && (subtotal||0) >= CONFIG.freeDeliveryOver;
+  return { from: fmt(addDays(a)), to: fmt(addDays(b)), fee: free ? 0 : (inDhaka ? CONFIG.deliveryFee : CONFIG.deliveryFeeOuter) };
+}
+function savedDistrict(){
+  try{ return localStorage.getItem('myhealth_district') || (JSON.parse(localStorage.getItem('myhealth_checkout_info')||'{}').district) || ''; }catch(e){ return ''; }
+}
+
+/* =========================================================================
+   LIVE PURCHASE POPUP — shudhu ASOL order theke ("Someone in Sylhet ordered…")
+   Firebase 'recentSales' e checkout shudhu district + product id rakhe (naam/phone na)
+   ========================================================================= */
+function logSale(order){
+  if(!window.fdb || !order || !order.items || !order.items[0]) return;
+  const d = BD_DISTRICTS.find(x => x.toLowerCase() === String(order.customer?.district||'').trim().toLowerCase()) || 'Bangladesh';
+  window.fdb.ref('recentSales').push({ d, p: Number(order.items[0].id)||0, ts: Date.now() }).then(null, ()=>{});   // compat push-e .catch kaj kore na
+}
+let SALES = [], spIdx = 0, spShown = 0;
+function startSocialProof(){
+  if(CONFIG.socialProof === 'off' || !window.fdb || /checkout\.html|admin\.html/.test(location.pathname)) return;
+  window.fdb.ref('recentSales').limitToLast(25).once('value').then(s=>{
+    const week = Date.now() - 7*864e5;
+    SALES = Object.values(s.val()||{}).filter(x=>x && x.ts > week && findP(x.p) && findP(x.p).img)
+      .map(x=>({ ...x, d: BD_DISTRICTS.includes(x.d) ? x.d : 'Bangladesh' })).sort((a,b)=>b.ts-a.ts);
+    if(!SALES.length) return;
+    setTimeout(showSaleToast, 12000);
+  }, ()=>{});
+}
+function showSaleToast(){
+  if(!SALES.length || spShown >= 4) return;
+  if(document.hidden){ setTimeout(showSaleToast, 28000); return; }   // tab dekha na gele pore abar
+  const s = SALES[spIdx++ % SALES.length], p = findP(s.p); if(!p) return;
+  spShown++;
+  document.getElementById('spToast')?.remove();
+  document.body.insertAdjacentHTML('beforeend', `
+    <a class="sp-toast" id="spToast" href="product.html?id=${p.id}">
+      <span class="sp-img">${imgHTML(p, '')}</span>
+      <span class="sp-txt"><small>Someone in <b>${esc(s.d)}</b> ordered</small><b>${esc(p.name)}</b><small>${timeAgo(s.ts)} · ✓ Verified purchase</small></span>
+      <button class="sp-x" onclick="event.preventDefault();this.parentElement.remove()" aria-label="Close">×</button>
+    </a>`);
+  requestAnimationFrame(()=> document.getElementById('spToast')?.classList.add('show'));
+  setTimeout(()=>{ const t = document.getElementById('spToast'); if(t){ t.classList.remove('show'); setTimeout(()=>t.remove(), 400); } }, 6500);
+  setTimeout(showSaleToast, 28000);
+}
+
+/* =========================================================================
    INIT — chrome inject, settings + products load, tarpor page-er initPage()
    ========================================================================= */
 function renderChrome(){
@@ -1301,6 +1425,20 @@ function renderChrome(){
     const on = tag ? a.getAttribute('href').includes('tag='+tag) : a.dataset.nav === page;
     a.classList.toggle('on', !!on);
   });
+  document.querySelectorAll('.mnav [data-mn]').forEach(a=> a.classList.toggle('on', a.dataset.mn === page));
+  renderNotices();
+  refreshCompareUI();
+}
+/* mobile-er niche fixed menu (Home / Shop / Search / Cart / Account) */
+function buildMobileNav(){
+  return `
+  <nav class="mnav" aria-label="Mobile navigation">
+    <a href="index.html" data-mn="index">${ICO.home}<span>Home</span></a>
+    <a href="category.html?goal=all" data-mn="category">${ICO.bag}<span>Shop</span></a>
+    <button onclick="mobileSearch()">${ICO.search}<span>Search</span></button>
+    <button onclick="openCart()">${ICO.cart}<span>Cart</span><i class="mn-badge" id="mnCart" style="display:none">0</i></button>
+    <a href="account.html" data-mn="account">${ICO.user}<span>Account</span></a>
+  </nav>`;
 }
 /* category chobi (admin > Banners > Category Images) — menu + homepage tile */
 function loadCatImages(){
@@ -1320,16 +1458,20 @@ window.addEventListener('scroll', ()=>{
 document.addEventListener('DOMContentLoaded', ()=>{
   document.body.insertAdjacentHTML('beforeend',
     buildDrawer() + `<div id="chrome-menu"></div>` + buildWishDrawer() + buildQuickView() + `<div id="chrome-wa"></div>`
-    + `<button class="to-top" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">${ICO.up}</button>`);
+    + `<button class="to-top" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">${ICO.up}</button>`
+    + buildMobileNav());
+  document.body.classList.add('has-mnav');
   renderChrome();
   injectAnalytics();
   initAccountState();
   updateCartUI();
   updateWishUI();
+  loadNotices();
   Promise.all([loadStoreConfig(), new Promise(r=>bootProducts(r)), loadCatImages()]).then(([changed])=>{
     if(changed){ renderChrome(); injectAnalytics(); }
     else fillBrowse();   // product/chobi ese gele category menu-te chobi
     updateCartUI(); updateWishUI();
     if(typeof initPage === 'function') initPage();
+    startSocialProof();
   });
 });

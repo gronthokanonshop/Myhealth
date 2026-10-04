@@ -19,10 +19,26 @@
 <main class="wrap">
   <div class="crumb"><a href="index.html">Home</a><span>›</span><span id="crumbParent" style="display:none"></span><span id="crumbParentSep" style="display:none">›</span><span id="crumbCat">All Products</span></div>
 
-  <div class="cat-hero">
+  <div class="cat-hero" id="catHero">
     <h1 id="catTitle">All Products</h1>
     <p id="catDesc">Browse our full range of authentic products.</p>
     <div class="cat-pills" id="catPills"></div>
+  </div>
+  <!-- FLASH SALE hero (tag=flash hole dekhay) -->
+  <div class="flash-hero" id="flashHero" style="display:none">
+    <div>
+      <span class="fh-chip">⚡ Limited time offers</span>
+      <h1>Flash Sale</h1>
+      <p>Big discounts on your favourite products — grab them before the clock runs out!</p>
+      <div class="fh-cd">Hurry up! Offers end in:
+        <span><b id="fhH">00</b><small>Hours</small></span><span><b id="fhM">00</b><small>Mins</small></span><span><b id="fhS">00</b><small>Secs</small></span>
+      </div>
+    </div>
+    <div class="fh-stats">
+      <div><b id="fhCount">0</b><small>Products on sale</small></div>
+      <div><b id="fhMax">0%</b><small>Max discount</small></div>
+      <div><b id="fhCats">0</b><small>Categories</small></div>
+    </div>
   </div>
 
   <div class="shop-layout">
@@ -60,12 +76,27 @@
           <button onclick="setTag('flash')" data-tag="flash">On sale</button>
           <button onclick="setTag('best')" data-tag="best">Best sellers</button>
           <button onclick="setTag('new')" data-tag="new">New arrivals</button>
+          <button onclick="setTag('import')" data-tag="import">Imported</button>
+          <button onclick="setTag('wholesale')" data-tag="wholesale">Wholesale</button>
         </div>
         <h4>Price (৳)</h4>
         <div class="fprice">
           <input id="fMin" type="number" inputmode="numeric" min="0" placeholder="Min" oninput="onPriceInput()">
           <span>–</span>
           <input id="fMax" type="number" inputmode="numeric" min="0" placeholder="Max" oninput="onPriceInput()">
+        </div>
+        <div class="franges">
+          <button onclick="setRange(0,500)" data-range="0-500">Under ৳500</button>
+          <button onclick="setRange(500,1000)" data-range="500-1000">৳500 – ৳1,000</button>
+          <button onclick="setRange(1000,2000)" data-range="1000-2000">৳1,000 – ৳2,000</button>
+          <button onclick="setRange(2000,null)" data-range="2000-">Over ৳2,000</button>
+        </div>
+        <h4>Rating</h4>
+        <div class="fgoal" id="ratingFilters">
+          <button onclick="setRating(0)" class="on" data-rating="0">Any rating</button>
+          <button onclick="setRating(4.5)" data-rating="4.5"><span class="stars">★★★★★</span> 4.5 &amp; up</button>
+          <button onclick="setRating(4)" data-rating="4"><span class="stars">★★★★☆</span> 4 &amp; up</button>
+          <button onclick="setRating(3)" data-rating="3"><span class="stars">★★★☆☆</span> 3 &amp; up</button>
         </div>
         <h4>Availability</h4>
         <div class="fbrands" style="max-height:none">
@@ -93,9 +124,10 @@
 <script src="ai.js"></script>
 <script>
 let activeGoal = param('goal') || 'all';
-let activeTag  = ['flash','best','new'].includes(param('tag')) ? param('tag') : 'all';
+let activeTag  = ['flash','best','new','import','wholesale'].includes(param('tag')) ? param('tag') : 'all';
+const TAG_NAMES = { flash:'On sale', best:'Best sellers', new:'New arrivals', import:'Imported', wholesale:'Wholesale' };
 let searchQ    = (param('q') || '').toLowerCase().trim();
-let priceMin = null, priceMax = null, inStockOnly = false;
+let priceMin = null, priceMax = null, inStockOnly = false, minRating = 0;
 let brandSel = new Set();
 const PAGE = 24;
 let pageSize = PAGE;
@@ -125,7 +157,13 @@ function initPage(){
 }
 
 function setGoal(id){ activeGoal=id; searchQ=''; brandSel.clear(); resetPaging(); applyHero(); renderBrands(); render(); closeFilterDrawer(); syncUrl(); }
-function setTag(t){ activeTag=t; resetPaging(); render(); syncUrl(); }
+function setTag(t){ activeTag=t; resetPaging(); applyHero(); render(); syncUrl(); }
+function setRange(a, b){
+  priceMin = a; priceMax = b;
+  document.getElementById('fMin').value = a ?? ''; document.getElementById('fMax').value = b ?? '';
+  resetPaging(); render();
+}
+function setRating(r){ minRating = r; resetPaging(); render(); }
 function openFilterDrawer(){ openPanel('filterDrawer','filterOverlay'); }
 function closeFilterDrawer(){ closePanel('filterDrawer','filterOverlay'); }
 let priceTimer;
@@ -139,7 +177,7 @@ function onPriceInput(){
 }
 function toggleBrand(b, on){ on ? brandSel.add(b) : brandSel.delete(b); resetPaging(); render(); }
 function clearFilters(){
-  activeTag='all'; priceMin=priceMax=null; inStockOnly=false; brandSel.clear();
+  activeTag='all'; priceMin=priceMax=null; inStockOnly=false; minRating=0; brandSel.clear(); applyHero();
   document.getElementById('fMin').value=''; document.getElementById('fMax').value='';
   document.getElementById('fStock').checked=false;
   resetPaging(); renderBrands(); render(); syncUrl();
@@ -178,12 +216,38 @@ function applyHero(){
   document.querySelectorAll('[data-goal]').forEach(b=> b.classList.toggle('on', b.dataset.goal===activeGoal));
   const openGroup = sub ? document.querySelector(`.fcat-group[data-cat="${CSS.escape(sub.parent)}"]`) : document.querySelector(`.fcat-group[data-cat="${CSS.escape(activeGoal)}"]`);
   document.querySelectorAll('.fcat-group').forEach(d=> d.open = (d===openGroup));
+  // Tag page: flash hole countdown-soho alada hero, onno tag hole title
+  const flash = activeTag === 'flash' && !searchQ;
+  document.getElementById('catHero').style.display = flash ? 'none' : '';
+  document.getElementById('flashHero').style.display = flash ? '' : 'none';
+  if(activeTag !== 'all' && !flash && !sub && !cat && !searchQ){
+    document.getElementById('catTitle').textContent = TAG_NAMES[activeTag];
+    document.getElementById('crumbCat').textContent = TAG_NAMES[activeTag];
+    document.title = TAG_NAMES[activeTag] + ' — ' + CONFIG.brand;
+  }
+  if(flash){
+    document.title = 'Flash Sale — ' + CONFIG.brand;
+    document.getElementById('crumbCat').textContent = 'Flash Sale';
+    const onSale = PRODUCTS.filter(p=>(p.tags||[]).includes('flash') && inStock(p));
+    document.getElementById('fhCount').textContent = onSale.length;
+    document.getElementById('fhMax').textContent = Math.max(0, ...onSale.map(discountPct)) + '%';
+    document.getElementById('fhCats').textContent = new Set(onSale.map(p=>categoryOf(getCats(p)[0])?.id).filter(Boolean)).size;
+    flashTick(); clearInterval(window._fhT); window._fhT = setInterval(flashTick, 1000);
+  } else clearInterval(window._fhT);
+}
+/* offer shesh: aj raat 12 ta */
+function flashTick(){
+  const now = new Date(), end = new Date(now); end.setHours(24,0,0,0);
+  const s = Math.max(0, Math.floor((end-now)/1000)), pad = n => String(n).padStart(2,'0');
+  document.getElementById('fhH').textContent = pad(Math.floor(s/3600));
+  document.getElementById('fhM').textContent = pad(Math.floor(s%3600/60));
+  document.getElementById('fhS').textContent = pad(s%60);
 }
 
 /* goal + search diye base list (brand/price/stock filter er AGE) */
 function baseList(){
-  const words = searchQ ? searchQ.split(/\s+/) : [];
-  return PRODUCTS.filter(p=> productInCat(p, activeGoal) && (!words.length || words.every(w=>searchText(p).includes(w))));
+  const found = searchQ ? new Set(searchProducts(searchQ)) : null;   // Bangla/shomossa diye khoja-o (app.js)
+  return PRODUCTS.filter(p=> productInCat(p, activeGoal) && (!found || found.has(p)));
 }
 function renderBrands(){
   const counts = {};
@@ -200,6 +264,7 @@ function render(){
     if(priceMin!=null && p.price < priceMin) return false;
     if(priceMax!=null && p.price > priceMax) return false;
     if(inStockOnly && !inStock(p)) return false;
+    if(minRating && (Number(p.rating)||0) < minRating) return false;
     if(brandSel.size && !brandSel.has(p.brand)) return false;
     return true;
   });
@@ -221,10 +286,13 @@ function render(){
   document.getElementById('loadMore').style.display = list.length > pageSize ? '' : 'none';
   document.getElementById('showResultsBtn').textContent = `Show ${list.length} result${list.length!==1?'s':''}`;
   document.querySelectorAll('[data-tag]').forEach(b=> b.classList.toggle('on', b.dataset.tag===activeTag));
+  document.querySelectorAll('[data-rating]').forEach(b=> b.classList.toggle('on', Number(b.dataset.rating)===minRating));
+  document.querySelectorAll('[data-range]').forEach(b=> b.classList.toggle('on', b.dataset.range === `${priceMin ?? ''}-${priceMax ?? ''}`));
 
   // active filter chips
   const chips = [];
-  if(activeTag!=='all') chips.push([({flash:'On sale',best:'Best sellers',new:'New arrivals'})[activeTag], `setTag('all')`]);
+  if(activeTag!=='all') chips.push([TAG_NAMES[activeTag], `setTag('all')`]);
+  if(minRating) chips.push([`${minRating}★ & up`, `setRating(0)`]);
   if(priceMin!=null || priceMax!=null) chips.push([`${priceMin!=null?money(priceMin):'৳0'} – ${priceMax!=null?money(priceMax):'any'}`, `priceMin=priceMax=null;document.getElementById('fMin').value='';document.getElementById('fMax').value='';render()`]);
   if(inStockOnly) chips.push(['In stock only', `inStockOnly=false;document.getElementById('fStock').checked=false;render()`]);
   brandSel.forEach(b=> chips.push([b, `toggleBrand(${esc(JSON.stringify(b))}, false);renderBrands()`]));

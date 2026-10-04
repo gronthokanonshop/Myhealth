@@ -215,6 +215,7 @@ function renderHero(){
 
   heroIdx = Math.min(heroIdx, slides.length - 1);
   box.innerHTML = `
+    <h1 class="sr-only">${esc(CONFIG.brand)} — ${esc(CONFIG.tagline || 'Health, Beauty & Wellness')} in Bangladesh</h1>
     <div class="hs-track" id="hsTrack">
       ${slides.map((s,i)=>{
         const inner = `<img src="${esc(s.img)}" alt="${esc(s.title)}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'}>`;
@@ -227,24 +228,37 @@ function renderHero(){
       <div class="hs-dots">${slides.map((_,i)=>`<button class="${i===heroIdx?'on':''}" onclick="heroGo(${i},true)" aria-label="Slide ${i+1}"></button>`).join('')}</div>` : ''}`;
   box.querySelectorAll('.hs-slide img').forEach(img=> img.addEventListener('load', heroSize));
   heroGo(heroIdx, false);
-  if(slides.length > 1){
-    heroTimer = setInterval(()=> heroGo(heroIdx+1, false), 5500);
-    // mobile swipe
-    let x0 = null;
-    box.ontouchstart = e => { x0 = e.touches[0].clientX; };
-    box.ontouchend = e => { if(x0==null) return; const dx = e.changedTouches[0].clientX - x0; if(Math.abs(dx) > 40) heroGo(heroIdx + (dx < 0 ? 1 : -1), true); x0 = null; };
-    box.onmouseenter = () => clearInterval(heroTimer);
-    box.onmouseleave = () => { clearInterval(heroTimer); heroTimer = setInterval(()=> heroGo(heroIdx+1, false), 5500); };
-  }
+  heroAuto();
+  // mobile swipe (onek banner thakle)
+  let x0 = null;
+  box.ontouchstart = e => { x0 = e.touches[0].clientX; };
+  box.ontouchend = e => { if(x0==null) return; const dx = e.changedTouches[0].clientX - x0; if(slides.length > 1 && Math.abs(dx) > 40) heroGo(heroIdx + (dx < 0 ? 1 : -1), true); x0 = null; };
+  box.onmouseenter = () => clearInterval(heroTimer);
+  box.onmouseleave = () => heroAuto();
+}
+/* onek banner: ekta-r por ekta (fade). Ekta banner: oi ta-i bar bar fade out -> fade in ("off hobe, on hobe") */
+function heroAuto(){
+  clearInterval(heroTimer);
+  const track = document.getElementById('hsTrack'); if(!track) return;
+  if(track.children.length > 1) heroTimer = setInterval(()=> heroGo(heroIdx+1, false), 6500);
+  else heroTimer = setInterval(heroPulse, 7500);
+}
+function heroPulse(){
+  const s = document.querySelector('#hsTrack .hs-slide'); if(!s) return;
+  s.classList.remove('on');                       // fade out
+  setTimeout(()=>{ void s.offsetWidth; s.classList.add('on'); }, 1500);   // abar fade in (zoom soho)
 }
 function heroGo(i, manual){
   const track = document.getElementById('hsTrack'); if(!track) return;
   const n = track.children.length;
   heroIdx = (i + n) % n;
-  track.style.transform = `translateX(-${heroIdx*100}%)`;
+  [...track.children].forEach((s,j)=>{
+    if(j === heroIdx){ s.classList.remove('on'); void s.offsetWidth; s.classList.add('on'); }   // zoom animation abar shuru
+    else s.classList.remove('on');
+  });
   document.querySelectorAll('.hs-dots button').forEach((d,j)=>d.classList.toggle('on', j===heroIdx));
   heroSize();
-  if(manual){ clearInterval(heroTimer); heroTimer = setInterval(()=> heroGo(heroIdx+1, false), 5500); }
+  if(manual) heroAuto();
 }
 /* slider-er uchchota = active chobir uchchota (kono chobi kata pore na) */
 function heroSize(){
@@ -253,7 +267,8 @@ function heroSize(){
   if(img && img.naturalWidth) document.getElementById('heroSlider').style.height = img.offsetHeight + 'px';
 }
 /* slider-er width bodlale (resize, phone ghurano, sidebar) abar mapi */
-if(window.ResizeObserver) new ResizeObserver(()=> heroSize()).observe(document.getElementById('heroSlider'));
+let heroW = 0;   // shudhu width bodlale (height amra nijei set kori — loop hoy na)
+if(window.ResizeObserver) new ResizeObserver(es=>{ const w = Math.round(es[0].contentRect.width); if(w !== heroW){ heroW = w; requestAnimationFrame(heroSize); } }).observe(document.getElementById('heroSlider'));
 else window.addEventListener('resize', ()=>{ clearTimeout(window._hsT); window._hsT = setTimeout(heroSize, 150); });
 
 /* ---------------- SERVICE CARDS ---------------- */
@@ -262,8 +277,8 @@ function renderServices(){
   const cards = [
     { ico:ICO.spark,  t:'Ask our AI Assistant', s:'Product advice in seconds', href:'#aiSection' },
     { ico:ICO.route,  t:'Track Your Order',     s:'Live status with Order ID',  href:'track.html' },
-    { ico:ICO.box,    t:'Bulk / Wholesale',     s:'Special prices for resellers', href: wa ? waLink('Hi! I want to place a bulk / wholesale order.') : 'page.html?p=contact', ext:!!wa },
-    { ico:ICO.shield, t:'100% Authentic',       s:'Direct from brands & importers', href:'page.html?p=about' },
+    { ico:ICO.box,    t:'Bulk / Wholesale',     s:'Special prices for resellers', href: PRODUCTS.some(p=>has(p,'wholesale')) ? 'category.html?goal=all&tag=wholesale' : (wa ? waLink('Hi! I want to place a bulk / wholesale order.') : 'page.html?p=contact'), ext: !PRODUCTS.some(p=>has(p,'wholesale')) && !!wa },
+    { ico:ICO.heartPulse, t:'Free Health Tools', s:'BMI, water & protein calculators', href:'health-tools.html' },
   ];
   document.getElementById('svcRow').innerHTML = cards.map(c=>`
     <a class="svc-card" href="${esc(c.href)}" ${c.ext?'target="_blank" rel="noopener"':''}>
@@ -293,20 +308,35 @@ const DEFAULT_PROMOS = [
   { title:'First order? Use code HEALTH10', subtitle:'Valid on everything in store', bigText:'Extra 10% OFF', link:'category.html?goal=all' },
   { title:'Glow-up skincare', subtitle:'Cleansers, serums & sunscreen', bigText:'New arrivals', link:'category.html?goal=facecare' },
 ];
+/* sob promo banner ekta choloman strip-e (dan theke bame), mouse/touch dile thame */
 function renderPromos(){
-  const mine = BANNERS.filter(b=>b.placement!=='hero').slice(0,3);
-  const list = [...mine, ...DEFAULT_PROMOS].slice(0,3);
-  const bgs = ['var(--p1)','var(--p5)','var(--p7)'];
-  document.getElementById('promoRow').innerHTML = list.map((b,i)=>{
+  const mine = BANNERS.filter(b=>b.placement!=='hero');
+  const base = mine.length >= 3 ? mine : [...mine, ...DEFAULT_PROMOS].slice(0, 3);
+  const bgs = ['var(--p1)','var(--p5)','var(--p7)','var(--p2)','var(--p4)','var(--p8)'];
+  const card = (b, i, dup) => {
     const href = b.link ? esc(b.link) : 'category.html?goal=all';
-    if(b.img) return `<a class="pb-card has-img" href="${href}"><img src="${esc(b.img)}" alt="${esc(b.title||'')}" loading="lazy"><span class="pb-btn">Shop Now ${ICO.arrow}</span></a>`;
+    const hide = dup ? ' aria-hidden="true" tabindex="-1"' : '';
+    if(b.img) return `<a class="pb-card has-img" href="${href}"${hide}><img src="${esc(b.img)}" alt="${dup ? '' : esc(b.title||'')}"><span class="pb-btn">Shop Now ${ICO.arrow}</span></a>`;
     let goal = 'all'; try{ goal = new URL(b.link||'', location.href).searchParams.get('goal') || 'all'; }catch(e){}
     const pic = PRODUCTS.filter(p=>p.img && inStock(p) && productInCat(p, goal)).sort(bestFirst)[0];
-    return `<a class="pb-card" href="${href}" style="background:${bgs[i]}">
+    return `<a class="pb-card" href="${href}" style="background:${bgs[i % bgs.length]}"${hide}>
       <div class="pb-text">${b.subtitle ? `<small>${esc(b.subtitle)}</small>` : ''}<h3>${esc(b.title||'')}</h3>${b.bigText ? `<div class="big">${esc(b.bigText)}</div>` : ''}<span class="pb-btn">Shop Now ${ICO.arrow}</span></div>
-      ${pic ? `<span class="pb-pic"><img src="${esc(pic.img)}" alt="" loading="lazy"></span>` : ''}
+      ${pic ? `<span class="pb-pic"><img src="${esc(pic.img)}" alt=""></span>` : ''}
     </a>`;
-  }).join('');
+  };
+  // strip ta screen-er cheye lomba korte set repeat, tarpor 2 copy = seamless loop
+  let set = []; while(set.length < 6) set = set.concat(base);
+  const one = set.map((b,i)=>card(b, i % base.length, i >= base.length)).join('');
+  const two = set.map((b,i)=>card(b, i % base.length, true)).join('');
+  const box = document.getElementById('promoRow');
+  box.innerHTML = `<div class="pm-track" id="pmTrack">${one}${two}</div>`;
+  const track = document.getElementById('pmTrack');
+  const speed = () => track.style.setProperty('--pm-dur', Math.max(18, (track.scrollWidth/2) / 45) + 's');   // ~45px/sec
+  speed();
+  track.querySelectorAll('img').forEach(img=> img.addEventListener('load', speed));
+  // phone: chhuile thame, chere dile 2 sec por abar chole
+  box.ontouchstart = () => { clearTimeout(box._t); track.classList.add('paused'); };
+  box.ontouchend = () => { box._t = setTimeout(()=> track.classList.remove('paused'), 2000); };
 }
 
 /* ---------------- FLASH SALE + countdown (raat 12 ta porjonto) ---------------- */

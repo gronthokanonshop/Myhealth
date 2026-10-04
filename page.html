@@ -48,13 +48,69 @@ function initPage(){
     .replace(/\{deliveryFeeOuter\}/g, CONFIG.deliveryFeeOuter)
     .replace(/\{deliveryFee\}/g, CONFIG.deliveryFee)
     .replace(/\{freeDeliveryLine\}/g, freeDeliveryOn() ? `<li><b>FREE delivery</b> on orders over <b>${money(CONFIG.freeDeliveryOver)}</b> — anywhere in Bangladesh.</li>` : '')
-    .replace(/\{freeDeliveryOver\}/g, Number(CONFIG.freeDeliveryOver).toLocaleString('en-IN'));
+    .replace(/\{freeDeliveryOver\}/g, Number(CONFIG.freeDeliveryOver).toLocaleString('en-IN'))
+    .replace(/\{productCount\}/g, Math.max(1, Math.floor(PRODUCTS.length / 10) * 10))
+    .replace(/\{brandCount\}/g, Math.max(1, Math.floor(new Set(PRODUCTS.map(p=>p.brand).filter(Boolean)).size / 5) * 5))
+    .replace(/\{categoryCount\}/g, CATEGORIES.length);
 
   document.title = page.title + " — " + CONFIG.brand;
   document.getElementById('crumbPage').textContent = page.title;
   document.getElementById('infoPage').innerHTML = `
     <div class="info-hero"><h1>${page.title}</h1></div>
-    <div class="info-body">${fill(page.html)}</div>`;
+    ${key === 'contact' ? contactHTML() : `<div class="info-body">${fill(page.html)}</div>`}`;
+}
+
+/* ---------- CONTACT — card + message form (admin > Messages e jay) ---------- */
+function contactHTML(){
+  const wa = waNumber(), hot = CONFIG.hotline;
+  const cards = [
+    hot ? [ICO.phone, 'Call us', `<a href="tel:${esc(hot)}">${esc(hot)}</a>`] : null,
+    wa  ? [WA_ICON, 'WhatsApp', `<a href="${waLink('Hi! I have a question.')}" target="_blank" rel="noopener">Chat with us →</a>`] : null,
+    CONFIG.email ? [ICO.mail, 'Email', `<a href="mailto:${esc(CONFIG.email)}">${esc(CONFIG.email)}</a>`] : null,
+    CONFIG.address ? [ICO.pin, 'Address', esc(CONFIG.address)] : null,
+    [ICO.clock, 'Business hours', 'Every day, 9:00 AM – 10:00 PM'],
+  ].filter(Boolean);
+  return `
+  <div class="contact-grid">
+    <div class="contact-cards">
+      ${cards.map(([ic,t,v])=>`<div class="cc-card"><span class="cc-ico">${ic}</span><div><b>${t}</b><span>${v}</span></div></div>`).join('')}
+      <p class="tag-mini" style="margin:6px 4px 0">To check an order, use <a href="track.html" style="color:var(--leaf);font-weight:700">Track Order</a>.</p>
+    </div>
+    <form class="info-body contact-form" id="contactForm" onsubmit="event.preventDefault(); sendMessage();">
+      <h3>Send us a message</h3>
+      <p class="tag-mini" style="margin:-4px 0 16px;font-size:13.5px">Fill out the form and we'll get back to you within 24 hours.</p>
+      <div class="f2">
+        <div class="field" id="cwName"><label for="cName">Full name *</label><input id="cName" maxlength="80" autocomplete="name"><div class="field-err">Please enter your name</div></div>
+        <div class="field" id="cwPhone"><label for="cPhone">Phone *</label><input id="cPhone" type="tel" maxlength="20" placeholder="01XXXXXXXXX" autocomplete="tel"><div class="field-err">Enter a valid mobile number</div></div>
+      </div>
+      <div class="f2">
+        <div class="field" id="cwEmail"><label for="cEmail">Email (optional)</label><input id="cEmail" type="email" maxlength="100" autocomplete="email"><div class="field-err">Enter a valid email</div></div>
+        <div class="field"><label for="cSubject">Subject</label><select id="cSubject"><option>Product question</option><option>Order / delivery</option><option>Return or refund</option><option>Wholesale / bulk order</option><option>Other</option></select></div>
+      </div>
+      <div class="field" id="cwMsg"><label for="cMsg">Message *</label><textarea id="cMsg" maxlength="1500" placeholder="How can we help?"></textarea><div class="field-err">Please write your message (at least 10 characters)</div></div>
+      <button class="btn btn-green" id="cSend" type="submit">Send message</button>
+    </form>
+  </div>`;
+}
+function sendMessage(){
+  const v = id => document.getElementById(id).value.trim();
+  const name = v('cName'), phone = normalizePhone(v('cPhone')), email = v('cEmail'), msg = v('cMsg');
+  const bad = (id, b) => { document.getElementById(id).classList.toggle('invalid', !!b); return !!b; };
+  let err = false;
+  err = bad('cwName', !name) || err;
+  err = bad('cwPhone', !/^01\d{9}$/.test(phone)) || err;
+  err = bad('cwEmail', email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) || err;
+  err = bad('cwMsg', msg.length < 10) || err;
+  if(err) return;
+  try{ const last = Number(localStorage.getItem('myhealth_msg_ts'))||0; if(Date.now() - last < 60000){ toast('Please wait a minute before sending another message'); return; } }catch(e){}
+  if(!window.fdb){ toast('Could not send — please call or WhatsApp us'); return; }
+  const btn = document.getElementById('cSend'); btn.disabled = true; btn.textContent = 'Sending…';
+  const data = { name, phone, subject: v('cSubject'), message: msg, ts: Date.now() };
+  if(email) data.email = email;
+  window.fdb.ref('messages').push(data).then(()=>{
+    try{ localStorage.setItem('myhealth_msg_ts', String(Date.now())); }catch(e){}
+    document.getElementById('contactForm').innerHTML = `<div class="success" style="margin:0;border:none;padding:30px 10px"><div class="ok">✓</div><h1>Message sent!</h1><p>Thank you, ${esc(name)}. We'll get back to you on ${esc(phone)} soon.</p></div>`;
+  }).catch(()=>{ btn.disabled = false; btn.textContent = 'Send message'; toast('Could not send right now — please call or WhatsApp us'); });
 }
 </script>
 </body>

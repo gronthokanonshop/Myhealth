@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+<title>Blog — My Health</title>
+<meta name="description" content="Health tips, product guides and wellness advice from My Health — authentic health & beauty store in Bangladesh." />
+<meta name="theme-color" content="#3BB77E" />
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Lato:wght@400;700;900&family=Sora:wght@800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="wrap" id="blogWrap">
+  <div style="text-align:center;padding:80px 20px;color:var(--muted)">Loading…</div>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="product.js"></script>
+<script src="app.js"></script>
+<script src="ai.js"></script>
+<script>
+window.NO_LIVE_RERENDER = true;
+/* Blog post: Firebase 'posts' — admin > Blog theke lekha hoy */
+let POSTS = null;
+const fmtD = ts => { const d = new Date(Number(ts)||0); return isNaN(d) ? '' : d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); };
+const readMin = t => Math.max(1, Math.round(String(t||'').split(/\s+/).length / 200));
+/* choto formatting: ## heading, **bold**, - list, khali line = notun paragraph, link [text](https://..) */
+function postBody(t){
+  const blocks = String(t||'').replace(/\r/g,'').split(/\n{2,}/);
+  return blocks.map(b=>{
+    const lines = b.split('\n');
+    const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|[a-z0-9_-]+\.html[^\s)]*)\)/gi,'<a href="$2">$1</a>');
+    if(/^##\s/.test(b)) return `<h2>${inline(b.replace(/^##\s*/,''))}</h2>`;
+    if(lines.every(l=>/^\s*[-•]\s/.test(l))) return `<ul>${lines.map(l=>`<li>${inline(l.replace(/^\s*[-•]\s*/,''))}</li>`).join('')}</ul>`;
+    return `<p>${lines.map(inline).join('<br>')}</p>`;
+  }).join('');
+}
+function loadPosts(){
+  if(POSTS) return Promise.resolve(POSTS);
+  if(!window.fdb) return Promise.resolve(POSTS = []);
+  return window.fdb.ref('posts').once('value').then(s=>{
+    const v = s.val() || {};
+    POSTS = Object.entries(v).map(([id,p])=>({ id, ...p })).filter(p=>p && p.title && p.published !== false).sort((a,b)=>(b.ts||0)-(a.ts||0));
+    return POSTS;
+  }, ()=> POSTS = []);
+}
+function initPage(){
+  loadPosts().then(list=>{
+    const id = param('id');
+    id ? renderPost(list, id) : renderList(list);
+  });
+}
+function cardHTML(p){
+  return `<a class="blog-card" href="blog.html?id=${encodeURIComponent(p.id)}">
+    <span class="bc-img">${p.cover ? `<img src="${esc(p.cover)}" alt="" loading="lazy">` : `<span class="bc-ph">${ICO.spark}</span>`}</span>
+    <span class="bc-body">
+      ${p.tag ? `<span class="bc-tag">${esc(p.tag)}</span>` : ''}
+      <b>${esc(p.title)}</b>
+      <span class="bc-ex">${esc(p.excerpt || String(p.body||'').replace(/[#*\[\]]/g,'').slice(0,140))}</span>
+      <small>${fmtD(p.ts)} · ${readMin(p.body)} min read</small>
+    </span>
+  </a>`;
+}
+function renderList(list){
+  document.title = 'Blog — ' + CONFIG.brand;
+  document.getElementById('blogWrap').innerHTML = `
+    <div class="crumb"><a href="index.html">Home</a><span>›</span><span>Blog</span></div>
+    <div class="cat-hero"><h1>Health Tips &amp; Guides</h1><p>Simple, practical advice on supplements, skincare and everyday wellness — from the ${esc(CONFIG.brand)} team.</p></div>
+    ${list.length ? `<div class="blog-grid">${list.map(cardHTML).join('')}</div>`
+      : `<div class="nf" style="margin:20px auto"><div class="big" style="font-size:52px">${ICO.spark}</div><h2 style="font-size:26px;margin:12px 0 8px">No posts yet</h2><p>Our first articles are coming soon. Meanwhile, ask our AI Health Assistant anything.</p><a class="btn btn-green" style="margin-top:16px" href="index.html#aiSection">Ask AI assistant</a></div>`}`;
+}
+function renderPost(list, id){
+  const p = list.find(x=>x.id === id);
+  const wrap = document.getElementById('blogWrap');
+  if(!p){
+    wrap.innerHTML = `<div class="nf"><div class="big">404</div><h1>Post not found</h1><p>This article may have been removed.</p><a class="btn btn-green" style="margin-top:16px" href="blog.html">All articles</a></div>`;
+    return;
+  }
+  document.title = p.title + ' — ' + CONFIG.brand;
+  document.querySelector('meta[name="description"]')?.setAttribute('content', (p.excerpt || String(p.body||'')).slice(0,160));
+  // post-er tag/title er sathe mile emon product (category / naam)
+  const words = (p.title + ' ' + (p.tag||'')).toLowerCase().split(/\W+/).filter(w=>w.length>3);
+  const related = PRODUCTS.filter(x=>inStock(x) && words.some(w=>searchText(x).includes(w))).slice(0,8);
+  const more = list.filter(x=>x.id !== p.id).slice(0,3);
+  wrap.innerHTML = `
+    <div class="crumb"><a href="index.html">Home</a><span>›</span><a href="blog.html">Blog</a><span>›</span><span>${esc(p.title)}</span></div>
+    <article class="post">
+      ${p.tag ? `<span class="bc-tag">${esc(p.tag)}</span>` : ''}
+      <h1>${esc(p.title)}</h1>
+      <div class="post-meta">${fmtD(p.ts)} · ${readMin(p.body)} min read · by ${esc(CONFIG.brand)} team</div>
+      ${p.cover ? `<img class="post-cover" src="${esc(p.cover)}" alt="">` : ''}
+      <div class="post-body">${postBody(p.body)}</div>
+      <div class="pd-share" style="margin-top:22px">Share:
+        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(location.href)}" target="_blank" rel="noopener" aria-label="Share on Facebook">${SOCIAL_ICONS.facebook}</a>
+        <a href="https://wa.me/?text=${encodeURIComponent(p.title+' — '+location.href)}" target="_blank" rel="noopener" aria-label="Share on WhatsApp">${WA_ICON}</a>
+      </div>
+    </article>
+    ${related.length ? `<section class="section"><div class="sec-head"><h2>Products mentioned</h2></div><div class="carousel">${related.map(productCard).join('')}</div></section>` : ''}
+    ${more.length ? `<section class="section"><div class="sec-head"><h2>More articles</h2><a class="seeall" href="blog.html">All articles →</a></div><div class="blog-grid">${more.map(cardHTML).join('')}</div></section>` : ''}`;
+}
+</script>
+</body>
+</html>

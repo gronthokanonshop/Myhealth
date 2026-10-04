@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+<title>Compare Products — My Health</title>
+<meta name="description" content="Compare up to 4 products side by side — price, brand, size, benefits and usage." />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#3BB77E" />
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Lato:wght@400;700;900&family=Sora:wght@800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="wrap">
+  <div class="crumb"><a href="index.html">Home</a><span>›</span><span>Compare</span></div>
+  <div class="cat-hero">
+    <h1>Compare Products</h1>
+    <p>Compare up to 4 products side by side — price, size, benefits and how to use. Tap the <b>compare</b> icon on any product to add it here.</p>
+  </div>
+  <div id="cmpWrap"><div style="text-align:center;padding:60px;color:var(--muted)">Loading…</div></div>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="product.js"></script>
+<script src="app.js"></script>
+<script src="ai.js"></script>
+<script>
+function onCompareChange(){ initPage(); }
+function initPage(){
+  const list = compareList.map(findP).filter(Boolean);
+  const wrap = document.getElementById('cmpWrap');
+  if(!list.length){
+    wrap.innerHTML = `<div class="nf" style="margin:20px auto">
+      <div class="big" style="font-size:56px">${ICO.compare}</div>
+      <h2>No products to compare yet</h2>
+      <p>Browse products and tap the compare icon (on a product card or product page) to add up to 4 items.</p>
+      <a class="btn btn-green" style="margin-top:16px" href="category.html?goal=all">Browse products</a></div>`;
+    return;
+  }
+  const minPrice = Math.min(...list.map(p=>p.price));
+  const maxRating = Math.max(...list.map(p=>Number(p.rating)||0));
+  const row = (label, fn) => `<tr><th>${label}</th>${list.map(p=>`<td>${fn(p)}</td>`).join('')}${'<td class="cmp-empty"></td>'.repeat(4-list.length)}</tr>`;
+  wrap.innerHTML = `
+    <div class="cmp-tools"><span class="tag-mini" style="font-size:13.5px">Comparing <b style="color:var(--leaf)">${list.length}/4</b> products</span>
+      <button class="btn btn-ghost-green" style="height:38px" onclick="compareList=[];saveCompare();refreshCompareUI();initPage()">Clear all</button></div>
+    <div class="cmp-scroll"><table class="cmp-table">
+      <tr class="cmp-top"><th></th>${list.map(p=>`<td>
+        <button class="cmp-x" onclick="toggleCompare(${p.id})" aria-label="Remove">×</button>
+        <a class="cmp-img" href="product.html?id=${p.id}">${imgHTML(p, p.name)}</a>
+        <a class="cmp-name" href="product.html?id=${p.id}">${esc(p.name)}</a></td>`).join('')}
+        ${list.length < 4 ? `<td class="cmp-empty"><a class="cmp-add" href="category.html?goal=all">+<span>Add product</span></a></td>` + '<td class="cmp-empty"></td>'.repeat(3-list.length) : ''}</tr>
+      ${row('Price', p=>`<b class="cmp-price">${money(p.price)}</b>${p.oldPrice>p.price?` <s class="tag-mini">${money(p.oldPrice)}</s>`:''}${p.price===minPrice && list.length>1?' <span class="cmp-best">Lowest</span>':''}`)}
+      ${row('Discount', p=> discountPct(p) ? `<span style="color:var(--rose);font-weight:700">${discountPct(p)}% OFF</span>` : '—')}
+      ${row('Rating', p=> p.rating ? `<span class="stars">${stars(p.rating)}</span> ${Number(p.rating).toFixed(1)}${Number(p.rating)===maxRating && list.length>1?' <span class="cmp-best">Top rated</span>':''}` : '—')}
+      ${row('Brand', p=> esc(p.brand||'—'))}
+      ${row('Category', p=> esc(getCats(p).map(goalLabel).join(', ')||'—'))}
+      ${row('Size / pack', p=> esc(p.size||'—'))}
+      ${row('Availability', p=> inStock(p) ? `<span style="color:var(--ok);font-weight:700">● In stock${hasQty(p)?` (${p.qty})`:''}</span>` : `<span style="color:var(--rose);font-weight:700">● Out of stock</span>`)}
+      ${row('Key benefits', p=> (p.benefits||[]).length ? `<ul>${p.benefits.slice(0,5).map(b=>`<li>${esc(b)}</li>`).join('')}</ul>` : '—')}
+      ${row('How to use', p=> p.use && p.use.dose ? esc(p.use.dose) + (p.use.when ? `<br><span class="tag-mini">${esc(p.use.when)}</span>` : '') : '—')}
+      ${row('Description', p=> `<span class="cmp-desc">${esc(p.desc||'—')}</span>`)}
+      ${row('', p=> inStock(p) ? `<button class="btn btn-green" style="width:100%;height:40px" onclick="addToCart(${p.id})">${ICO.cart} Add to cart</button>` : `<button class="btn" disabled style="width:100%;height:40px;background:#eef0f2;color:#a3aab0">Sold out</button>`)}
+    </table></div>`;
+}
+</script>
+</body>
+</html>

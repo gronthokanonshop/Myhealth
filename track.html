@@ -24,7 +24,7 @@
     <p class="track-sub">Enter your Order ID and the phone number used on the order to see its real-time status.</p>
 
     <div class="track-form">
-      <div class="field"><label for="tOrderId">Order ID *</label><input id="tOrderId" placeholder="e.g. MH8K2PQ4ZT7A" autocomplete="off" style="text-transform:uppercase" /></div>
+      <div class="field"><label for="tOrderId">Order ID *</label><input id="tOrderId" placeholder="e.g. MH8K2PQ4ZT7A" autocomplete="off" style="text-transform:uppercase" onkeydown="if(event.key==='Enter') document.getElementById('tPhone').focus()" /></div>
       <div class="field"><label for="tPhone">Phone number *</label><input id="tPhone" type="tel" inputmode="tel" placeholder="01XXXXXXXXX"
         onkeydown="if(event.key==='Enter') trackOrder()" /></div>
       <button class="btn btn-green" onclick="trackOrder()" id="tBtn">Track Order</button>

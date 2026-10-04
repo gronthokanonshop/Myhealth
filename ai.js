@@ -93,6 +93,11 @@ const AI_CONCERNS = [
     kw:['immunity','immune','cold','flu','cough','frequently sick','get sick','sore throat','sordi','shordi','kashi','kashi','sickly','রোগ প্রতিরোধ','সর্দি','কাশি','ঠান্ডা','বারবার অসুস্থ','vitamin c','zinc'],
     tip:'Vitamin C, zinc and vitamin D support immunity, together with good sleep, fruits and vegetables.',
     tipBn:'ভিটামিন সি, জিঙ্ক ও ভিটামিন ডি রোগ প্রতিরোধে সাহায্য করে — সাথে ভালো ঘুম, ফল ও সবজি খান।' },
+  { label:'gastric & digestion', bn:'গ্যাস্ট্রিক ও হজম', cats:[], match:['digest','probiotic','gut','bloat'],
+    kw:['gastric','acidity','acid reflux','reflux','heartburn','indigestion','bloating','bloated','gas problem','constipation','digestion','stomach upset','upset stomach',
+        'gas hoy','gastric er','pet fapa','pet fape','bodhojom','bod hojom','hojom hoy na','ombol','buk jala','buk jole','গ্যাস','গ্যাস্ট্রিক','অম্বল','বুক জ্বালা','বদহজম','হজম','পেট ফাঁপা','পেট ফাপা','কোষ্ঠকাঠিন্য','পেটের সমস্যা'],
+    tip:'Eat on time, avoid oily/spicy food and lying down right after meals, and drink enough water. Probiotics support a healthy gut. If the pain is severe or you see blood, see a doctor quickly.',
+    tipBn:'সময়মতো খান, তেল-ঝাল খাবার আর খাওয়ার পরপরই শুয়ে পড়া এড়িয়ে চলুন, পর্যাপ্ত পানি পান করুন। প্রোবায়োটিক পেট ভালো রাখতে সাহায্য করে। ব্যথা খুব বেশি হলে বা রক্ত দেখলে দ্রুত ডাক্তার দেখান।' },
   { label:'poor sleep', bn:'ঘুমের সমস্যা', cats:['sleep'],
     kw:['sleep','insomnia','cant sleep','can\'t sleep','cannot sleep','sleepless','restless night','ghum','ghum hoy na','ghum ase na','ঘুম','অনিদ্রা'],
     tip:'Keep a fixed bedtime, avoid tea/coffee after evening and screens 1 hour before bed. Magnesium helps many people relax.',
@@ -173,18 +178,20 @@ function aiHas(norm, kw){
   return parts.length > 1 && parts.every(w => norm.includes(' ' + w));
 }
 
-function aiPickProducts(catIds, words, max, pinned){
+const aiPText = p => searchText(p) + ' ' + String(p.desc||'').toLowerCase() + ' ' + (p.benefits||[]).join(' ').toLowerCase();
+/* extraLists: category chara, product-er lekha theke khuje paoa list (jemon gastric → "digest", "probiotic") */
+function aiPickProducts(catIds, words, max, pinned, extraLists){
   const seen = new Set(), out = [];
   const add = p => { if(p && inStock(p) && !seen.has(p.id) && out.length < max){ seen.add(p.id); out.push(p.id); } };
   (pinned||[]).forEach(id=>add(findP(id)));
   const score = p => {
-    const t = searchText(p) + ' ' + String(p.desc||'').toLowerCase() + ' ' + (p.benefits||[]).join(' ').toLowerCase();
+    const t = aiPText(p);
     let s = (Number(p.rating)||0) + ((p.tags||[]).includes('best') ? 1 : 0);
     words.forEach(w=>{ if(t.includes(w)) s += 2; });
     return s;
   };
   // protita category theke paloy paloy — ek dhoroner product e sob na hoy
-  const lists = catIds.map(c => PRODUCTS.filter(p=>productInCat(p, c) && inStock(p)).sort((a,b)=>score(b)-score(a)));
+  const lists = [...(extraLists||[]), ...catIds.map(c => PRODUCTS.filter(p=>productInCat(p, c) && inStock(p)))].map(l => l.sort((a,b)=>score(b)-score(a)));
   for(let round=0; out.length<max && lists.some(l=>l.length>round); round++) lists.forEach(l=> add(l[round]));
   return out;
 }
@@ -222,7 +229,8 @@ function aiBasicAnswer(text){
   const hits = AI_CONCERNS.filter(c => c.kw.some(k=>aiHas(norm, k)));
   const caution = hits.some(c=>c.caution) || AI_CAUTION.some(k=>aiHas(norm, k));
   const cats = [...new Set(hits.flatMap(c=>c.cats))];
-  let products = aiPickProducts(cats, words, max, pinned);
+  const matchLists = hits.filter(c=>c.match).map(c => PRODUCTS.filter(p => inStock(p) && c.match.some(w => aiPText(p).includes(w))));
+  let products = aiPickProducts(cats, words, max, pinned, matchLists);
   const cautionLine = caution ? (bn ? '\n\n⚠️ আপনার কোনো রোগ থাকলে, ওষুধ চললে বা গর্ভবতী হলে সাপ্লিমেন্ট শুরুর আগে ডাক্তারের পরামর্শ নিন।'
                                      : '\n\n⚠️ If you have a medical condition, take medicines or are pregnant, please check with your doctor before starting supplements.') : '';
   const otherChips = AI_CFG.chips.filter(c=>!aiHas(norm, c.toLowerCase().split(' ')[0])).slice(0,2);
@@ -288,7 +296,7 @@ function aiLog(q, res){
   window.fdb.ref('aiLogs').push({
     q: q.slice(0,500), ts: Date.now(), mode: String(res.mode||'').slice(0,20),
     products: (res.products||[]).join(',').slice(0,200)
-  }).catch(()=>{});
+  }).then(null, ()=>{});   // compat push-e .catch kaj kore na (uncaught error dey)
 }
 
 let aiBusy = false;
@@ -344,7 +352,7 @@ function aiMessagesHTML(){
   return all.map((m,i)=>aiMsgHTML(m, i===all.length-1)).join('')
     + (aiBusy ? `<div class="ai-msg bot"><span class="ai-av">${AI_SPARK}</span><div class="ai-body"><div class="ai-bubble"><span class="ai-typing"><i></i><i></i><i></i></span></div></div></div>` : '');
 }
-const aiSpeech = window.SpeechRecognition || window.webkitSpeechRecognition;
+const aiSpeech = typeof SPEECH !== 'undefined' ? SPEECH : (window.SpeechRecognition || window.webkitSpeechRecognition);
 function aiShellHTML(floating){
   return `<div class="ai-chat${floating?' is-float':''}">
     <div class="ai-head">
@@ -442,17 +450,27 @@ function aiMountAll(){
 
 /* ---- voice input (Bangla) ---- */
 let aiRec = null;
-function aiToggleMic(btn){
+function aiToggleMic(btn, lang){
   if(!aiSpeech) return;
   if(aiRec){ aiRec.stop(); return; }
   const form = btn.closest('form'), inp = form.querySelector('input');
+  const ph = inp.placeholder, typed = inp.value;
+  let heard = false, failed = '';
   aiRec = new aiSpeech();
-  aiRec.lang = 'bn-BD'; aiRec.interimResults = true; aiRec.maxAlternatives = 1;
-  btn.classList.add('rec');
-  aiRec.onresult = e => { inp.value = [...e.results].map(r=>r[0].transcript).join(' '); };
-  aiRec.onend = () => { btn.classList.remove('rec'); aiRec = null; if(inp.value.trim()){ aiSend(inp.value); inp.value=''; } };
-  aiRec.onerror = () => { btn.classList.remove('rec'); aiRec = null; toast('Could not hear you — please type instead'); };
-  aiRec.start();
+  aiRec.lang = lang || 'bn-BD'; aiRec.interimResults = true; aiRec.continuous = false; aiRec.maxAlternatives = 1;
+  btn.classList.add('rec'); inp.placeholder = aiRec.lang === 'bn-BD' ? 'শুনছি… বাংলায় সমস্যাটা বলুন' : 'Listening… speak now';
+  const txt = e => typeof speechText === 'function' ? speechText(e) : [...e.results].map(r=>r[0].transcript).join(' ');
+  aiRec.onresult = e => { heard = true; inp.value = txt(e); };
+  aiRec.onerror = e => { failed = e.error || 'error'; };
+  aiRec.onend = () => {
+    btn.classList.remove('rec'); aiRec = null; inp.placeholder = ph;
+    // phone-e Bangla voice na thakle English diye abar chesta
+    if(failed === 'language-not-supported' && !lang){ aiToggleMic(btn, 'en-IN'); return; }
+    if(heard && inp.value.trim()){ aiSend(inp.value); inp.value = ''; return; }   // shudhu bola kotha-i pathay (age type kora lekha na)
+    inp.value = typed;
+    if(failed && failed !== 'aborted') toast(typeof micError === 'function' ? micError(failed) : 'Could not hear you — please type instead', 5500);
+  };
+  try{ aiRec.start(); }catch(err){ btn.classList.remove('rec'); aiRec = null; inp.placeholder = ph; toast('Could not start the microphone — please type instead', 4000); }
 }
 
 /* ---- event delegation (sob instance er jonno ekbar) ---- */

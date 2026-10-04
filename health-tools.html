@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+<title>Free Health Tools — BMI, Water, Protein & Calorie Calculator | My Health</title>
+<meta name="description" content="Free health calculators for Bangladesh: BMI (Asian standard), daily water intake, protein needs and daily calories — with simple advice and matching products." />
+<meta name="theme-color" content="#3BB77E" />
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Lato:wght@400;700;900&family=Sora:wght@800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2248%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M50%2076%20C31%2059%2021%2047%2021%2037.5%20C21%2029%2027.5%2023.5%2035%2023.5%20C41%2023.5%2046%2027.5%2050%2033.5%20C54%2027.5%2059%2023.5%2065%2023.5%20C72.5%2023.5%2079%2029%2079%2037.5%20C79%2047%2069%2059%2050%2076%20Z%22%20fill%3D%22%23EA7317%22%2F%3E%3Cpolyline%20points%3D%2227%2C49%2040%2C49%2044%2C40%2050%2C59%2055%2C35%2060%2C49%2073%2C49%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%224.5%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="site-header"></div>
+
+<main class="wrap">
+  <div class="crumb"><a href="index.html">Home</a><span>›</span><span>Health Tools</span></div>
+  <div class="cat-hero">
+    <h1>Free Health Tools</h1>
+    <p>Know your numbers in 10 seconds — BMI, daily water, protein and calories. Simple advice + products that fit your result.</p>
+    <div class="cat-pills">
+      <a href="#bmi">BMI</a><a href="#water">Water intake</a><a href="#protein">Protein need</a><a href="#cal">Daily calories</a>
+    </div>
+  </div>
+
+  <div class="ht-grid">
+    <!-- BMI -->
+    <section class="ht-card" id="bmi">
+      <div class="ht-head"><span class="ht-ico">⚖️</span><div><h2>BMI Calculator</h2><small>Body Mass Index — Asian standard (WHO)</small></div></div>
+      <form onsubmit="event.preventDefault(); calcBMI()">
+        <div class="f2">
+          <div class="field"><label>Height (cm)</label><input id="bH" type="number" min="90" max="230" placeholder="e.g. 165" required><small class="ht-hint">Feet → cm: 5′4″ = 163 · 5′6″ = 168 · 5′8″ = 173</small></div>
+          <div class="field"><label>Weight (kg)</label><input id="bW" type="number" min="20" max="250" step="0.1" placeholder="e.g. 62" required></div>
+        </div>
+        <button class="btn btn-green" type="submit">Calculate BMI</button>
+      </form>
+      <div class="ht-out" id="bmiOut"></div>
+    </section>
+
+    <!-- WATER -->
+    <section class="ht-card" id="water">
+      <div class="ht-head"><span class="ht-ico">💧</span><div><h2>Daily Water Intake</h2><small>Adjusted for Bangladesh's warm climate</small></div></div>
+      <form onsubmit="event.preventDefault(); calcWater()">
+        <div class="f2">
+          <div class="field"><label>Weight (kg)</label><input id="wW" type="number" min="20" max="250" step="0.1" placeholder="e.g. 62" required></div>
+          <div class="field"><label>Exercise per day</label><select id="wAct"><option value="0">None / little</option><option value="30">~30 minutes</option><option value="60">~1 hour</option><option value="90">1.5 hours +</option></select></div>
+        </div>
+        <label class="fcheck" style="padding-left:0"><input type="checkbox" id="wHot" checked> I spend time outdoors / in the heat</label>
+        <button class="btn btn-green" type="submit" style="margin-top:8px">Calculate water</button>
+      </form>
+      <div class="ht-out" id="waterOut"></div>
+    </section>
+
+    <!-- PROTEIN -->
+    <section class="ht-card" id="protein">
+      <div class="ht-head"><span class="ht-ico">💪</span><div><h2>Protein Need</h2><small>How many grams of protein you need per day</small></div></div>
+      <form onsubmit="event.preventDefault(); calcProtein()">
+        <div class="f2">
+          <div class="field"><label>Weight (kg)</label><input id="pW" type="number" min="20" max="250" step="0.1" placeholder="e.g. 62" required></div>
+          <div class="field"><label>Your goal</label><select id="pGoal"><option value="0.8">Stay healthy (little exercise)</option><option value="1.2">Active lifestyle</option><option value="1.8">Build muscle (gym)</option><option value="1.4">Lose fat, keep muscle</option></select></div>
+        </div>
+        <button class="btn btn-green" type="submit">Calculate protein</button>
+      </form>
+      <div class="ht-out" id="proteinOut"></div>
+    </section>
+
+    <!-- CALORIES -->
+    <section class="ht-card" id="cal">
+      <div class="ht-head"><span class="ht-ico">🔥</span><div><h2>Daily Calories</h2><small>Mifflin-St Jeor formula</small></div></div>
+      <form onsubmit="event.preventDefault(); calcCal()">
+        <div class="f2">
+          <div class="field"><label>Age</label><input id="cA" type="number" min="12" max="100" placeholder="e.g. 28" required></div>
+          <div class="field"><label>Gender</label><select id="cS"><option value="m">Male</option><option value="f">Female</option></select></div>
+        </div>
+        <div class="f2">
+          <div class="field"><label>Height (cm)</label><input id="cH" type="number" min="90" max="230" placeholder="e.g. 165" required></div>
+          <div class="field"><label>Weight (kg)</label><input id="cW" type="number" min="20" max="250" step="0.1" placeholder="e.g. 62" required></div>
+        </div>
+        <div class="f2">
+          <div class="field"><label>Activity</label><select id="cAct"><option value="1.2">Mostly sitting</option><option value="1.375">Light (1–3 days/week)</option><option value="1.55">Moderate (3–5 days)</option><option value="1.725">Very active (6–7 days)</option></select></div>
+          <div class="field"><label>Goal</label><select id="cGoal"><option value="-450">Lose weight</option><option value="0" selected>Maintain</option><option value="350">Gain weight</option></select></div>
+        </div>
+        <button class="btn btn-green" type="submit">Calculate calories</button>
+      </form>
+      <div class="ht-out" id="calOut"></div>
+    </section>
+  </div>
+
+  <div class="ht-cta">
+    <div><b>Want personal advice?</b><span>Tell our AI Health Assistant your problem in Bangla or English — it suggests the right products in seconds.</span></div>
+    <a class="btn btn-green" href="index.html#aiSection" data-ai-link>Ask AI assistant</a>
+  </div>
+  <p class="tag-mini" style="text-align:center;margin-top:16px">These tools give general guidance only and are not a medical diagnosis. Pregnant women, children and people with medical conditions should consult a doctor.</p>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="product.js"></script>
+<script src="app.js"></script>
+<script src="ai.js"></script>
+<script>
+window.NO_LIVE_RERENDER = true;
+document.querySelector('.ht-cta .btn').innerHTML = ICO.spark + ' Ask AI assistant';
+const BODY_KEY = 'myhealth_body';
+/* ager deya ojon/uchchota sob tool-e auto boshe */
+function loadBody(){
+  let b = {}; try{ b = JSON.parse(localStorage.getItem(BODY_KEY)||'{}'); }catch(e){}
+  const set = (id, v) => { const el = document.getElementById(id); if(el && v && !el.value) el.value = v; };
+  ['bW','wW','pW','cW'].forEach(id=>set(id, b.w)); ['bH','cH'].forEach(id=>set(id, b.h)); set('cA', b.a);
+  if(b.s) document.getElementById('cS').value = b.s;
+}
+function saveBody(o){ let b = {}; try{ b = JSON.parse(localStorage.getItem(BODY_KEY)||'{}'); }catch(e){} try{ localStorage.setItem(BODY_KEY, JSON.stringify({...b, ...o})); }catch(e){} }
+const n = id => parseFloat(document.getElementById(id).value);
+
+/* result-er niche mil-er product (category theke, best seller age) */
+function prodList(catIds, title){
+  const list = [];
+  catIds.forEach(c=> PRODUCTS.filter(p=>productInCat(p, c) && inStock(p)).sort((a,b)=>((b.tags||[]).includes('best')-(a.tags||[]).includes('best'))||((b.rating||0)-(a.rating||0)))
+    .forEach(p=>{ if(list.length < 3 && !list.includes(p)) list.push(p); }));
+  if(!list.length) return '';
+  return `<div class="ht-prods"><div class="ht-ptitle">${title}</div>${list.map(p=>`
+    <div class="ht-prod">
+      <a class="ht-pimg" href="product.html?id=${p.id}">${imgHTML(p, p.name)}</a>
+      <a class="ht-pname" href="product.html?id=${p.id}">${esc(p.name)}<b>${money(p.price)}</b></a>
+      <button class="ht-padd" onclick="addToCart(${p.id})">+ Add</button>
+    </div>`).join('')}</div>`;
+}
+
+function calcBMI(){
+  const h = n('bH'), w = n('bW'); if(!(h>0 && w>0)) return;
+  saveBody({ h, w });
+  const bmi = w / Math.pow(h/100, 2);
+  // Asian cut-off: <18.5 kom, 18.5–22.9 swabhabik, 23–24.9 beshi, 25+ obese
+  const [label, cls, tip, cats, ptitle] = bmi < 18.5
+    ? ['Underweight', 'low', 'Eat 300–500 extra calories a day with protein in every meal, and do some strength training.', ['muscle','energy'], 'Helpful for healthy weight gain']
+    : bmi < 23 ? ['Healthy weight', 'ok', 'Great! Keep a balanced diet, stay active and keep your immunity strong.', ['immunity','energy'], 'Stay healthy']
+    : bmi < 25 ? ['Overweight', 'mid', 'Walk 30–45 minutes daily, cut sugar & fried food, and eat more vegetables and protein.', ['weight'], 'Support for weight management']
+    : ['Obese', 'high', 'Losing even 5–10% of your weight improves health a lot. Start with daily walks and smaller portions — and talk to a doctor.', ['weight'], 'Support for weight management'];
+  const healthyMin = (18.5 * Math.pow(h/100,2)).toFixed(0), healthyMax = (22.9 * Math.pow(h/100,2)).toFixed(0);
+  const pos = Math.max(0, Math.min(100, (bmi - 15) / (35 - 15) * 100));
+  document.getElementById('bmiOut').innerHTML = `
+    <div class="ht-big ${cls}">${bmi.toFixed(1)} <span>${label}</span></div>
+    <div class="bmi-bar"><i style="left:${pos}%"></i></div>
+    <div class="bmi-scale"><span>Under</span><span>Healthy</span><span>Over</span><span>Obese</span></div>
+    <p>Healthy weight for your height: <b>${healthyMin}–${healthyMax} kg</b>. ${tip}</p>
+    ${prodList(cats, ptitle)}`;
+}
+function calcWater(){
+  const w = n('wW'); if(!(w>0)) return;
+  saveBody({ w });
+  const ml = w * 35 + Number(document.getElementById('wAct').value) * 12 + (document.getElementById('wHot').checked ? 500 : 0);
+  const glasses = Math.round(ml / 250);
+  document.getElementById('waterOut').innerHTML = `
+    <div class="ht-big ok">${(ml/1000).toFixed(1)} L <span>per day</span></div>
+    <div class="glasses">${'<i></i>'.repeat(Math.min(glasses, 20))}</div>
+    <p>That's about <b>${glasses} glasses</b> (250 ml). Start your morning with 1–2 glasses, keep a bottle nearby, and drink more on hot days or after exercise. Pale-yellow urine means you're well hydrated.</p>`;
+}
+function calcProtein(){
+  const w = n('pW'); if(!(w>0)) return;
+  saveBody({ w });
+  const f = Number(document.getElementById('pGoal').value);
+  const g = Math.round(w * f);
+  const muscle = f >= 1.4;
+  document.getElementById('proteinOut').innerHTML = `
+    <div class="ht-big ok">${g} g <span>protein / day</span></div>
+    <p>Spread it over 3–4 meals (~${Math.round(g/3)} g each). Easy sources: eggs (6 g each), chicken/fish (25 g per 100 g), dal (9 g per cup), milk (8 g per glass).${muscle ? ' One scoop of whey gives about <b>24 g</b> — handy after workouts.' : ''}</p>
+    ${prodList(muscle ? ['muscle'] : ['muscle','energy'], muscle ? 'Protein supplements' : 'Easy extra protein')}`;
+}
+function calcCal(){
+  const a = n('cA'), h = n('cH'), w = n('cW'), s = document.getElementById('cS').value;
+  if(!(a>0 && h>0 && w>0)) return;
+  saveBody({ a, h, w, s });
+  const bmr = 10*w + 6.25*h - 5*a + (s === 'm' ? 5 : -161);
+  const tdee = bmr * Number(document.getElementById('cAct').value);
+  const goal = Number(document.getElementById('cGoal').value);
+  const kcal = Math.round((tdee + goal) / 10) * 10;
+  const p = Math.round(kcal * .25 / 4), c = Math.round(kcal * .5 / 4), fat = Math.round(kcal * .25 / 9);
+  document.getElementById('calOut').innerHTML = `
+    <div class="ht-big ok">${kcal.toLocaleString('en-IN')} <span>kcal / day</span></div>
+    <div class="macros"><div><b>${p} g</b><small>Protein</small></div><div><b>${c} g</b><small>Carbs</small></div><div><b>${fat} g</b><small>Fat</small></div></div>
+    <p>${goal < 0 ? 'A ~450 kcal daily deficit means roughly 0.4 kg loss per week — slow and steady is best.' : goal > 0 ? 'A ~350 kcal surplus with strength training helps you gain mostly muscle.' : 'Eat around this much to keep your current weight.'} Your body burns <b>${Math.round(bmr)}</b> kcal at rest.</p>
+    ${prodList(goal < 0 ? ['weight'] : goal > 0 ? ['muscle'] : ['energy','immunity'], goal < 0 ? 'Support for weight loss' : goal > 0 ? 'For healthy weight gain' : 'Daily essentials')}`;
+}
+function initPage(){ loadBody(); }
+</script>
+</body>
+</html>

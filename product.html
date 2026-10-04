@@ -67,6 +67,20 @@
 let pdQty = 1;
 let pdProduct = null;
 let viewTracked = false;
+const REV_WRAP = document.querySelector('#reviewSection .rev-wrap');
+
+/* info tab (Description / Additional info / How to use / Reviews / Return & Delivery) */
+function openTab(name, noScroll){
+  document.querySelectorAll('#pdTabs [data-tab]').forEach(b=> b.classList.toggle('on', b.dataset.tab === name));
+  document.querySelectorAll('#pdTabs [data-panel]').forEach(p=> p.classList.toggle('on', p.dataset.panel === name));
+  if(!noScroll) setTimeout(()=> document.getElementById('pdTabs')?.scrollIntoView({ behavior:'smooth', block:'start' }), 30);
+}
+/* mobile-e native share sheet, na hole link copy */
+function shareProduct(){
+  const url = location.href.split('#')[0];
+  if(navigator.share){ navigator.share({ title: pdProduct?.name || document.title, url }).catch(()=>{}); return; }
+  copyLink();
+}
 
 function initPage(){
   pdProduct = findP(param('id'));
@@ -95,6 +109,16 @@ function initPage(){
   const wa = waNumber();
   const pageUrl = location.href.split('#')[0];
 
+  const hasUse = p.use && (p.use.dose || p.use.when || p.use.duration);
+  const TAG_LABEL = { flash:'On sale', best:'Best seller', new:'New arrival', import:'Imported', wholesale:'Wholesale' };
+  const specs = [
+    ['SKU', skuOf(p)], ['Brand', p.brand||'—'], ['Category', cats.map(goalLabel).join(', ')||'—'], ['Size / pack', p.size||'—'],
+    ['Best time to use', TIMING[p.timing]||TIMING.anytime],
+    ['Availability', oos ? 'Out of stock' : (hasQty(p) ? `In stock (${p.qty} available)` : 'In stock')],
+    ['Tags', (p.tags||[]).map(t=>TAG_LABEL[t]||t).join(', ')||'—'],
+    ['Authenticity', '100% original — sourced from the brand or an authorized importer'],
+  ];
+  const desc = String(p.desc||'');
   wrap.innerHTML = `
   <div class="crumb"><a href="index.html">Home</a><span>›</span>
     ${parent && parent.id!==mainCat ? `<a href="category.html?goal=${encodeURIComponent(parent.id)}">${esc(parent.label)}</a><span>›</span>` : ''}
@@ -107,65 +131,111 @@ function initPage(){
     </div>
 
     <div class="pd-detail">
-      <div class="pd-goal">${esc(goalLabel(mainCat))}${p.brand ? ' · '+esc(p.brand) : ''}</div>
+      <div class="pd-goal">${esc(goalLabel(mainCat))}</div>
       <h1>${esc(p.name)}</h1>
-      <div class="pd-rating"><span id="pdRating"><span class="stars">${stars(p.rating)}</span> <b>${p.rating||'-'}</b> · ${p.reviews||0} reviews</span> · ${oos
-        ? `<b style="display:inline-block;background:#ffe4e4;color:#c0392b;padding:3px 12px;border-radius:999px;font-weight:800">● Out of stock</b>`
-        : `<b style="display:inline-block;background:#e6f5e9;color:#1a7a35;padding:3px 12px;border-radius:999px;font-weight:800">● In stock</b>`}</div>
+      <div class="pd-meta"><span>SKU: <b>${esc(skuOf(p))}</b></span>${p.brand ? `<span>Brand: <a href="category.html?q=${encodeURIComponent(p.brand)}"><b>${esc(p.brand)}</b></a></span>` : ''}</div>
+      <div class="pd-rating"><span id="pdRating"><span class="stars">${stars(p.rating)}</span> <b>${p.rating||'-'}</b> · <a href="#pdTabs" onclick="openTab('rev')">${p.reviews||0} reviews</a></span> · ${oos
+        ? `<b class="pd-stock out">● Out of stock</b>`
+        : `<b class="pd-stock">● In stock</b>`}</div>
 
       <div class="pd-price">
         <span class="price">${money(p.price)}</span>
-        ${p.oldPrice>p.price?`<span class="old">${money(p.oldPrice)}</span><span class="save">Save ${money(save)}</span>`:''}
+        ${p.oldPrice>p.price?`<span class="old">${money(p.oldPrice)}</span>`:''}
+        ${usdText(p.price) ? `<span class="pd-usd">${usdText(p.price)}</span>` : ''}
       </div>
+      ${save > 0 ? `<div class="pd-save">🎉 You save <b>${money(save)}</b> on this item!</div>` : ''}
+
+      <p class="pd-short">${esc(desc.length > 240 ? desc.slice(0, 240).replace(/\s+\S*$/,'') + '…' : desc)}${desc.length > 240 ? ` <a href="#pdTabs" onclick="openTab('desc')">Read more</a>` : ''}</p>
 
       <div class="pd-badges">
         <span>${esc(p.size||'Standard pack')}</span>
         <span>${TIMING[p.timing]||TIMING.anytime}</span>
         <span>100% Authentic</span>
-        <span>Delivery 12–48 hrs</span>
       </div>
-
-      <p style="color:var(--muted); font-size:15px;">${esc(p.desc||'').replace(/\n/g,'<br>')}</p>
 
       <div class="pd-buy">
         <div class="qtybox">
           <button onclick="setPdQty(-1)" aria-label="Decrease">−</button><span id="pdQty">1</span><button onclick="setPdQty(1)" aria-label="Increase">＋</button>
         </div>
-        <button class="btn btn-green" ${oos?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="${oos?'':`addToCart(${p.id}, pdQty)`}">${oos?'Out of stock':'Add to Cart'}</button>
-        <button class="btn btn-lime" ${oos?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="${oos?'':'buyNow()'}">Buy Now</button>
+        <button class="btn btn-green" ${oos?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="${oos?'':`addToCart(${p.id}, pdQty)`}">${ICO.cart} ${oos?'Out of stock':'Add to Cart'}</button>
+        <button class="btn btn-lime" ${oos?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="${oos?'':'buyNow()'}">${ICO.bolt} Buy Now</button>
+      </div>
+      <div class="pd-avail">
+        ${oos ? `<span class="pd-chip out">Out of stock — check back soon</span>`
+              : hasQty(p) ? `<span class="pd-chip ${p.qty<=5?'low':''}">● ${p.qty<=5 ? `Only ${p.qty} left — order soon` : `In stock (${p.qty} available)`}</span>`
+              : `<span class="pd-chip">● In stock</span>`}
+      </div>
+      ${oos ? `
+      <div class="notify-box" id="backInStock">
+        <b>${ICO.bellOn} Get notified when it's back</b>
+        <span>Leave your mobile number — we'll message you as soon as it's in stock.</span>
+        <form onsubmit="event.preventDefault(); stockAlert(${p.id}, this)">
+          <input type="tel" inputmode="tel" placeholder="01XXXXXXXXX" maxlength="20" required aria-label="Mobile number">
+          <button class="btn btn-green" type="submit">Notify me</button>
+        </form>
+      </div>` : `
+      <div class="eta-box">
+        <label>${ICO.truck} Deliver to
+          <select id="etaDistrict" onchange="renderEta()">${BD_DISTRICTS.map(d=>`<option ${d===(savedDistrict()||'Dhaka')?'selected':''}>${esc(d)}</option>`).join('')}</select>
+        </label>
+        <div id="etaOut"></div>
+      </div>`}
+      <div class="pd-acts">
+        <button class="pd-act ${compareList.includes(p.id)?'on':''}" data-cmp="${p.id}" onclick="toggleCompare(${p.id})">${ICO.compare} Compare</button>
+        <button class="pd-act ${wishlist.has(p.id)?'on':''}" data-wish="${p.id}" onclick="toggleWish(${p.id})">${ICO.heart} Wishlist</button>
+        <button class="pd-act" onclick="shareProduct()">${ICO.share} Share</button>
       </div>
       ${wa && !oos ? `<a class="btn btn-wa-order" target="_blank" rel="noopener" href="${waLink(`Hi! I want to order:\n${p.name}\nPrice: ${money(p.price)}\n${pageUrl}`)}">${WA_ICON} Order on WhatsApp</a>` : ''}
 
       <div class="pd-perks">
         <div><b>${freeDeliveryOn() ? 'Free delivery' : 'Fast delivery'}</b>${freeDeliveryOn() ? `On orders over ${money(CONFIG.freeDeliveryOver)}` : 'Across all 64 districts'}</div>
         <div><b>Cash on Delivery</b>Pay when you receive it</div>
-        <div><b>Easy returns</b><a href="page.html?p=return" style="text-decoration:underline">Return policy</a></div>
-      </div>
-
-      <div class="pd-share">Share:
-        <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}" target="_blank" rel="noopener" aria-label="Share on Facebook">${SOCIAL_ICONS.facebook}</a>
-        <a href="https://wa.me/?text=${encodeURIComponent(p.name+' — '+pageUrl)}" target="_blank" rel="noopener" aria-label="Share on WhatsApp">${WA_ICON}</a>
-        <button onclick="copyLink()" aria-label="Copy link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></button>
-      </div>
-
-      <div class="pd-info">
-        ${(p.benefits||[]).length ? `<h3>Key Benefits</h3>
-        <ul>${p.benefits.map(b=>`<li>${esc(b)}</li>`).join('')}</ul>` : ''}
-
-        ${p.use && (p.use.dose || p.use.when || p.use.duration) ? `<h3>How to use</h3>
-        <div class="howto">
-          <div><b>Dosage</b><small>${esc(p.use.dose||'-')}</small></div>
-          <div><b>Best time</b><small>${esc(p.use.when||'-')}</small></div>
-          <div><b>Duration</b><small>${esc(p.use.duration||'-')}</small></div>
-        </div>` : ''}
-
-        ${parent && parent.id==='supplements' ? `<p style="font-size:13px; color:var(--muted); background:var(--cream); padding:12px 14px; border-radius:12px;">
-          <b>Note:</b> Supplements are not a substitute for a balanced diet. Consult a doctor if pregnant, nursing, or on medication.
-        </p>` : ''}
+        <div><b>Easy returns</b><a href="#pdTabs" onclick="openTab('ship')" style="text-decoration:underline">Return policy</a></div>
       </div>
     </div>
-  </div>`;
+  </div>
+
+  <section class="pd-tabs" id="pdTabs">
+    <div class="eyebrow">Product information</div>
+    <h2>Everything about this product</h2>
+    <div class="tab-btns" role="tablist">
+      <button class="on" data-tab="desc" role="tab">Description</button>
+      <button data-tab="info" role="tab">Additional info</button>
+      ${hasUse ? `<button data-tab="use" role="tab">How to use</button>` : ''}
+      <button data-tab="rev" role="tab">Reviews (<span id="revCountTab">0</span>)</button>
+      <button data-tab="ship" role="tab">Return &amp; Delivery</button>
+    </div>
+    <div class="tab-panel on" data-panel="desc">
+      ${desc ? `<p>${esc(desc).replace(/\n/g,'<br>')}</p>` : '<p class="tag-mini">No description yet.</p>'}
+      ${(p.benefits||[]).length ? `<h3>Key benefits</h3><ul class="pd-benefits">${p.benefits.map(b=>`<li>${esc(b)}</li>`).join('')}</ul>` : ''}
+      ${parent && parent.id==='supplements' ? `<p class="pd-note"><b>Note:</b> Supplements are not a substitute for a balanced diet. Consult a doctor if pregnant, nursing, or on medication.</p>` : ''}
+    </div>
+    <div class="tab-panel" data-panel="info">
+      <table class="spec-table">${specs.map(([k,v])=>`<tr><th>${k}</th><td>${esc(v)}</td></tr>`).join('')}</table>
+    </div>
+    ${hasUse ? `<div class="tab-panel" data-panel="use">
+      <div class="howto">
+        <div><b>Dosage</b><small>${esc(p.use.dose||'-')}</small></div>
+        <div><b>Best time</b><small>${esc(p.use.when||'-')}</small></div>
+        <div><b>Duration</b><small>${esc(p.use.duration||'-')}</small></div>
+      </div>
+      <p class="pd-note">Do not exceed the recommended amount unless advised by a qualified healthcare professional.</p>
+    </div>` : ''}
+    <div class="tab-panel" data-panel="rev" id="revPanel"></div>
+    <div class="tab-panel" data-panel="ship">
+      <div class="ship-grid">
+        <div><b>${ICO.truck} Delivery charge</b><span>Inside Dhaka ${money(CONFIG.deliveryFee)} · Outside Dhaka ${money(CONFIG.deliveryFeeOuter)}${freeDeliveryOn() ? ` · <b>FREE</b> over ${money(CONFIG.freeDeliveryOver)}` : ''}</span></div>
+        <div><b>${ICO.clock} Delivery time</b><span>Dhaka 1–2 days · Outside Dhaka 2–4 days</span></div>
+        <div><b>${ICO.cash} Payment</b><span>Cash on Delivery, bKash or Nagad</span></div>
+        <div><b>${ICO.ret} Returns</b><span>Wrong, damaged or expired item? Tell us within 24 hours for a free replacement or refund.</span></div>
+      </div>
+      <p style="margin-top:14px"><a href="page.html?p=return" style="color:var(--leaf);font-weight:700">Full return policy →</a> &nbsp; <a href="page.html?p=delivery" style="color:var(--leaf);font-weight:700">Delivery information →</a></p>
+    </div>
+  </section>`;
   pdImages = images;
+  // review box ta "Reviews" tab-er bhitore (ekbar dhore rakha node, prottek render-e abar boshai)
+  document.getElementById('revPanel').appendChild(REV_WRAP);
+  document.getElementById('pdTabs').onclick = e => { const b = e.target.closest('[data-tab]'); if(b) openTab(b.dataset.tab, true); };
 
   // related products: kono category mile, current bade
   const related = PRODUCTS.filter(x=> x.id!==p.id && getCats(x).some(c=>cats.includes(c)))
@@ -189,6 +259,9 @@ function initPage(){
   sb.classList.add('show');
   document.body.classList.add('has-sticky-buy');
 
+  renderEta();
+  renderFbt(p);
+  if(location.hash === '#back-in-stock') setTimeout(()=> document.getElementById('backInStock')?.scrollIntoView({ behavior:'smooth', block:'center' }), 300);
   setMeta(p);
   injectProductJsonLd(p, oos);
   initReviews(p);
@@ -205,7 +278,7 @@ function showImg(i){
 }
 function buyNow(){
   if(!pdProduct || !inStock(pdProduct)) return;
-  cart[pdProduct.id] = Math.max(cart[pdProduct.id]||0, pdQty);
+  cart[pdProduct.id] = Math.min(maxQty(pdProduct), Math.max(cart[pdProduct.id]||0, pdQty));
   saveCart();
   location.href = 'checkout.html';
 }
@@ -233,7 +306,7 @@ function setMeta(p){
 let rvPick = 5;
 function initReviews(p){
   const sec = document.getElementById('reviewSection');
-  sec.style.display = '';
+  sec.style.display = 'none';   // review box "Reviews" tab-e thake
   document.getElementById('revStarPick').innerHTML =
     [1,2,3,4,5].map(n=>`<button type="button" class="rsp ${n<=rvPick?'on':''}" data-n="${n}" onclick="setRvStar(${n})" aria-label="${n} star">★</button>`).join('');
   document.getElementById('revList').innerHTML = `<div class="rev-loading">Loading reviews…</div>`;
@@ -246,6 +319,7 @@ function setRvStar(n){
 }
 function renderReviews(p, list){
   const sum = document.getElementById('revSummary');
+  const rc = document.getElementById('revCountTab'); if(rc) rc.textContent = list.length;
   if(list.length){
     const avg = (list.reduce((s,r)=>s+Number(r.rating||0),0)/list.length);
     sum.innerHTML = `
@@ -256,7 +330,7 @@ function renderReviews(p, list){
       </div>`;
     /* asol review thakle upore-r rating o asol review theke dekhai */
     const pr = document.getElementById('pdRating');
-    if(pr) pr.innerHTML = `<span class="stars">${stars(avg)}</span> <b>${avg.toFixed(1)}</b> · <a href="#reviewSection" style="text-decoration:underline">${list.length} review${list.length!==1?'s':''}</a>`;
+    if(pr) pr.innerHTML = `<span class="stars">${stars(avg)}</span> <b>${avg.toFixed(1)}</b> · <a href="#pdTabs" onclick="openTab('rev')" style="text-decoration:underline">${list.length} review${list.length!==1?'s':''}</a>`;
   } else {
     sum.innerHTML = `<div class="rev-none">No reviews yet — <b>be the first</b> to review this product!</div>`;
   }
@@ -324,9 +398,82 @@ function injectProductJsonLd(p, oos){
   document.head.appendChild(s);
 }
 
+/* ---- "Deliver to" — district bachle exact tarikh + charge ---- */
+function renderEta(){
+  const sel = document.getElementById('etaDistrict'), out = document.getElementById('etaOut');
+  if(!sel || !out || !pdProduct) return;
+  const d = sel.value;
+  try{ localStorage.setItem('myhealth_district', d); }catch(e){}
+  const sub = pdProduct.price * pdQty + cartTotals().sub;
+  const e = deliveryEstimate(d, sub);
+  out.innerHTML = `Arrives <b>${e.from} – ${e.to}</b> · Delivery <b>${e.fee ? money(e.fee) : 'FREE'}</b>${e.fee && freeDeliveryOn() ? `<small>Free over ${money(CONFIG.freeDeliveryOver)}</small>` : ''}`;
+}
+/* ---- back-in-stock alert (Firebase stockAlerts/{productId}) ---- */
+function stockAlert(id, form){
+  const phone = normalizePhone(form.querySelector('input').value);
+  if(!/^01\d{9}$/.test(phone)){ toast('Enter a valid 11-digit mobile number'); return; }
+  const key = 'myhealth_alert_' + id;
+  try{ if(localStorage.getItem(key)){ toast("You're already on the list — we'll message you ✓"); return; } }catch(e){}
+  if(!window.fdb){ toast('Could not save right now — please try later'); return; }
+  const btn = form.querySelector('button'); btn.disabled = true;
+  window.fdb.ref('stockAlerts/' + id).push({ phone, ts: Date.now() }).then(()=>{
+    try{ localStorage.setItem(key, '1'); }catch(e){}
+    form.parentElement.classList.add('done'); form.parentElement.innerHTML = `<b>${ICO.bellOn} You're on the list!</b><span>We'll message <b>${esc(phone)}</b> as soon as it's back in stock.</span>`;
+  }).catch(()=>{ btn.disabled = false; toast('Could not save right now — please try later'); });
+}
+/* ---- Frequently bought together — ei product + 2 ta mil-er product, ek click-e cart-e ---- */
+function renderFbt(p){
+  document.getElementById('fbtSec')?.remove();
+  if(!inStock(p)) return;
+  const cats = getCats(p), parent = categoryOf(cats[0]);
+  const pool = PRODUCTS.filter(x=> x.id !== p.id && inStock(x));
+  // age onno sub-category (eki parent) — "complete the routine", tarpor eki sub
+  const sameParent = pool.filter(x=> parent && productInCat(x, parent.id) && !getCats(x).some(c=>cats.includes(c)));
+  const sameSub = pool.filter(x=> getCats(x).some(c=>cats.includes(c)));
+  const rank = (a,b)=> ((b.tags||[]).includes('best') - (a.tags||[]).includes('best')) || ((b.rating||0)-(a.rating||0));
+  const picks = [...sameParent.sort(rank), ...sameSub.sort(rank)].filter((x,i,arr)=>arr.findIndex(y=>y.id===x.id)===i).slice(0,2);
+  if(!picks.length) return;
+  const items = [p, ...picks];
+  document.getElementById('pdTabs').insertAdjacentHTML('beforebegin', `
+    <section class="fbt" id="fbtSec">
+      <h2>Frequently bought together</h2>
+      <div class="fbt-row">
+        ${items.map((x,i)=>`${i ? '<span class="fbt-plus">+</span>' : ''}
+          <label class="fbt-item">
+            <input type="checkbox" checked data-fbt="${x.id}" onchange="fbtTotal()">
+            <span class="fbt-img">${imgHTML(x, x.name)}</span>
+            <span class="fbt-name">${i ? `<a href="product.html?id=${x.id}">${esc(x.name)}</a>` : `<b>This item:</b> ${esc(x.name)}`}</span>
+            <b class="fbt-price">${money(x.price)}</b>
+          </label>`).join('')}
+        <div class="fbt-buy">
+          <span>Total for <b id="fbtCount">${items.length}</b> items</span>
+          <b class="fbt-total" id="fbtTotal"></b>
+          <button class="btn btn-green" onclick="fbtAdd()">${ICO.cart} Add all to cart</button>
+        </div>
+      </div>
+    </section>`);
+  fbtTotal();
+}
+function fbtTotal(){
+  const on = [...document.querySelectorAll('[data-fbt]:checked')].map(c=>findP(c.dataset.fbt)).filter(Boolean);
+  document.getElementById('fbtTotal').textContent = money(on.reduce((s,x)=>s+x.price, 0));
+  document.getElementById('fbtCount').textContent = on.length;
+}
+function fbtAdd(){
+  const ids = [...document.querySelectorAll('[data-fbt]:checked')].map(c=>Number(c.dataset.fbt));
+  if(!ids.length){ toast('Select at least one item'); return; }
+  ids.forEach(id=>{ const x = findP(id); if(x && inStock(x) && (cart[id]||0) < maxQty(x)) cart[id] = (cart[id]||0) + 1; });
+  saveCart(); updateCartUI(); refreshAddButtons();
+  toast(`${ids.length} item${ids.length>1?'s':''} added to cart ✓`);
+  openCart();
+}
+
 function setPdQty(d){
-  pdQty = Math.max(1, Math.min(99, pdQty + d));
+  const max = maxQty(pdProduct);
+  if(d > 0 && pdQty >= max){ toast(`Only ${max} available`); return; }
+  pdQty = Math.max(1, Math.min(max, pdQty + d));
   document.getElementById('pdQty').textContent = pdQty;
+  renderEta();
 }
 </script>
 </body>

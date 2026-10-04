@@ -362,6 +362,10 @@ tr:last-child td{ border-bottom:none; }
 .chk{ display:inline-flex; gap:8px; align-items:center; font-weight:500; font-size:14px; }
 .chk input{ width:17px; height:17px; accent-color:var(--leaf); }
 .login .forgot{ display:block; margin:12px auto 0; font-size:13px; font-weight:600; color:var(--leaf); }
+.sa-row{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:12px 18px; border-bottom:1px solid var(--line); }
+.sa-row:last-child{ border-bottom:none; }
+.sa-prod{ display:flex; gap:11px; align-items:center; flex:1; min-width:220px; }
+.sa-phones{ display:flex; flex-wrap:wrap; gap:6px; }
 </style>
 </head>
 <body>
@@ -462,14 +466,15 @@ const DEFAULT_SETTINGS = {
   announcement:'', footerAbout:"Bangladesh's trusted store for authentic health, beauty & wellness products. Delivered to all 64 districts.",
   bkash:'', bkashType:'Personal', nagad:'', nagadType:'Personal',
   facebook:'', instagram:'', youtube:'', tiktok:'', gaId:'', fbPixel:'',
-  deliveryFee:60, deliveryFeeOuter:120, freeDeliveryOver:1500
+  deliveryFee:60, deliveryFeeOuter:120, freeDeliveryOver:5000, usdRate:0, socialProof:'on'
 };
-const TAGS = ["flash","best","new"];
+const TAGS = ["flash","best","new","import","wholesale"];
+const TAG_LABELS = { flash:'On sale / Flash', best:'Best seller', new:'New arrival', import:'Imported', wholesale:'Wholesale' };
 const STATUSES = ['pending','confirmed','shipped','delivered','cancelled','returned'];
 const TABS = [
   ['dashboard','Dashboard'], ['orders','Orders'], ['products','Products'], ['categories','Categories'],
   ['banners','Banners'], ['coupons','Coupons'], ['customers','Customers'], ['reviews','Reviews'],
-  ['ai','AI Assistant'], ['courier','Courier'], ['settings','Settings']
+  ['ai','AI Assistant'], ['messages','Messages'], ['blog','Blog'], ['courier','Courier'], ['settings','Settings']
 ];
 /* AI assistant default — ai.js er AI_DEFAULTS er sathe mil */
 const AI_DEFAULTS = {
@@ -515,10 +520,11 @@ rebuildCats();
 
 const getCats = p => (Array.isArray(p.cats) && p.cats.length) ? p.cats : (p.goal ? [p.goal] : []);
 const catLabel = id => { const c = CATS.find(x=>x.id===id); return c ? c.label : id; };
-const inStockP = p => p.stock !== false;   // field na thakle in-stock
+const inStockP = p => p.stock !== false && !(typeof p.qty === 'number' && p.qty <= 0);   // field na thakle in-stock
 
 let products = [], orders = [], banners = [], coupons = [], subscribers = [], reviewsFlat = null;
 let aiCfg = { ...AI_DEFAULTS }, aiLogs = [];
+let messages = [], posts = [], notices = [], stockAlerts = {};
 let categoryImages = {}, heroImage = '', storeSettings = {...DEFAULT_SETTINGS};
 let curTab = 'dashboard';
 let seeded = false;
@@ -658,6 +664,21 @@ function attachListeners(){
     aiCfg.chips = arr(aiCfg.chips);
     aiCfg.rules = arr(aiCfg.rules).filter(Boolean).map(r=>({ ...r, products: arr(r.products).map(Number) }));
   }, ['ai']);
+  listen('messages', val=>{
+    messages = val ? Object.entries(val).map(([k,v])=>({ _key:k, ...v })) : [];
+    messages.sort((a,b)=> num(b.ts)-num(a.ts));
+    const unread = messages.filter(m=>!m.read).length;
+    document.querySelectorAll('[data-tab="messages"] span').forEach(s=> s.textContent = unread ? `Messages (${unread})` : 'Messages');
+  }, ['messages']);
+  listen('stockAlerts', val=>{ stockAlerts = val || {}; }, ['products']);
+  listen('posts', val=>{
+    posts = val ? Object.entries(val).map(([k,v])=>({ _key:k, ...v })) : [];
+    posts.sort((a,b)=> num(b.ts)-num(a.ts));
+  }, ['blog']);
+  listen('notices', val=>{
+    notices = val ? Object.entries(val).map(([k,v])=>({ _key:k, ...v })) : [];
+    notices.sort((a,b)=> num(b.ts)-num(a.ts));
+  }, ['banners']);
   /* shudhu shesh 500 ta prosno (purono gulo Firebase-e thake, export e ase na) */
   window.fdb.ref('aiLogs').limitToLast(500).on('value', snap=>{
     delete permIssue.aiLogs;
@@ -726,7 +747,7 @@ function payTag(o){
 /* ============================ ROUTER ============================ */
 function renderCurrent(){
   ({dashboard:renderDashboard, orders:renderOrders, products:renderProducts, categories:renderCategories, banners:renderBanners,
-    coupons:renderCoupons, customers:renderCustomers, reviews:renderReviews, ai:renderAI, courier:renderCourier, settings:renderSettings}[curTab] || renderDashboard)();
+    coupons:renderCoupons, customers:renderCustomers, reviews:renderReviews, ai:renderAI, messages:renderMessages, blog:renderBlog, courier:renderCourier, settings:renderSettings}[curTab] || renderDashboard)();
 }
 function go(tab){
   curTab = tab;
@@ -948,7 +969,7 @@ function renderProducts(){
   const catOpts = `<option value="all">All categories</option>`
     + CATS.map(c=>`<option value="${esc(c.id)}" ${catFilter===c.id?'selected':''}>${esc(c.label)}</option>`).join('');
   const catPills = p => getCats(p).map(id=>`<span class="pill goal">${esc(catLabel(id))}</span>`).join('') || '<span class="tag-mini">—</span>';
-  document.getElementById('content').innerHTML = `
+  document.getElementById('content').innerHTML = `${stockAlertsHTML()}
     <div class="panel">
       <div class="panel-head">
         <h2>Products (${list.length}${list.length!==products.length?' of '+products.length:''})</h2>
@@ -1013,7 +1034,7 @@ function openProduct(id, copyFrom){
   const isEdit = id!=null && !!src;
   const p = src ? { ...src, name: isEdit ? src.name : src.name + ' (copy)' } : null;
   const selCats = getCats(p || {});
-  const tagChecks = TAGS.map(t=>`<label class="chk" style="margin-right:16px"><input type="checkbox" id="pt_${t}" ${p&&(p.tags||[]).includes(t)?'checked':''}> ${({flash:'On sale / Flash',best:'Best seller',new:'New arrival'})[t]}</label>`).join('');
+  const tagChecks = TAGS.map(t=>`<label class="chk" style="margin-right:16px"><input type="checkbox" id="pt_${t}" ${p&&(p.tags||[]).includes(t)?'checked':''}> ${TAG_LABELS[t]}</label>`).join('');
   document.getElementById('modal').innerHTML = `
     <div class="modal-head"><h3>${isEdit?'Edit':(copyFrom!=null?'Duplicate':'Add')} Product</h3><button onclick="closeModal()">×</button></div>
     <div class="modal-body">
@@ -1045,6 +1066,11 @@ function openProduct(id, copyFrom){
           <option value="1" ${!p || inStockP(p) ? 'selected':''}>In stock</option>
           <option value="0" ${p && !inStockP(p) ? 'selected':''}>Out of stock</option>
         </select></div>
+      </div>
+      <div class="g3">
+        <div class="fld"><label>Stock quantity (optional)</label><input id="p_qty" type="number" min="0" value="${typeof p?.qty==='number' ? p.qty : ''}" placeholder="e.g. 25">
+          <div class="hint">Order "confirmed" করলে নিজে কমবে, cancel হলে ফিরে আসবে। খালি = হিসাব রাখা হবে না।</div></div>
+        <div class="fld"><label>SKU (optional)</label><input id="p_sku" value="${esc(p?.sku||'')}" placeholder="auto: MH-00012" maxlength="30"></div>
       </div>
       <div class="fld"><label>Tags</label><div>${tagChecks}</div></div>
 
@@ -1115,6 +1141,8 @@ function saveProduct(id, copyFrom){
     img: v('p_img'),
     imgs: v('p_imgs').split('\n').map(s=>s.trim()).filter(Boolean),
     stock: v('p_stock') === '1',
+    qty: v('p_qty') === '' ? null : Math.max(0, parseInt(v('p_qty'),10) || 0),
+    sku: v('p_sku'),
     timing: v('p_timing'),
     rating: isFinite(rating) ? Math.max(0, Math.min(5, rating)) : 4.7,
     reviews: Math.max(0, parseInt(v('p_reviews'),10)||0),
@@ -1246,10 +1274,18 @@ function delProduct(id){
 /* ========================= STOCK (stock:false = out, na thakle in) ========================= */
 function stockCell(p){
   const ins = inStockP(p);
-  return `<button class="stock-toggle ${ins?'in':'out'}" onclick="stockToggle(${p.id})" title="Click to toggle">${ins ? 'In Stock' : 'Out of Stock'}</button>`;
+  return `<button class="stock-toggle ${ins?'in':'out'}" onclick="stockToggle(${p.id})" title="Click to toggle">${ins ? 'In Stock' : 'Out of Stock'}${typeof p.qty==='number' ? ' · '+p.qty : ''}</button>`;
 }
 function stockToggle(id){
   const p = products.find(x=>x.id===id); if(!p) return;
+  // quantity 0 hoye stock-out hole — notun quantity chai
+  if(!inStockP(p) && typeof p.qty === 'number' && p.qty <= 0){
+    const v = prompt(`"${p.name}" — new stock quantity?`, '10');
+    if(v == null) return;
+    const n = Math.max(0, parseInt(v,10) || 0);
+    window.fdb.ref(ADMIN.productsKey+'/'+id).update({ qty:n, stock:true }).catch(e=>alert('Stock update failed: '+e.message));
+    return;
+  }
   window.fdb.ref(ADMIN.productsKey+'/'+id+'/stock').set(!inStockP(p))
     .catch(e=>alert('Stock update failed: '+e.message));
 }
@@ -1421,6 +1457,8 @@ function renderBanners(){
       ` : `<div class="empty">No banners yet — the homepage shows 2 default banners until you add your own.</div>`}
     </div>
     <div class="note-box"><b>Hero slider</b> banners (image required, ~1600×500) rotate at the top of the homepage together with the Hero Banner Image. <b>Promo row</b> shows the first 3 active promo banners (sorted by Order) — text banners automatically get a matching product photo.</div>
+
+    ${noticesPanelHTML()}
 
     <div class="panel" style="margin-top:20px">
       <div class="panel-head"><h2>Category Images</h2></div>
@@ -1733,6 +1771,179 @@ function delReview(pid, rid){
     .then(()=>{ reviewsFlat = (reviewsFlat||[]).filter(r=>!(r.pid===pid && r.rid===rid)); renderReviews(); })
     .catch(e=>alert(e.message));
 }
+
+/* ============================ MESSAGES (contact form) ============================ */
+let msgFilter = 'all';
+function renderMessages(){
+  const unread = messages.filter(m=>!m.read).length;
+  const list = msgFilter === 'unread' ? messages.filter(m=>!m.read) : messages;
+  document.getElementById('content').innerHTML = `
+    ${permWarn('messages')}
+    <div class="panel">
+      <div class="panel-head"><h2>Messages (${messages.length}${unread ? ` · <span style="color:var(--rose)">${unread} unread</span>` : ''})</h2>
+        <div class="panel-tools">
+          <select onchange="msgFilter=this.value;renderMessages()"><option value="all">All messages</option><option value="unread" ${msgFilter==='unread'?'selected':''}>Unread only</option></select>
+          ${unread ? `<button class="b b-ghost b-sm" onclick="markAllRead()">Mark all read</button>` : ''}
+        </div></div>
+      ${list.length ? list.map(m=>{
+        const ph = normPhone(m.phone);
+        return `<div class="rv-adm" style="${m.read?'':'background:var(--leaf-ll)'}">
+          <div style="flex:1;min-width:0">
+            <div>${m.read ? '' : '<span class="pill" style="background:var(--rose);color:#fff;margin-right:6px">NEW</span>'}<b>${esc(m.name)}</b> <span class="tag-mini">· ${esc(m.phone)}${m.email?' · '+esc(m.email):''} · ${fmtDate(m.ts)}</span></div>
+            <div class="tag-mini" style="margin-top:2px"><b>${esc(m.subject||'Message')}</b></div>
+            <p style="white-space:pre-wrap">${esc(m.message)}</p>
+            <div class="od-acts">
+              <a class="b b-ghost b-sm" href="tel:${esc(ph)}">📞 Call</a>
+              <a class="b b-ghost b-sm" target="_blank" rel="noopener" href="https://wa.me/88${encodeURIComponent(ph)}?text=${encodeURIComponent('Hi '+(m.name||'')+', this is '+(storeSettings.brand||'My Health')+' replying to your message: ')}">WhatsApp</a>
+              ${m.email ? `<a class="b b-ghost b-sm" href="mailto:${esc(m.email)}?subject=${encodeURIComponent('Re: '+(m.subject||'Your message'))}">✉ Email</a>` : ''}
+              <button class="b b-ghost b-sm" onclick="setMsgRead(${jsq(m._key)}, ${!m.read})">${m.read ? 'Mark unread' : '✓ Mark read'}</button>
+            </div>
+          </div>
+          <button class="b b-rose b-sm" onclick="delMessage(${jsq(m._key)})">Delete</button>
+        </div>`; }).join('') : `<div class="empty">${msgFilter==='unread' ? 'No unread messages 🎉' : 'No messages yet — the Contact page form sends messages here.'}</div>`}
+    </div>`;
+}
+function setMsgRead(key, read){ window.fdb.ref('messages/'+key+'/read').set(read).catch(e=>alert(e.message)); }
+function markAllRead(){
+  const upd = {}; messages.filter(m=>!m.read).forEach(m=>{ upd['messages/'+m._key+'/read'] = true; });
+  window.fdb.ref().update(upd).catch(e=>alert(e.message));
+}
+function delMessage(key){ if(confirm('Delete this message?')) window.fdb.ref('messages/'+key).remove().catch(e=>alert(e.message)); }
+
+
+/* ============================ BACK-IN-STOCK REQUESTS ============================
+   Customer out-of-stock product page-e number dey → stockAlerts/{productId}/{key}
+   Restock korar por WhatsApp e janan, tarpor Clear. */
+function stockAlertsHTML(){
+  const rows = Object.entries(stockAlerts||{}).map(([pid, v])=>({
+    pid: Number(pid), p: products.find(x=>x.id===Number(pid)),
+    list: Object.values(v||{}).filter(a=>a && a.phone).sort((a,b)=>num(b.ts)-num(a.ts))
+  })).filter(r=>r.list.length).sort((a,b)=> (b.p && inStockP(b.p)) - (a.p && inStockP(a.p)) || b.list.length - a.list.length);
+  if(!rows.length) return '';
+  const total = rows.reduce((s,r)=>s+r.list.length, 0);
+  const site = (storeSettings.siteUrl||'').replace(/\/$/,'');
+  return `<div class="panel">
+    <div class="panel-head"><h2>Back-in-stock requests (${total})</h2>
+      <span class="tag-mini">Customers asked to be told when these are back. Restock → tap a number to send WhatsApp → Clear.</span></div>
+    ${rows.map(r=>{
+      const name = r.p ? r.p.name : 'Product #'+r.pid, back = r.p && inStockP(r.p);
+      const msg = `Good news! "${name}" is back in stock at ${storeSettings.brand||'My Health'}. Order now: ${site}/product.html?id=${r.pid}`;
+      return `<div class="sa-row">
+        <div class="sa-prod">${r.p ? thumb(r.p) : ''}<div><b>${esc(name)}</b>
+          <div class="tag-mini">${r.list.length} request${r.list.length>1?'s':''} · ${back ? '<b style="color:var(--ok)">● Back in stock — notify now</b>' : '<span style="color:var(--rose)">● Still out of stock</span>'}</div></div></div>
+        <div class="sa-phones">${r.list.map(a=>`<a class="b b-ghost b-sm" target="_blank" rel="noopener" title="${esc(fmtDate(a.ts))}"
+          href="https://wa.me/88${encodeURIComponent(a.phone)}?text=${encodeURIComponent(msg)}">${esc(a.phone)}</a>`).join('')}</div>
+        <button class="b b-ghost b-sm" onclick="clearStockAlerts(${r.pid})">Clear</button>
+      </div>`; }).join('')}
+  </div>`;
+}
+function clearStockAlerts(pid){
+  if(!confirm('Remove all requests for this product? (Do this after you have messaged them.)')) return;
+  window.fdb.ref('stockAlerts/'+pid).remove().catch(e=>alert(e.message));
+}
+/* ============================ BLOG ============================ */
+function renderBlog(){
+  document.getElementById('content').innerHTML = `
+    ${permWarn('posts')}
+    <div class="panel">
+      <div class="panel-head"><h2>Blog posts (${posts.length})</h2>
+        <div class="panel-tools"><a class="b b-ghost b-sm" href="blog.html" target="_blank">View blog →</a><button class="b b-green b-sm" onclick="openPost()">+ New post</button></div></div>
+      ${posts.length ? `<div class="table-wrap"><table><thead><tr><th>Post</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody>
+        ${posts.map(p=>`<tr>
+          <td><div style="display:flex;gap:11px;align-items:center">${p.cover?`<img class="t-img" src="${esc(p.cover)}" alt="">`:'<div class="t-emoji">✎</div>'}<div><b>${esc(p.title)}</b><div class="tag-mini">${esc(p.tag||'')}</div></div></div></td>
+          <td><button class="stock-toggle ${p.published!==false?'in':'out'}" onclick="togglePost(${jsq(p._key)})">${p.published!==false?'Published':'Draft'}</button></td>
+          <td class="tag-mini">${fmtDate(p.ts)}</td>
+          <td><div class="row-acts"><a class="b b-ghost b-sm" href="blog.html?id=${encodeURIComponent(p._key)}" target="_blank">View</a><button class="b b-ghost b-sm" onclick="openPost(${jsq(p._key)})">Edit</button><button class="b b-rose b-sm" onclick="delPost(${jsq(p._key)})">Delete</button></div></td>
+        </tr>`).join('')}
+      </tbody></table></div>
+      <div class="m-card-list">${posts.map(p=>`<div class="m-card"><b>${esc(p.title)}</b><div class="tag-mini">${p.published!==false?'Published':'Draft'} · ${fmtDate(p.ts)}</div>
+        <div class="m-card-acts"><button class="b b-ghost b-sm" onclick="openPost(${jsq(p._key)})">Edit</button><button class="b b-rose b-sm" onclick="delPost(${jsq(p._key)})">Delete</button></div></div>`).join('')}</div>`
+      : `<div class="empty">No posts yet. Health tips & product guides bring free visitors from Google — write your first post!</div>`}
+    </div>
+    <div class="note-box">Formatting tips: blank line = new paragraph · <code>## Heading</code> · <code>**bold**</code> · lines starting with <code>- </code> become a list · <code>[link text](https://...)</code>. Products whose name matches the post title/tag are shown under the post automatically.</div>`;
+}
+function openPost(key){
+  const p = key ? posts.find(x=>x._key===key) : null;
+  document.getElementById('modal').innerHTML = `
+    <div class="modal-head"><h3>${p?'Edit':'New'} blog post</h3><button onclick="closeModal()">×</button></div>
+    <div class="modal-body">
+      <div class="fld"><label>Title *</label><input id="bp_title" value="${esc(p?.title||'')}" placeholder="e.g. 5 vitamins that help with hair fall" maxlength="140"></div>
+      <div class="g2">
+        <div class="fld"><label>Tag / topic</label><input id="bp_tag" value="${esc(p?.tag||'')}" placeholder="e.g. Hair care" maxlength="30"></div>
+        <div class="fld"><label>Status</label><select id="bp_pub"><option value="1" ${p?.published!==false?'selected':''}>Published</option><option value="0" ${p?.published===false?'selected':''}>Draft (hidden)</option></select></div>
+      </div>
+      <div class="fld"><label>Cover image</label>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input id="bp_cover" value="${esc(p?.cover||'')}" placeholder="https://… (or Upload)" style="flex:1;min-width:180px">
+          <input type="file" id="bp_cover_file" accept="image/*" style="display:none" onchange="uploadInto('bp_cover_file','bp_cover','bp_cover_status')">
+          <button type="button" class="b b-ghost b-sm" onclick="document.getElementById('bp_cover_file').click()">Upload</button>
+        </div><div id="bp_cover_status" style="font-size:12px;margin-top:6px"></div></div>
+      <div class="fld"><label>Short summary (shown on the blog list)</label><textarea id="bp_ex" style="min-height:52px" maxlength="300">${esc(p?.excerpt||'')}</textarea></div>
+      <div class="fld"><label>Article *</label><textarea id="bp_body" style="min-height:260px" placeholder="## Why hair falls&#10;&#10;Write your article here…">${esc(p?.body||'')}</textarea></div>
+    </div>
+    <div class="modal-foot"><button class="b b-ghost" onclick="closeModal()">Cancel</button><button class="b b-green" onclick="savePost(${p?jsq(p._key):'null'})">${p?'Save changes':'Publish post'}</button></div>`;
+  openModal();
+}
+function savePost(key){
+  const v = id => document.getElementById(id).value.trim();
+  const title = v('bp_title'), body = v('bp_body');
+  if(!title || body.length < 30){ alert('Title আর অন্তত কয়েক লাইনের লেখা দিন।'); return; }
+  const old = key ? posts.find(x=>x._key===key) : null;
+  const data = { title: title.slice(0,140), tag: v('bp_tag').slice(0,30), cover: v('bp_cover'), excerpt: v('bp_ex').slice(0,300),
+    body: body.slice(0,30000), published: v('bp_pub') === '1', ts: old?.ts || Date.now(), updatedAt: Date.now() };
+  const ref = key ? window.fdb.ref('posts/'+key) : window.fdb.ref('posts').push();
+  ref.set(data).then(()=>{ closeModal(); atoast(data.published ? 'Post published ✓' : 'Draft saved ✓'); })
+    .catch(e=> alert('Save failed: '+e.message + (e.code==='PERMISSION_DENIED' ? '\n\nনতুন firebase-rules.json Publish করুন।' : '')));
+}
+function togglePost(key){ const p = posts.find(x=>x._key===key); if(p) window.fdb.ref('posts/'+key+'/published').set(p.published===false).catch(e=>alert(e.message)); }
+function delPost(key){ if(confirm('Delete this post permanently?')) window.fdb.ref('posts/'+key).remove().catch(e=>alert(e.message)); }
+
+/* ============================ NOTIFICATIONS (header bell) ============================ */
+function noticesPanelHTML(){
+  return `
+    ${permWarn('notices')}
+    <div class="panel" style="margin-top:20px">
+      <div class="panel-head"><h2>🔔 Notifications (${notices.length})</h2>
+        <div class="panel-tools"><button class="b b-green b-sm" onclick="openNotice()">+ New notification</button></div></div>
+      <p class="sec-note">ওয়েবসাইটের উপরের 🔔 bell-এ দেখাবে (নতুন হলে লাল সংখ্যা)। অফার, নতুন প্রোডাক্ট, ছুটির নোটিশ ইত্যাদির জন্য।</p>
+      <div style="padding:12px 18px 16px">
+        ${notices.length ? notices.map(n=>`
+          <div class="courier-card">
+            <div class="cc-info"><div class="cc-name">${esc(n.title)}</div><div class="cc-phone">${esc(n.text||'')}${n.link?' · '+esc(n.link):''} · ${fmtDate(n.ts)}</div></div>
+            <div class="cc-acts">
+              <button class="stock-toggle ${n.active!==false?'in':'out'}" onclick="toggleNotice(${jsq(n._key)})">${n.active!==false?'Showing':'Hidden'}</button>
+              <button class="b b-ghost b-sm" onclick="openNotice(${jsq(n._key)})">Edit</button>
+              <button class="b b-rose b-sm" onclick="delNotice(${jsq(n._key)})">✕</button>
+            </div>
+          </div>`).join('') : '<div class="empty" style="padding:16px">No notifications yet.</div>'}
+      </div>
+    </div>`;
+}
+function openNotice(key){
+  const n = key ? notices.find(x=>x._key===key) : null;
+  document.getElementById('modal').innerHTML = `
+    <div class="modal-head"><h3>${n?'Edit':'New'} notification</h3><button onclick="closeModal()">×</button></div>
+    <div class="modal-body">
+      <div class="fld"><label>Title *</label><input id="nt_title" value="${esc(n?.title||'')}" placeholder="e.g. 🎉 Eid sale — 20% off" maxlength="80"></div>
+      <div class="fld"><label>Details</label><input id="nt_text" value="${esc(n?.text||'')}" placeholder="e.g. Use code EID20 on all supplements" maxlength="160"></div>
+      <div class="fld"><label>Link (optional)</label><input id="nt_link" value="${esc(n?.link||'')}" placeholder="e.g. category.html?goal=all&tag=flash"><div class="hint">Page name (…html) or full https:// link.</div></div>
+      ${n ? '' : `<label class="chk"><input type="checkbox" id="nt_fresh" checked> Show as new (red badge) to everyone</label>`}
+    </div>
+    <div class="modal-foot"><button class="b b-ghost" onclick="closeModal()">Cancel</button><button class="b b-green" onclick="saveNotice(${n?jsq(n._key):'null'})">Save</button></div>`;
+  openModal();
+}
+function saveNotice(key){
+  const v = id => document.getElementById(id).value.trim();
+  const title = v('nt_title'); if(!title){ alert('Title দিন।'); return; }
+  const link = v('nt_link');
+  if(link && !/^(https?:\/\/|[a-z0-9_-]+\.html)/i.test(link)){ alert('Link must be a page like "category.html?..." or start with https://'); return; }
+  const old = key ? notices.find(x=>x._key===key) : null;
+  const data = { title, text: v('nt_text'), link, active: old ? old.active !== false : true, ts: old ? old.ts : Date.now() };
+  const ref = key ? window.fdb.ref('notices/'+key) : window.fdb.ref('notices').push();
+  ref.set(data).then(()=>{ closeModal(); atoast('Notification saved ✓'); }).catch(e=>alert('Save failed: '+e.message));
+}
+function toggleNotice(key){ const n = notices.find(x=>x._key===key); if(n) window.fdb.ref('notices/'+key+'/active').set(n.active===false).catch(e=>alert(e.message)); }
+function delNotice(key){ if(confirm('Delete this notification?')) window.fdb.ref('notices/'+key).remove().catch(e=>alert(e.message)); }
 
 /* ============================ AI ASSISTANT ============================
    Firebase 'aiConfig' (website pore) + 'aiLogs' (customer-er prosno, naam/phone chara).
@@ -2241,6 +2452,7 @@ async function submitPickup(orderKey, orderId){
     if(consignment_id) upd.consignment_id = consignment_id;
     if(tracking_code)  upd.tracking_code  = tracking_code;
     await window.fdb.ref(ADMIN.ordersKey+'/'+orderKey).update(upd);
+    syncInventory(orderKey, 'shipped').catch(()=>{});
     closeModal();
     alert(consignment_id
       ? `Steadfast এ parcel create হলো!\nConsignment: ${consignment_id}\nTracking: ${tracking_code||'-'}\n\nOrder status → Shipped`
@@ -2349,7 +2561,34 @@ function setStatus(key, status){
   if(!STATUSES.includes(status)) return;
   const upd = { status };
   upd['statusHistory/'+status] = Date.now();
-  window.fdb.ref(ADMIN.ordersKey+'/'+key).update(upd).catch(e=>alert(e.message));
+  window.fdb.ref(ADMIN.ordersKey+'/'+key).update(upd)
+    .then(()=> syncInventory(key, status))
+    .catch(e=>alert(e.message));
+}
+/* STOCK QUANTITY — order confirm/ship/deliver hole product-er qty kome,
+   cancel/return hole ferot ase. Shudhu jei product-e qty deya ache (number). Ekbar-i hoy (stockDeducted flag). */
+async function syncInventory(key, status){
+  const o = orders.find(x=>x._key===key); if(!o) return;
+  const wantTake = ['confirmed','shipped','delivered'].includes(status);
+  const wantGive = ['cancelled','returned'].includes(status);
+  if(!wantTake && !wantGive) return;
+  /* flag-ta database-e transaction diye "claim" kori — tara-tari duibar click korleo stock ekbar-i kombe/barbe */
+  const claim = await window.fdb.ref(ADMIN.ordersKey+'/'+key+'/stockDeducted').transaction(cur => {
+    if(wantTake && !cur) return true;
+    if(wantGive && cur) return false;
+    return;   // kichu korar nai — abort
+  });
+  if(!claim || !claim.committed) return;
+  const take = wantTake;
+  const sign = take ? -1 : 1;
+  const touched = [];
+  for(const it of (o.items||[])){
+    const p = products.find(x=>x.id===num(it.id));
+    if(!p || typeof p.qty !== 'number') continue;
+    await window.fdb.ref(ADMIN.productsKey+'/'+p.id+'/qty').transaction(q => typeof q === 'number' ? Math.max(0, q + sign*num(it.qty)) : q);
+    touched.push(p.name);
+  }
+  if(touched.length) atoast(take ? `Stock reduced for ${touched.length} product(s)` : `Stock returned for ${touched.length} product(s)`);
 }
 function delOrder(key){
   const o = orders.find(x=>x._key===key);
@@ -2503,7 +2742,10 @@ function renderSettings(){
         ${f('address','Shop address','House, Road, Area, Dhaka')}
 
         <div class="form-sec">Delivery charges (৳)</div>
-        <div class="g3">${f('deliveryFee','Inside Dhaka','60','', 'number')}${f('deliveryFeeOuter','Outside Dhaka','120','', 'number')}${f('freeDeliveryOver','Free delivery over','1500','0 = no free delivery','number')}</div>
+        <div class="g3">${f('deliveryFee','Inside Dhaka','60','', 'number')}${f('deliveryFeeOuter','Outside Dhaka','120','', 'number')}${f('freeDeliveryOver','Free delivery over','5000','0 = no free delivery','number')}</div>
+        <div class="g3">${f('usdRate','USD rate (৳ per $1)','e.g. 123','0 = hide USD price. Shows e.g. "($11.69)" under prices.','number')}
+          <div class="fld"><label for="st_socialProof">Live purchase popup</label><select id="st_socialProof"><option value="on" ${s.socialProof!=='off'?'selected':''}>On</option><option value="off" ${s.socialProof==='off'?'selected':''}>Off</option></select>
+            <div class="hint">"Someone in Sylhet ordered…" — shows only REAL orders from the last 7 days (district + product, never name/phone).</div></div></div>
 
         <div class="form-sec">bKash / Nagad payment</div>
         <p style="color:var(--muted);font-size:13px;margin:-4px 0 12px">Number দিলে checkout-এ customer-কে নম্বর দেখাবে এবং Transaction ID চাইবে। খালি রাখলে bKash/Nagad বাছলে আপনি ফোনে পেমেন্ট ডিটেইলস দেবেন।</p>
@@ -2662,7 +2904,7 @@ function siteBase(){ const u = (storeSettings.siteUrl||'').trim(); return (u && 
 function downloadSitemap(){
   const base = siteBase();
   const today = new Date().toISOString().slice(0,10);
-  const staticPages = ['', 'category.html?goal=all', 'track.html',
+  const staticPages = ['', 'category.html?goal=all', 'category.html?goal=all&tag=flash', 'blog.html', 'health-tools.html', 'compare.html', 'track.html',
     'page.html?p=about', 'page.html?p=contact', 'page.html?p=delivery',
     'page.html?p=return', 'page.html?p=privacy', 'page.html?p=terms', 'page.html?p=faq'];
   const xmlEsc = s => String(s).replace(/&/g,'&amp;');
@@ -2672,6 +2914,7 @@ function downloadSitemap(){
   TOP_CATEGORIES.forEach(c=> add('category.html?goal='+encodeURIComponent(c.id)));
   CATEGORY_TREE.forEach(c=> (c.subs||[]).forEach(s=> add('category.html?goal='+encodeURIComponent(s.id))));
   products.forEach(p=> add('product.html?id='+p.id));
+  posts.filter(p=>p.published!==false).forEach(p=> add('blog.html?id='+encodeURIComponent(p._key)));
   xml += '</urlset>\n';
   download('sitemap.xml', xml, 'application/xml;charset=utf-8');
   alert(`sitemap.xml ডাউনলোড হচ্ছে (${products.length}টি প্রোডাক্ট)।\nএবার ফাইলটা হোস্টিংয়ের root ফোল্ডারে আপলোড করো।`
