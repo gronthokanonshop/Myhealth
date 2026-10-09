@@ -494,10 +494,11 @@ function aiMountFloating(){
   document.getElementById('aiFab')?.remove();
   document.getElementById('aiFloat')?.remove();
   aiFabObserver?.disconnect();
-  if(!AI_CFG.enabled || !AI_CFG.floatingButton) return;
+  if(!AI_CFG.enabled) return;
   const inline = document.getElementById('aiInline');
+  // chat window sob somoy thake (menu-r "Ask AI" eta khole); bhasoman button shudhu admin chalu rakhle
   document.body.insertAdjacentHTML('beforeend', `
-    <button class="ai-fab${waNumber() ? ' has-wa' : ''}" id="aiFab" aria-label="Ask our ${esc(AI_CFG.assistantName)}">${AI_SPARK}<span>Ask AI</span></button>
+    ${AI_CFG.floatingButton ? `<button class="ai-fab${waNumber() ? ' has-wa' : ''}" id="aiFab" aria-label="Ask our ${esc(AI_CFG.assistantName)}">${AI_SPARK}<span>Ask AI</span></button>` : ''}
     <div class="ai-float" id="aiFloat" role="dialog" aria-label="${esc(AI_CFG.assistantName)}">${aiShellHTML(true)}</div>`);
   // homepage: AI section screen-e thakle button lukai
   const sec = document.getElementById('aiSection');
@@ -517,6 +518,13 @@ function openAI(){
   if(document.getElementById('aiFloat')){ aiOpenFloat(); return; }
   location.href = 'index.html#aiSection';
 }
+/* "#aiSection" link (onno page / service card theke) — homepage-e boro section nai, tai chat window khule */
+function aiOpenFromHash(){
+  if(location.hash !== '#aiSection' || document.getElementById('aiSection') || !document.getElementById('aiFloat')) return;
+  history.replaceState(null, '', location.pathname + location.search);
+  aiOpenFloat();
+}
+window.addEventListener('hashchange', aiOpenFromHash);
 function aiOpenFloat(){
   const f = document.getElementById('aiFloat'); if(!f) return;
   f.classList.add('open'); document.getElementById('aiFab')?.classList.add('hide');
@@ -530,7 +538,7 @@ function aiCloseFloat(){
   document.body.classList.remove('ai-open');
 }
 function aiMountAll(){
-  aiMountInline(); aiMountFloating();
+  aiMountInline(); aiMountFloating(); aiOpenFromHash();
   // AI bondho thakle menu-r "Ask AI" link o lukai
   document.querySelectorAll('[data-ai-link]').forEach(a=> a.style.display = AI_CFG.enabled ? '' : 'none');
 }

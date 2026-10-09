@@ -462,7 +462,7 @@ const DEFAULT_CATEGORIES = [
 /* Store settings default — app.js er CONFIG er sathe mil */
 const DEFAULT_SETTINGS = {
   brand:'My Health', tagline:'Health, Beauty & Wellness', siteUrl:'https://gronthokanonshop.github.io/Myhealth',
-  hotline:'16XXX', whatsapp:'8801XXXXXXXXX', email:'support@YOUR-DOMAIN.com', address:'Dhaka, Bangladesh', tradeLicense:'', themeColor:'#3BB77E',
+  hotline:'16XXX', whatsapp:'8801XXXXXXXXX', email:'support@YOUR-DOMAIN.com', address:'Dhaka, Bangladesh', tradeLicense:'', themeColor:'#F98A1E',
   announcement:'', footerAbout:"Bangladesh's trusted store for authentic health, beauty & wellness products. Delivered to all 64 districts.",
   bkash:'', bkashType:'Personal', nagad:'', nagadType:'Personal',
   facebook:'', instagram:'', youtube:'', tiktok:'', gaId:'', fbPixel:'',
@@ -2734,10 +2734,10 @@ function renderSettings(){
         <div class="form-sec">Theme color</div>
         <p style="color:var(--muted);font-size:13px;margin:-4px 0 12px">Website-er button, price, menu ityadir rong. Logo-r rong (orange) bodlabe na.</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-          ${[['#3BB77E','Fresh green (default)'],['#EA7317','Logo orange'],['#0EA5A4','Teal'],['#2563EB','Blue'],['#7C3AED','Purple'],['#DB2777','Pink']].map(([hex,name])=>`
+          ${[['#F98A1E','Fresh orange (default)'],['#34BE82','Fresh green'],['#EA7317','Logo orange'],['#0EA5A4','Teal'],['#2563EB','Blue'],['#7C3AED','Purple'],['#DB2777','Pink']].map(([hex,name])=>`
             <button type="button" class="b b-ghost b-sm" onclick="document.getElementById('st_themeColor').value='${hex}';applyAdminTheme('${hex}')" title="${name}"
               style="gap:8px"><span style="width:16px;height:16px;border-radius:50%;background:${hex};display:inline-block"></span>${name}</button>`).join('')}
-          <input type="color" id="st_themeColor" value="${esc(/^#[0-9a-f]{6}$/i.test(s.themeColor||'') ? s.themeColor : '#3BB77E')}" oninput="applyAdminTheme(this.value)"
+          <input type="color" id="st_themeColor" value="${esc(/^#[0-9a-f]{6}$/i.test(s.themeColor||'') ? s.themeColor : '#F98A1E')}" oninput="applyAdminTheme(this.value)"
             style="width:46px;height:36px;border:1.5px solid var(--line);border-radius:9px;padding:2px;cursor:pointer" title="Custom color">
         </div>
         ${f('address','Shop address','House, Road, Area, Dhaka')}

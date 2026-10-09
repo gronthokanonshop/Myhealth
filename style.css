@@ -7,22 +7,23 @@
    ========================================================================= */
 :root{
   /* brand (admin theke bodlay) */
-  --leaf:    #3BB77E;
-  --leaf-d:  #29A56C;
-  --leaf-dd: #1E7A50;
-  --leaf-l:  #DEF9EC;
-  --leaf-ll: #F2FCF6;
-  --brand-rgb: 59,183,126;
+  --leaf:    #F98A1E;   /* fresh orange (Ghorer Bazar-er #F48721 theke ektu ujjol) */
+  --leaf-d:  #D6771A;
+  --leaf-dd: #9A5613;
+  --leaf-l:  #FEEEDD;
+  --leaf-ll: #FFF8F0;
+  --brand-rgb: 249,138,30;
 
   /* neutrals */
-  --pine:    #253D4E;   /* headings, dark buttons */
-  --pine-d:  #1A2C39;
-  --ink:     #253D4E;
+  --pine:    #0E3A33;   /* headings, dark buttons, menu bar — gaarho fresh sobuj */
+  --pine-d:  #082621;
+  --ink:     #0E3A33;
   --text:    #5B6670;
   --muted:   #7E7E7E;
   --muted-2: #B6B6B6;
   --line:    #ECECEC;
-  --cream:   #F6F7F9;   /* soft section / input background */
+  --cream:   #F8F7F3;   /* soft section / input background */
+  --page:    #FFFEFB;   /* site-er background — ujjol fresh sada (ektu ushno chhoa) */
   --card:    #FFFFFF;
 
   /* accents */
@@ -30,8 +31,8 @@
   --amber:   #F59E0B;
   --rose:    #F74B81;   /* sale / danger */
   --sky:     #67BCEE;
-  --ok:      #3BB77E; --ok-l:#DEF9EC;   /* success (delivered, in stock) */
-  --sage:    #3BB77E; --sage-d:#29A56C; --sage-l:#DEF9EC;   /* legacy alias */
+  --ok:      #22B07D; --ok-l:#DDF6EC;   /* success (delivered, in stock) */
+  --sage:    #22B07D; --sage-d:#1A9468; --sage-l:#DDF6EC;   /* legacy alias */
 
   /* pastel tiles */
   --p1:#F2FCE4; --p2:#FFFCEB; --p3:#ECFFEC; --p4:#FEEFEA; --p5:#FFF3EB; --p6:#FFF3FF; --p7:#EAF6FF; --p8:#F4F1FF;
@@ -45,7 +46,7 @@
 }
 *{ box-sizing:border-box; }
 html{ scroll-behavior:smooth; }
-body{ margin:0; font-family:var(--body); color:var(--text); background:#fff; line-height:1.55; font-size:15px; -webkit-font-smoothing:antialiased; }
+body{ margin:0; font-family:var(--body); color:var(--text); background:var(--page); line-height:1.55; font-size:15px; -webkit-font-smoothing:antialiased; }
 a{ color:inherit; text-decoration:none; }
 img{ max-width:100%; display:block; }
 button{ font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; }
@@ -139,8 +140,8 @@ header.site{ background:#fff; position:relative; z-index:41; }
 .sr-all:hover{ background:var(--leaf-l); }
 
 /* ---------- Main nav (Browse categories + links) ---------- */
-.mainnav{ background:#fff; border-top:1px solid var(--line); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:40; transition:box-shadow .2s; }
-.mainnav.stuck{ box-shadow:0 6px 20px rgba(37,61,78,.08); }
+.mainnav{ background:var(--pine); position:sticky; top:0; z-index:40; transition:box-shadow .2s; }
+.mainnav.stuck{ box-shadow:0 6px 20px rgba(8,38,33,.25); }
 .mainnav .wrap{ display:flex; align-items:center; gap:26px; height:62px; }
 .browse{ position:relative; flex:0 0 auto; }
 .browse-btn{ display:flex; align-items:center; gap:10px; height:44px; padding:0 18px; border-radius:var(--r-sm); background:var(--leaf); color:#fff;
@@ -163,18 +164,18 @@ header.site{ background:#fff; position:relative; z-index:41; }
 .bd-subs a:hover{ color:var(--leaf); }
 .bd-all{ grid-column:1/-1; text-align:center; padding-top:8px; font-weight:700; color:var(--leaf); font-size:14px; }
 .nav-links{ display:flex; align-items:center; gap:4px; flex:1; min-width:0; }
-.nav-links a{ font-family:var(--display); font-weight:700; font-size:15px; color:var(--pine); padding:8px 12px; border-radius:8px; white-space:nowrap; display:flex; align-items:center; gap:6px; transition:color .15s; }
+.nav-links a{ font-family:var(--display); font-weight:700; font-size:15px; color:#fff; padding:8px 12px; border-radius:8px; white-space:nowrap; display:flex; align-items:center; gap:6px; transition:color .15s; }
 .nav-links a:hover, .nav-links a.on{ color:var(--leaf); }
 .nav-links .nav-flash svg{ width:16px; height:16px; color:var(--rose); }
-.nav-links .nav-ai{ color:var(--leaf-d); background:var(--leaf-l); border-radius:999px; padding:7px 14px; }
+.nav-links .nav-ai{ color:#fff; background:rgba(255,255,255,.12); border-radius:999px; padding:7px 14px; }
 .nav-links .nav-ai:hover{ background:var(--leaf); color:#fff; }
 .nav-links .nav-ai svg{ width:15px; height:15px; }
 .menu-nav .menu-ai{ color:var(--leaf-d); background:var(--leaf-ll); }
 #aiSection{ scroll-margin-top:84px; }
 .nav-hot{ display:flex; align-items:center; gap:10px; flex:0 0 auto; }
-.nav-hot svg{ width:34px; height:34px; color:var(--pine); }
+.nav-hot svg{ width:34px; height:34px; color:#fff; }
 .nav-hot b{ display:block; font-family:var(--display); font-size:21px; color:var(--leaf); line-height:1.1; }
-.nav-hot small{ display:block; font-size:11.5px; color:var(--muted); }
+.nav-hot small{ display:block; font-size:11.5px; color:rgba(255,255,255,.7); }
 @media (max-width:1280px){ .nav-hot{ display:none; } }
 @media (max-width:1100px){ .nav-links a:nth-child(n+6){ display:none; } }
 @keyframes fadeUp{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
@@ -224,30 +225,31 @@ header.site{ background:#fff; position:relative; z-index:41; }
 /* ---------- Product rows + grid ---------- */
 .carousel{ display:flex; gap:20px; overflow-x:auto; padding:4px 2px 14px; scroll-snap-type:x mandatory; scrollbar-width:none; scroll-behavior:smooth; }
 .carousel::-webkit-scrollbar{ display:none; }   /* arrow button / swipe diye scroll */
-.carousel > .pcard{ flex:0 0 228px; scroll-snap-align:start; }
-.grid, .pgrid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(196px,1fr)); gap:20px; }
+.carousel > .pcard{ flex:0 0 236px; scroll-snap-align:start; }
+.grid, .pgrid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:34px 20px; }   /* row-er majhe beshi faka */
 /* Popular Products — 12 ta product sob screen-e purno row (6×2 / 4×3 / 3×4 / 2×6) */
 .pgrid{ grid-template-columns:repeat(6,minmax(0,1fr)); }
 @media (max-width:1239px){ .pgrid{ grid-template-columns:repeat(4,minmax(0,1fr)); } }
 @media (max-width:860px){ .pgrid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
 
 /* ---------- Product card ---------- */
-.pcard{ background:#fff; border:1px solid var(--line); border-radius:var(--r); overflow:hidden; display:flex; flex-direction:column; position:relative; transition:.2s; min-width:0; }
-.pcard:hover{ border-color:var(--leaf-l); box-shadow:var(--shadow-h); }
-.pc-media{ position:relative; aspect-ratio:1/1; padding:14px; display:grid; place-items:center; background:#fff; }
+/* lomba rectangular card (Ghorer Bazar style) — sada card, cream background-er upor */
+.pcard{ background:#fff; border:1px solid #EFEBE4; box-shadow:0 2px 10px rgba(14,58,51,.04); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; position:relative; transition:.2s; min-width:0; min-height:440px; }
+.pcard:hover{ border-color:var(--leaf-l); box-shadow:0 14px 34px rgba(14,58,51,.10); transform:translateY(-3px); }
+.pc-media{ position:relative; aspect-ratio:1/1.08; padding:14px; display:grid; place-items:center; background:#fff; }
 .pc-img{ position:absolute; inset:14px; display:grid; place-items:center; overflow:hidden; border-radius:10px; }
 .pc-img img{ width:100%; height:100%; object-fit:contain; transition:transform .45s ease; }
 .pcard:hover .pc-img img{ transform:scale(1.07); }
 .pc-img .img-ph, .pc-img .img-emoji{ width:100%; height:100%; border-radius:10px; }
-.pc-badge{ position:absolute; top:0; left:0; z-index:2; padding:6px 13px; border-radius:var(--r) 0 var(--r) 0; font-size:12px; font-weight:700; color:#fff; background:var(--rose); }
-.pc-badge.new{ background:var(--sky); } .pc-badge.hot{ background:var(--leaf); } .pc-badge.oos{ background:#8a939b; }
+.pc-badge{ position:absolute; top:0; left:0; z-index:2; padding:6px 13px; border-radius:12px 0 12px 0; font-size:12px; font-weight:700; color:#fff; background:var(--rose); }
+.pc-badge.new{ background:var(--ok); } .pc-badge.hot{ background:#FF3F33; } .pc-badge.oos{ background:#8a939b; }
 .pc-actions{ position:absolute; top:12px; right:12px; z-index:2; display:flex; flex-direction:column; gap:7px; opacity:0; transform:translateX(8px); transition:.2s; }
 .pcard:hover .pc-actions{ opacity:1; transform:none; }
 .pc-act{ width:36px; height:36px; border-radius:50%; background:#fff; border:1px solid var(--leaf-l); color:var(--pine); display:grid; place-items:center; transition:.15s; box-shadow:var(--shadow); }
 .pc-act:hover{ background:var(--leaf); color:#fff; border-color:var(--leaf); }
 .pc-act svg{ width:16px; height:16px; }
 .pc-act.on{ color:#fff; background:var(--rose); border-color:var(--rose); }
-.pc-body{ padding:4px 16px 16px; display:flex; flex-direction:column; gap:4px; flex:1; }
+.pc-body{ padding:6px 16px 18px; display:flex; flex-direction:column; gap:5px; flex:1; }
 .pc-cat{ font-size:12px; color:var(--muted-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .pc-cat:hover{ color:var(--leaf); }
 .pc-name{ font-family:var(--display); font-size:15.5px; font-weight:700; line-height:1.3; color:var(--pine); margin:0;
@@ -261,15 +263,16 @@ header.site{ background:#fff; position:relative; z-index:41; }
 .pc-price{ display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
 .pc-price b{ font-family:var(--display); font-size:18.5px; color:var(--leaf); font-weight:700; }
 .pc-price s{ font-size:13.5px; color:var(--muted-2); font-weight:600; }
-.pc-btns{ display:flex; gap:8px; }
-.pc-add, .pc-buy{ flex:1; height:36px; border-radius:8px; font-family:var(--display); font-weight:700; font-size:13.5px; display:flex; align-items:center; justify-content:center; gap:5px; transition:.15s; }
-.pc-add svg, .pc-buy svg{ width:15px; height:15px; }
-.pc-add{ background:var(--leaf-l); color:var(--leaf-d); }
-.pc-add:hover{ background:var(--leaf); color:#fff; }
-.pc-add.in{ background:var(--leaf); color:#fff; }
+/* "Add to Cart" (outline) + "Buy Now" (bhora) — ekta-r niche arekta, puro width */
+.pc-btns{ display:flex; flex-direction:column; gap:8px; }
+.pc-add, .pc-buy{ width:100%; height:40px; border-radius:8px; border:1.5px solid var(--leaf); font-family:var(--display); font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; gap:6px; transition:.15s; white-space:nowrap; }
+.pc-add svg, .pc-buy svg{ width:16px; height:16px; }
+.pc-add{ background:#fff; color:var(--leaf); }
+.pc-add:hover{ background:var(--leaf-ll); }
+.pc-add.in{ background:var(--leaf-l); color:var(--leaf-dd); }
 .pc-buy{ background:var(--leaf); color:#fff; }
-.pc-buy:hover{ background:var(--leaf-d); }
-.pc-add[disabled], .pc-buy[disabled]{ background:#eef0f2; color:#a3aab0; cursor:not-allowed; }
+.pc-buy:hover{ background:var(--leaf-d); border-color:var(--leaf-d); box-shadow:0 6px 16px rgba(var(--brand-rgb),.3); }
+.pc-add[disabled], .pc-buy[disabled]{ background:#eef0f2; color:#a3aab0; border-color:#eef0f2; cursor:not-allowed; }
 .pcard.is-oos .pc-img{ filter:grayscale(.6); opacity:.75; }
 @media (hover:none){ .pc-actions{ opacity:1; transform:none; } .pc-actions .pc-qv{ display:none; } }
 
@@ -301,6 +304,15 @@ header.site{ background:#fff; position:relative; z-index:41; }
 /* aste aste kache theke dure (zoom-out) — beshi chokhe pore */
 .hs-slide.on img{ animation:hsZoom 7.5s cubic-bezier(.22,.68,.3,1) both; }
 @keyframes hsZoom{ from{ transform:scale(1.18); } to{ transform:scale(1); } }
+/* computer/tablet: banner chowra + kom uchu (2.8 : 1) — chobi majhkhan theke kata, upor-nicher faka ongsho bad pore.
+   Notun banner banale 1920×686 px (ba 2.8 : 1) size-e banao, tahole kichui kata porbe na. Phone-e chobi purota dekhay. */
+@media (min-width:621px){
+  .hero{ position:relative; left:50%; width:min(1560px, calc(100vw - 40px)); transform:translateX(-50%); }
+  .hero-slider.hs-img{ aspect-ratio:14/5; height:auto !important; }
+  .hero-slider.hs-img .hs-track, .hero-slider.hs-img .hs-slide{ height:100%; }
+  .hero-slider.hs-img .hs-slide{ bottom:0; }
+  .hero-slider.hs-img .hs-slide img{ height:100%; object-fit:cover; object-position:center 48%; }
+}
 .hs-arrow{ position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; background:#fff; color:var(--pine);
   display:grid; place-items:center; z-index:3; box-shadow:var(--shadow); transition:.15s; }
 .hs-arrow:hover{ background:var(--leaf); color:#fff; }
@@ -347,15 +359,40 @@ header.site{ background:#fff; position:relative; z-index:41; }
 /* ---- featured category tiles ---- */
 .cat-slider{ display:flex; gap:18px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; padding:4px 2px 6px; scroll-behavior:smooth; }
 .cat-slider::-webkit-scrollbar{ display:none; }
-.fc-tile{ flex:0 0 150px; scroll-snap-align:start; border-radius:var(--r); padding:20px 10px 16px; display:flex; flex-direction:column; align-items:center; gap:10px;
-  text-align:center; border:1px solid transparent; transition:.2s; min-height:186px; }
+.fc-tile{ flex:0 0 200px; scroll-snap-align:start; border-radius:16px; padding:26px 12px 20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+  text-align:center; border:1px solid transparent; transition:.2s; min-height:240px; }
 .fc-tile:hover{ border-color:var(--leaf); box-shadow:var(--shadow); transform:translateY(-3px); }
-.fc-img{ width:84px; height:84px; display:grid; place-items:center; }
+.fc-img{ width:120px; height:120px; display:grid; place-items:center; }
 .fc-img img{ width:100%; height:100%; object-fit:contain; transition:transform .3s; }
 .fc-tile:hover .fc-img img{ transform:scale(1.08); }
-.fc-init{ width:72px; height:72px; border-radius:50%; background:#fff; display:grid; place-items:center; font-family:var(--display); font-weight:700; font-size:28px; color:var(--leaf); }
-.fc-tile b{ font-family:var(--display); font-size:15px; color:var(--pine); line-height:1.25; }
-.fc-tile small{ font-size:12.5px; color:var(--muted); }
+.fc-init{ width:96px; height:96px; border-radius:50%; background:#fff; display:grid; place-items:center; font-family:var(--display); font-weight:700; font-size:36px; color:var(--leaf); }
+.fc-tile b{ font-family:var(--display); font-size:16.5px; color:var(--pine); line-height:1.25; }
+.fc-tile small{ font-size:13px; color:var(--muted); }
+
+/* ---- video spotlight — gaarho sobuj band: bame khara video, dane product row ---- */
+.vid-band{ display:grid; grid-template-columns:300px minmax(0,1fr); gap:26px; align-items:center; padding:24px; border-radius:var(--r-lg);
+  background:radial-gradient(120% 140% at 0% 0%, #164C43 0%, var(--pine) 55%, var(--pine-d) 100%); }
+.vid-band.no-vid{ grid-template-columns:minmax(0,1fr); }
+.vid-media{ position:relative; aspect-ratio:9/16; border-radius:16px; overflow:hidden; background:#000; box-shadow:0 18px 40px rgba(0,0,0,.35); }
+.vid-media video{ width:100%; height:100%; object-fit:cover; display:block; }
+.vid-sound{ position:absolute; right:12px; bottom:12px; width:40px; height:40px; border-radius:50%; background:rgba(0,0,0,.45); color:#fff; display:grid; place-items:center;
+  backdrop-filter:blur(4px); transition:.15s; }
+.vid-sound:hover{ background:var(--leaf); }
+.vid-sound svg{ width:19px; height:19px; }
+.vid-side{ min-width:0; }
+.vid-band .sec-head h2{ color:#fff; }
+.vid-band .sec-head h2 em{ font-style:normal; color:var(--leaf); }
+.vid-band .eyebrow{ color:#FFC48A; }
+.vid-band .seeall{ color:#fff; }
+.vid-band .seeall:hover{ color:var(--leaf); }
+.vid-band .sl-btn{ background:rgba(255,255,255,.12); color:#fff; }
+.vid-band .sl-btn:hover{ background:var(--leaf); }
+.vid-band .carousel{ padding-bottom:4px; }
+@media (max-width:760px){
+  .vid-band{ grid-template-columns:minmax(0,1fr); padding:16px 12px; gap:18px; }
+  .vid-media{ aspect-ratio:1/1; }
+  .vid-sound{ right:auto; left:12px; }   /* dane floating cart thake */
+}
 
 /* ---- promo banners — choloman strip (marquee), hover/touch e thame ---- */
 .promo3{ position:relative; overflow:hidden; margin:36px 0; padding:4px 0 10px;
@@ -478,6 +515,24 @@ footer ul a:hover, footer ul button:hover{ color:var(--leaf); padding-left:4px; 
 .to-top.show{ opacity:1; visibility:visible; transform:none; }
 .to-top:hover{ background:var(--leaf); color:#fff; }
 .to-top svg{ width:18px; height:18px; }
+/* dan pashe bhasoman cart — upore orange (icon + item), niche sada (taka) */
+.float-cart{ position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:53; width:84px; padding:0; display:flex; flex-direction:column;
+  border-radius:12px 0 0 12px; overflow:hidden; background:#fff; box-shadow:0 10px 28px rgba(14,58,51,.18); transition:width .2s, box-shadow .2s; }
+.float-cart:hover{ width:92px; box-shadow:0 14px 34px rgba(var(--brand-rgb),.35); }
+.float-cart .fc-top{ background:var(--leaf); color:#fff; display:flex; flex-direction:column; align-items:center; gap:4px; padding:12px 6px 9px; }
+.float-cart .fc-top svg{ width:24px; height:24px; }
+.float-cart .fc-count{ font-family:var(--display); font-size:12.5px; font-weight:700; white-space:nowrap; }
+.float-cart .fc-total{ display:block; padding:7px 4px; font-family:var(--display); font-weight:700; font-size:13px; color:var(--leaf-d); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.float-cart.bump .fc-top svg{ animation:fcBump .5s ease; }
+@keyframes fcBump{ 0%,100%{ transform:none; } 30%{ transform:scale(1.3) rotate(-8deg); } 60%{ transform:scale(.95) rotate(4deg); } }
+@media (max-width:760px){
+  /* phone-e choto (niche menu-teo cart ache) — shudhu icon + item, taka lukano */
+  .float-cart, .float-cart:hover{ width:50px; top:60%; border-radius:10px 0 0 10px; }
+  .float-cart .fc-top{ padding:8px 3px 7px; gap:2px; }
+  .float-cart .fc-top svg{ width:19px; height:19px; }
+  .float-cart .fc-count{ font-size:10px; }
+  .float-cart .fc-total{ display:none; }
+}
 .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--pine); color:#fff; padding:13px 22px; border-radius:999px;
   font-size:14px; font-weight:700; opacity:0; visibility:hidden; transition:.25s; z-index:70; box-shadow:var(--shadow-h); display:flex; gap:8px; align-items:center; max-width:calc(100vw - 32px); text-align:center; }
 .toast.show{ opacity:1; visibility:visible; transform:translateX(-50%) translateY(0); }
@@ -948,17 +1003,20 @@ body.has-sticky-buy .ai-fab.has-wa{ bottom:150px; }
   .svc-go{ display:none; }
   .svc-txt b{ font-size:14px; white-space:normal; }
   .svc-txt small{ white-space:normal; font-size:12px; line-height:1.35; }
-  .fc-tile{ flex:0 0 116px; min-height:150px; padding:14px 8px 12px; }
-  .fc-img{ width:64px; height:64px; }
-  .fc-tile b{ font-size:13.5px; }
+  .fc-tile{ flex:0 0 146px; min-height:186px; padding:18px 8px 14px; }
+  .fc-img{ width:86px; height:86px; }
+  .fc-init{ width:72px; height:72px; font-size:28px; }
+  .fc-tile b{ font-size:14px; }
   .promo3{ margin:26px 0; }
   .pb-card{ height:150px; width:300px; }
   .pb-text{ padding:16px 16px; }
   .pb-text h3{ font-size:16px; } .pb-text .big{ font-size:14px; margin-bottom:8px; }
   .pb-btn{ height:30px; font-size:12px; padding:0 11px; }
-  .grid, .pgrid{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  .grid, .pgrid{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px 10px; }
   .carousel{ gap:10px; }
   .carousel > .pcard{ flex:0 0 46vw; }
+  .pcard{ min-height:0; }
+  .pcard:hover{ transform:none; }
   .pc-media{ padding:8px; } .pc-img{ inset:8px; }
   .pc-body{ padding:2px 10px 12px; gap:3px; }
   .pc-name{ font-size:13.5px; min-height:35px; }

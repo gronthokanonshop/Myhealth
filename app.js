@@ -22,7 +22,7 @@ const CONFIG = {
   email:            "support@YOUR-DOMAIN.com",
   address:          "Dhaka, Bangladesh",
   tradeLicense:     "",
-  themeColor:       "#3BB77E",          // site-er main color (admin > Store Settings > Theme color)
+  themeColor:       "#F98A1E",          // site-er main color (admin > Store Settings > Theme color)
   announcement:     "",                 // utilbar-e custom offer line (khali = free delivery line)
   footerAbout:      "Bangladesh's trusted store for authentic health, beauty & wellness products. Delivered to all 64 districts.",
   /* manual mobile payment — number boshale checkout-e number + TrxID field dekhabe */
@@ -325,6 +325,8 @@ function applySettings(s){
     if(isFinite(n) && n >= 0) CONFIG[k] = n;
   });
   CONFIG.siteUrl = CONFIG.siteUrl.replace(/\/+$/,'');
+  // ager default sobuj (#3BB77E) Firebase-e save thakle notun default orange dekhai — admin theke onno rong dile seta-i thake
+  if(/^#?3bb77e$/i.test(CONFIG.themeColor)) CONFIG.themeColor = CONFIG_DEFAULTS.themeColor;
   applyTheme(CONFIG.themeColor);
 }
 /* theme color -> --leaf, --leaf-d (gaarho), --leaf-l (halka) ityadi CSS variable */
@@ -524,7 +526,7 @@ function refreshAddButtons(){
     const q = cart[id];
     if(btn.classList.contains('pc-add')){
       btn.classList.toggle('in', !!q);
-      btn.innerHTML = q ? `✓ Added (${q})` : `${ICO.cart} Add`;
+      btn.innerHTML = q ? `✓ Added (${q})` : `${ICO.cart} Add to Cart`;
     }
   });
 }
@@ -603,9 +605,9 @@ function productCard(p){
       <div class="pc-foot">
         <div class="pc-price"><b>${money(p.price)}</b>${p.oldPrice>p.price ? `<s>${money(p.oldPrice)}</s>` : ''}${usdText(p.price) ? `<small class="pc-usd">${usdText(p.price)}</small>` : ''}</div>
         <div class="pc-btns">
-          <button class="pc-add ${q?'in':''}" data-add="${p.id}" ${oos?'disabled':''} onclick="addToCart(${p.id})">${oos ? 'Sold out' : (q ? `✓ Added (${q})` : `${ICO.cart} Add`)}</button>
-          ${oos ? `<a class="pc-buy pc-notify" href="product.html?id=${p.id}#back-in-stock" title="Get notified when it's back">${ICO.bell} Notify</a>`
-                : `<button class="pc-buy" onclick="quickBuy(${p.id})">${ICO.bolt} Buy</button>`}
+          <button class="pc-add ${q?'in':''}" data-add="${p.id}" ${oos?'disabled':''} onclick="addToCart(${p.id})">${oos ? 'Sold out' : (q ? `✓ Added (${q})` : `${ICO.cart} Add to Cart`)}</button>
+          ${oos ? `<a class="pc-buy pc-notify" href="product.html?id=${p.id}#back-in-stock" title="Get notified when it's back">${ICO.bell} Notify me</a>`
+                : `<button class="pc-buy" onclick="quickBuy(${p.id})">${ICO.bolt} Buy Now</button>`}
         </div>
       </div>
     </div>
@@ -1015,6 +1017,14 @@ function updateCartUI(){
   const badge = document.getElementById('cartBadge'); if(badge) badge.textContent = count;
   const mb = document.getElementById('mnCart'); if(mb){ mb.textContent = count; mb.style.display = count ? '' : 'none'; }
   const cc = document.getElementById('cartCount'); if(cc) cc.textContent = count;
+  const fc = document.getElementById('floatCart');
+  if(fc){
+    const prev = Number(fc.dataset.count || 0);
+    fc.dataset.count = count;
+    fc.querySelector('.fc-count').textContent = `${count} Item${count!==1?'s':''}`;
+    fc.querySelector('.fc-total').textContent = money(sub - discount);
+    if(count > prev){ fc.classList.remove('bump'); void fc.offsetWidth; fc.classList.add('bump'); }   // add hole ektu lafay
+  }
   const body = document.getElementById('cartBody');
   const foot = document.getElementById('cartFoot');
   const prog = document.getElementById('fdProg');
@@ -1127,6 +1137,8 @@ document.addEventListener('click', e=>{ if(!e.target.closest('.search')) closeSe
    REVIEW SLIDER (homepage) — auto-play, dots, touch-scroll friendly
    ========================================================================= */
 let rvTimer = null, rvIdx = 0;
+const RV_SPEED = 2500;   // protita review koto ms por shore (ager 4500)
+const rvStep = (track, card) => card.offsetWidth + (parseFloat(getComputedStyle(track).columnGap) || 0);
 function initReviewSlider(){
   const track = document.getElementById('rvTrack');
   const dots  = document.getElementById('rvDots');
@@ -1146,13 +1158,13 @@ function initReviewSlider(){
   }
   rvIdx = 0;
   clearInterval(rvTimer);
-  rvTimer = setInterval(()=> rvGo(rvIdx+1, false), 4500);
+  rvTimer = setInterval(()=> rvGo(rvIdx+1, false), RV_SPEED);
   /* manual scroll korle dot sync — listener ekbar-i lagai (initPage bar bar chole) */
   if(!track.dataset.bound){
     track.dataset.bound = '1';
     track.addEventListener('scroll', ()=>{
       const card = track.querySelector('.rv-card'); if(!card) return;
-      const i = Math.round(track.scrollLeft / (card.offsetWidth + 14));
+      const i = Math.round(track.scrollLeft / rvStep(track, card));
       if(i !== rvIdx){ rvIdx = Math.min(i, REVIEWS.length-1); rvDots(); }
     }, {passive:true});
   }
@@ -1161,9 +1173,11 @@ function rvGo(i, manual){
   const track = document.getElementById('rvTrack'); if(!track) return;
   const card = track.querySelector('.rv-card'); if(!card) return;
   rvIdx = ((i % REVIEWS.length) + REVIEWS.length) % REVIEWS.length;
-  track.scrollTo({ left: rvIdx * (card.offsetWidth + 14), behavior:'smooth' });
+  // shesh card dekha gele (ar shorar jayga nai) — boshe na theke shuru-te ferot
+  if(!manual && i > 0 && track.scrollLeft >= track.scrollWidth - track.clientWidth - 2) rvIdx = 0;
+  track.scrollTo({ left: rvIdx * rvStep(track, card), behavior:'smooth' });
   rvDots();
-  if(manual){ clearInterval(rvTimer); rvTimer = setInterval(()=> rvGo(rvIdx+1,false), 4500); }
+  if(manual){ clearInterval(rvTimer); rvTimer = setInterval(()=> rvGo(rvIdx+1,false), RV_SPEED); }
 }
 function rvDots(){
   document.querySelectorAll('[data-rv]').forEach(d=> d.classList.toggle('on', Number(d.dataset.rv)===rvIdx));
@@ -1450,6 +1464,14 @@ function loadCatImages(){
   if(!window.fdb) return Promise.resolve();
   return window.fdb.ref('categoryImages').once('value').then(s=>{ CAT_IMAGES = s.val() || {}; }, ()=>{});
 }
+/* dan pashe bhasoman cart (Ghorer Bazar style) — checkout page-e dorkar nai */
+function buildFloatCart(){
+  if(/checkout\.html$/i.test(location.pathname)) return '';
+  return `<button class="float-cart" id="floatCart" onclick="openCart()" aria-label="Open cart">
+    <span class="fc-top">${ICO.bag}<span class="fc-count">0 Items</span></span>
+    <span class="fc-total">${money(0)}</span>
+  </button>`;
+}
 /* scroll: sticky nav-e shadow + back-to-top button */
 let scrollTick = false;
 window.addEventListener('scroll', ()=>{
@@ -1464,7 +1486,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   document.body.insertAdjacentHTML('beforeend',
     buildDrawer() + `<div id="chrome-menu"></div>` + buildWishDrawer() + buildQuickView() + `<div id="chrome-wa"></div>`
     + `<button class="to-top" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">${ICO.up}</button>`
-    + buildMobileNav() + buildToolsTab());
+    + buildFloatCart() + buildMobileNav() + buildToolsTab());
   document.body.classList.add('has-mnav');
   renderChrome();
   injectAnalytics();

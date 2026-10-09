@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
 <title>My Health — Authentic Health, Beauty & Wellness in Bangladesh</title>
 <meta name="description" content="Shop genuine vitamins & supplements, face care, hair care, body care, makeup, mother & baby and men's care. 100% authentic, fast delivery, Cash on Delivery, bKash & Nagad." />
-<meta name="theme-color" content="#3BB77E" />
+<meta name="theme-color" content="#F98A1E" />
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Lato:wght@400;700;900&family=Sora:wght@800&family=Hind+Siliguri:wght@500;600;700&display=swap" rel="stylesheet">
@@ -83,33 +83,32 @@
       <h2>Featured Categories</h2>
       <div class="sec-tools">
         <div class="pill-tabs" id="featLinks"></div>
-        <div class="sl-btns"><button class="sl-btn" onclick="scrollRow('catSlider',-1)" aria-label="Previous"></button><button class="sl-btn" onclick="scrollRow('catSlider',1)" aria-label="Next"></button></div>
+        <div class="sl-btns"><button class="sl-btn" onclick="catStep(-1,true)" aria-label="Previous"></button><button class="sl-btn" onclick="catStep(1,true)" aria-label="Next"></button></div>
       </div>
     </div>
     <div class="cat-slider" id="catSlider"></div>
   </section>
 
-  <!-- AI Health Assistant — ai.js render kore, admin > AI Assistant theke control -->
-  <section class="section" id="aiSection">
-    <div class="ai-hero">
-      <div class="ai-intro">
-        <span class="ai-eyebrow"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9L12 2z"/></svg> AI Health Assistant</span>
-        <h2 id="aiTitle">Tell us your problem — <em>get the right products</em></h2>
-        <p id="aiSub">Describe what's bothering you in Bangla or English. Our assistant suggests suitable products and simple tips in seconds.</p>
-        <ul class="ai-points">
-          <li>Write in Bangla, English or Banglish — or just speak</li>
-          <li>Suggests only genuine products that are in stock</li>
-          <li>Free, private, no login needed</li>
-        </ul>
-        <div class="ai-try-label">Try asking about</div>
-        <div class="ai-try" id="aiTry"></div>
-      </div>
-      <div class="ai-panel" id="aiInline"></div>
-    </div>
-  </section>
-
   <!-- 3 PROMO BANNERS — admin > Banners ("Promo row") -->
   <section class="promo3" id="promoRow"></section>
+
+  <!-- VIDEO SPOTLIGHT — video.mp4 (hair care) + pashe hair care product. Video bodlate shudhu video.mp4 file ta bodlao -->
+  <section class="section vid-band" id="vidBand" style="display:none">
+    <div class="vid-media">
+      <video id="spotVideo" muted loop playsinline preload="none" aria-label="Hair care video"></video>
+      <button class="vid-sound" id="vidSound" type="button" onclick="toggleVidSound()" aria-label="Turn sound on"></button>
+    </div>
+    <div class="vid-side">
+      <div class="sec-head">
+        <div><div class="eyebrow">Hair Care Spotlight</div><h2>Silky, strong &amp; <em>shiny hair</em></h2></div>
+        <div class="sec-tools">
+          <a class="seeall" href="category.html?goal=haircare">Shop Hair Care →</a>
+          <div class="sl-btns"><button class="sl-btn" onclick="scrollRow('vidRow',-1)" aria-label="Previous"></button><button class="sl-btn" onclick="scrollRow('vidRow',1)" aria-label="Next"></button></div>
+        </div>
+      </div>
+      <div class="carousel" id="vidRow"></div>
+    </div>
+  </section>
 
   <!-- FLASH SALE (tag: flash) -->
   <section class="section" id="flashSec" style="display:none">
@@ -213,6 +212,7 @@ function renderHero(){
   if(HERO_IMG) slides.push({ img:HERO_IMG, link:'', title:CONFIG.brand });
   BANNERS.filter(b=>b.placement==='hero' && b.img).forEach(b=>slides.push({ img:b.img, link:b.link||'', title:b.title||'' }));
   clearInterval(heroTimer);
+  box.classList.toggle('hs-img', slides.length > 0);   // chobi-wala banner: computer-e chowra 2.4:1 frame (style.css)
 
   if(!slides.length){
     // designed text hero — best seller-er 3 ta chobi diye collage
@@ -226,7 +226,7 @@ function renderHero(){
           <p>Genuine supplements, skincare, haircare and mother &amp; baby essentials — honest prices, delivered fast across Bangladesh.</p>
           <div class="hs-ctas">
             <a class="btn btn-green" href="category.html?goal=all">${ICO.cart} Shop now</a>
-            <a class="btn btn-outline-dark" href="#aiSection">${ICO.spark} Ask AI assistant</a>
+            <a class="btn btn-outline-dark" href="#aiSection" data-ai-link onclick="if(window.openAI){event.preventDefault();openAI();}">${ICO.spark} Ask AI assistant</a>
           </div>
         </div>
         <div class="hs-art">
@@ -301,7 +301,7 @@ else window.addEventListener('resize', ()=>{ clearTimeout(window._hsT); window._
 function renderServices(){
   const wa = waNumber();
   const cards = [
-    { ico:ICO.spark,  t:'Ask our AI Assistant', s:'Product advice in seconds', href:'#aiSection' },
+    { ico:ICO.spark,  t:'Ask our AI Assistant', s:'Product advice in seconds', href:'#aiSection' },   // ai.js #aiSection link dhore chat khole
     { ico:ICO.route,  t:'Track Your Order',     s:'Live status with Order ID',  href:'track.html' },
     { ico:ICO.box,    t:'Bulk / Wholesale',     s:'Special prices for resellers', href: PRODUCTS.some(p=>has(p,'wholesale')) ? 'category.html?goal=all&tag=wholesale' : (wa ? waLink('Hi! I want to place a bulk / wholesale order.') : 'page.html?p=contact'), ext: !PRODUCTS.some(p=>has(p,'wholesale')) && !!wa },
     { ico:ICO.heartPulse, t:'Free Health Tools', s:'BMI, পানি ও প্রোটিন — ফ্রি হিসাব', href:'health-tools.html', hot:'ফ্রি' },
@@ -360,6 +360,34 @@ function renderFeatured(){
   }).join('');
   document.getElementById('featLinks').innerHTML = tiles.filter(t=>t.n).slice(0,5)
     .map(({c})=>`<a href="category.html?goal=${encodeURIComponent(c.id)}">${esc(c.label)}</a>`).join('');
+  catAuto();
+}
+/* category slider — ekta ekta kore nije theke shore (shesh hoy na: samner tile pichone chole jay) */
+let catTimer = null, catBusy = false;
+function catStep(dir, manual){
+  const el = document.getElementById('catSlider');
+  if(!el || catBusy || el.children.length < 2 || el.scrollWidth <= el.clientWidth + 4) return;
+  catBusy = true;
+  const step = el.children[0].offsetWidth + (parseFloat(getComputedStyle(el).columnGap) || 0);
+  const jump = fn => { el.style.scrollBehavior = 'auto'; el.style.scrollSnapType = 'none'; fn(); el.style.scrollBehavior = ''; el.style.scrollSnapType = ''; };
+  const start = el.scrollLeft;
+  if(dir < 0) jump(()=>{ el.prepend(el.lastElementChild); el.scrollLeft = start + step; });
+  el.scrollTo({ left: dir > 0 ? start + step : start, behavior:'smooth' });
+  // animation shesh hole: samner tile pichone pathiye ager jaygay ferot (chokhe kichu bodlay na)
+  setTimeout(()=>{
+    jump(()=>{ if(dir > 0) el.appendChild(el.firstElementChild); el.scrollLeft = start; });
+    catBusy = false;
+  }, 650);
+  if(manual) catAuto();
+}
+function catAuto(){
+  clearInterval(catTimer);
+  const el = document.getElementById('catSlider'); if(!el) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // mouse rakhle / chhuile thame
+  el.onmouseenter = () => el._hold = true;  el.onmouseleave = () => el._hold = false;
+  el.ontouchstart = () => el._hold = true;  el.ontouchend = () => setTimeout(()=> el._hold = false, 2500);
+  catTimer = setInterval(()=>{ if(!el._hold && !document.hidden) catStep(1); }, 2600);
 }
 
 /* ---------------- 3 PROMO BANNERS ---------------- */
@@ -397,6 +425,36 @@ function renderPromos(){
   // phone: chhuile thame, chere dile 2 sec por abar chole
   box.ontouchstart = () => { clearTimeout(box._t); track.classList.add('paused'); };
   box.ontouchend = () => { box._t = setTimeout(()=> track.classList.remove('paused'), 2000); };
+}
+
+/* ---------------- VIDEO SPOTLIGHT (video.mp4 + hair care product) ---------------- */
+const SND_OFF = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg>`;
+const SND_ON  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>`;
+let vidObserver = null;
+function renderVideoBand(){
+  const sec = document.getElementById('vidBand');
+  const list = PRODUCTS.filter(p=>productInCat(p, 'haircare')).sort(bestFirst).slice(0,10);
+  document.getElementById('vidRow').innerHTML = list.map(productCard).join('');
+  sec.style.display = '';
+  const v = document.getElementById('spotVideo');
+  document.getElementById('vidSound').innerHTML = v.muted ? SND_OFF : SND_ON;
+  if(vidObserver) return;
+  // screen-er kache ele tobei video load (data bachay), screen theke sorle pause
+  const play = () => v.play().catch(()=>{});
+  if(!window.IntersectionObserver){ v.src = 'video.mp4'; play(); return; }
+  vidObserver = new IntersectionObserver(([en])=>{
+    if(en.isIntersecting){ if(!v.src) v.src = 'video.mp4'; play(); }
+    else v.pause();
+  }, { rootMargin:'200px 0px', threshold:0 });
+  vidObserver.observe(sec);
+  v.onerror = () => { sec.querySelector('.vid-media').style.display = 'none'; sec.classList.add('no-vid'); };   // file na thakle shudhu product
+}
+function toggleVidSound(){
+  const v = document.getElementById('spotVideo'), b = document.getElementById('vidSound');
+  v.muted = !v.muted;
+  if(!v.muted) v.play().catch(()=>{});
+  b.innerHTML = v.muted ? SND_OFF : SND_ON;
+  b.setAttribute('aria-label', v.muted ? 'Turn sound on' : 'Turn sound off');
 }
 
 /* ---------------- FLASH SALE + countdown (raat 12 ta porjonto) ---------------- */
@@ -454,6 +512,7 @@ function initPage(){
   document.querySelectorAll('.sl-btn:empty').forEach((b,i)=> b.innerHTML = b.getAttribute('aria-label')==='Previous' ? ICO.left : ICO.right);
   renderServices();
   renderFeatured();
+  renderVideoBand();
   renderFlash();
   renderPopular();
   renderCatBoxes();
