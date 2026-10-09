@@ -40,11 +40,12 @@ const OUTPUT_SCHEMA = {
   additionalProperties: false,
   properties: {
     reply:               { type: 'string' },
+    reply_en:            { type: 'string' },   // website-er "Translate to English" button-er jonno
     product_ids:         { type: 'array', items: { type: 'integer' } },
     follow_up_questions: { type: 'array', items: { type: 'string' } },
     see_doctor:          { type: 'boolean' }
   },
-  required: ['reply', 'product_ids', 'follow_up_questions', 'see_doctor']
+  required: ['reply', 'reply_en', 'product_ids', 'follow_up_questions', 'see_doctor']
 };
 
 let storeCache = { at: 0, data: null };
@@ -111,7 +112,8 @@ export default {
     }
 
     if (data.stop_reason === 'refusal') {
-      return json({ reply: "Sorry, I can't help with that here. Please ask about a health, beauty or wellness concern, or contact our team.", products: [], followups: [], seeDoctor: false }, 200, cors);
+      return json({ reply: 'দুঃখিত, এ বিষয়ে এখানে সাহায্য করতে পারছি না। স্বাস্থ্য, সৌন্দর্য বা সুস্থতা নিয়ে জিজ্ঞেস করুন, অথবা আমাদের টিমের সাথে যোগাযোগ করুন।',
+        replyEn: "Sorry, I can't help with that here. Please ask about a health, beauty or wellness concern, or contact our team.", products: [], followups: [], seeDoctor: false }, 200, cors);
     }
     const textBlock = (data.content || []).find(b => b.type === 'text');
     let out;
@@ -124,6 +126,7 @@ export default {
 
     return json({
       reply: String(out.reply || '').slice(0, 2000),
+      replyEn: String(out.reply_en || '').slice(0, 2000),
       products,
       followups: (out.follow_up_questions || []).map(String).filter(Boolean).slice(0, 3),
       seeDoctor: !!out.see_doctor
@@ -212,13 +215,14 @@ function buildSystemPrompt(store, maxProducts) {
   return `You are "${oneLine(cfg.assistantName) || 'Health Assistant'}", the shopping assistant on the website of ${brand}, an online health, beauty and wellness store in Bangladesh. Customers describe a problem or need; you recommend suitable products from the catalog below and give short, practical tips.
 
 How to reply:
-- Answer in the customer's language and script: Bangla script gets Bangla, Banglish (Bangla in English letters) gets simple Banglish, English gets English.
+- Always write "reply" in simple, natural Bangla (Bangla script), whatever language the customer writes in — Bangla, Banglish or English. Keep common product words like shampoo, serum or protein as they are.
+- Also write "reply_en": the same reply translated into plain English, with the same meaning and **bold** parts. The website shows it only when the customer taps "Translate to English".
 - Be warm and brief: 2–5 sentences, plus up to 3 short "•" bullet tips when helpful. Plain text only; **bold** is allowed, no headings, tables or links.
 - Recommend only catalog products, through product_ids (up to ${maxProducts}, best match first). Never recommend items marked OUT OF STOCK. The website shows each recommended product as a card with name, price and an Add-to-cart button, so don't repeat product names or prices in the reply — refer to them generally (for example "the biotin capsules below"). Never invent products, prices, discounts or health claims beyond the catalog descriptions.
 - If nothing in the catalog fits, say so honestly and return an empty product_ids.
 - If the request is vague, ask one short clarifying question; still suggest products when a reasonable match exists.
 - If the message is unrelated to health, beauty, wellness or this shop, politely say what you can help with and return an empty product_ids.
-- follow_up_questions: 0–3 short questions the customer might tap next, written from the customer's point of view in the reply's language (for example "How do I take it?").
+- follow_up_questions: 0–3 short questions the customer might tap next, written in Bangla from the customer's point of view (for example "কিভাবে খাবো?").
 
 Safety — you are a shop assistant, not a doctor:
 - Never diagnose, never suggest prescription medicine, never promise a cure.

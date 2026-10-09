@@ -262,8 +262,9 @@ const AI_DOCTOR = [
 const AI_HELLO  = /^(hi+|hello|helo|hlw|hey|salam|slm|assalamu ?alaikum|assalamualaikum|aslamualaikum|good (morning|afternoon|evening)|হাই|হ্যালো|সালাম|আসসালামু আলাইকুম)\b/;
 const AI_THANKS = /(thank|thanks|thx|tnx|dhonnobad|dhonnobaad|donnobad|ধন্যবাদ)/;
 
-function aiBasicAnswer(text){
-  const bn = aiIsBn(text);
+/* uttor sob somoy Bangla-y (lang 'en' dile English — "Translate" button-er jonno) */
+function aiBasicAnswer(text, lang){
+  const bn = lang !== 'en';
   const norm = aiNorm(text);
   const max = AI_CFG.maxProducts;
   const words = norm.trim().split(' ').filter(w=>w.length>2 && !AI_STOP.has(w));
@@ -325,7 +326,7 @@ function aiBasicAnswer(text){
     const labels = hits.slice(0,2).map(c => bn ? c.bn : c.label);
     const tip = notes[0] || (hits[0] ? (bn ? hits[0].tipBn : hits[0].tip) : '');
     const head = labels.length
-      ? (bn ? `**${labels.join(' ও ')}** এর জন্য আমার পরামর্শ:` : `Here are my picks for **${labels.join(' & ')}**:`)
+      ? (bn ? `**${labels.join(' ও ')}**-এর জন্য আমার পরামর্শ:` : `Here are my picks for **${labels.join(' & ')}**:`)
       : (bn ? 'আপনার জন্য কিছু পরামর্শ:' : 'Here are some suggestions for you:');
     return { products, seeDoctor: caution, followups: [bn ? 'কিভাবে খাবো?' : 'How do I use these?', ...otherChips],
       reply: head + (tip ? `\n\n💡 ${tip}` : '') + (products.length ? '' : (bn ? '\n\nএই মুহূর্তে মানানসই প্রোডাক্ট স্টকে নেই — শিগগিরই আসবে।' : '\n\nMatching products are out of stock right now — please check back soon.')) + cautionLine };
@@ -347,6 +348,12 @@ function aiBasicAnswer(text){
       + (CONFIG.hotline && !isPlaceholder(CONFIG.hotline) ? (bn ? ` চাইলে আমাদের কল করুন: ${CONFIG.hotline}` : ` Or call us at ${CONFIG.hotline}.`) : '') + cautionLine };
 }
 
+/* Bangla uttor + tar English rup (product, followup Bangla version theke) */
+function aiBasicBoth(text){
+  const res = aiBasicAnswer(text, 'bn');
+  return { ...res, replyEn: aiBasicAnswer(text, 'en').reply };
+}
+
 /* =========================================================================
    AI MODE — Cloudflare Worker -> Claude. Fail korle basic mode.
    ========================================================================= */
@@ -366,15 +373,15 @@ async function aiAnswer(text){
       const j = await res.json().catch(()=>({}));
       if(res.ok && typeof j.reply === 'string' && j.reply.trim()){
         const ids = (Array.isArray(j.products) ? j.products : []).map(Number).filter(id=>inStock(findP(id))).slice(0, AI_CFG.maxProducts);
-        return { reply: j.reply, products: ids, followups: (j.followups||[]).map(String).slice(0,3), seeDoctor: !!j.seeDoctor, mode:'ai' };
+        return { reply: j.reply, replyEn: typeof j.replyEn === 'string' ? j.replyEn : '', products: ids, followups: (j.followups||[]).map(String).slice(0,3), seeDoctor: !!j.seeDoctor, mode:'ai' };
       }
       console.warn('AI worker error:', res.status, j.error);
     }catch(e){ console.warn('AI worker unreachable:', e.message); }
     finally{ clearTimeout(timer); }
-    return { ...aiBasicAnswer(text), mode:'basic-fallback' };
+    return { ...aiBasicBoth(text), mode:'basic-fallback' };
   }
   await new Promise(r=>setTimeout(r, 450));   // choto "typing" anubhuti
-  return { ...aiBasicAnswer(text), mode:'basic' };
+  return { ...aiBasicBoth(text), mode:'basic' };
 }
 
 /* admin > AI Assistant e "Recent questions" — naam/phone chara, shudhu prosno */
@@ -395,8 +402,9 @@ async function aiSend(raw){
   aiSaveChat(); aiRenderAll(true);
   let res;
   try{ res = await aiAnswer(text); }
-  catch(e){ console.warn(e); res = { ...aiBasicAnswer(text), mode:'basic-fallback' }; }
-  aiChat.push({ role:'assistant', text: res.reply, products: res.products||[], followups: res.followups||[], seeDoctor: !!res.seeDoctor });
+  catch(e){ console.warn(e); res = { ...aiBasicBoth(text), mode:'basic-fallback' }; }
+  aiChat.push({ role:'assistant', text: res.reply, textEn: res.replyEn || '', showEn: aiPrefEn() && !!res.replyEn,
+    products: res.products||[], followups: res.followups||[], seeDoctor: !!res.seeDoctor });
   aiBusy = false;
   aiSaveChat(); aiRenderAll();
   aiLog(text, res);
@@ -420,23 +428,42 @@ function aiProdRow(p){
     <button class="ai-padd${q?' in':''}" data-ai-add="${p.id}" aria-label="Add ${esc(p.name)} to cart">${q ? '✓ Added' : '+ Add'}</button>
   </div>`;
 }
-function aiMsgHTML(m, isLast){
+/* "Translate" — ekbar English chaile porer uttor-o English-e (ei tab bondho na hoa porjonto) */
+const AI_LANG_KEY = 'myhealth_ai_en';
+const aiPrefEn = () => { try{ return sessionStorage.getItem(AI_LANG_KEY) === '1'; }catch(e){ return false; } };
+function aiSetPrefEn(on){ try{ on ? sessionStorage.setItem(AI_LANG_KEY, '1') : sessionStorage.removeItem(AI_LANG_KEY); }catch(e){} }
+const AI_WELCOME_BN = 'হ্যালো! 👋 আপনার কী সমস্যা বলুন — যেমন চুল পড়া, দুর্বলতা, ব্রণ বা ঘুমের সমস্যা। বাংলা বা ইংরেজি, যেভাবে খুশি লিখতে পারেন।';
+function aiToggleLang(idx){
+  const m = idx < 0 ? null : aiChat[idx];
+  const toEn = m ? !m.showEn : !aiPrefEn();
+  if(m) m.showEn = toEn;
+  aiSetPrefEn(toEn);
+  aiSaveChat();
+  // scroll jemon chilo temon-i thake (purono message translate korle niche lafay na)
+  document.querySelectorAll('.ai-msgs').forEach(box=>{ const y = box.scrollTop; box.innerHTML = aiMessagesHTML(); box.scrollTop = y; });
+}
+function aiMsgHTML(m, isLast, idx){
   if(m.role === 'user') return `<div class="ai-msg me"><div class="ai-bubble">${esc(m.text)}</div></div>`;
   const prods = (m.products||[]).map(findP).filter(Boolean);
+  const en = !!(m.showEn && m.textEn), shown = en ? m.textEn : m.text;
   return `<div class="ai-msg bot">
     <span class="ai-av">${AI_SPARK}</span>
     <div class="ai-body">
-      <div class="ai-bubble">${aiFormat(m.text)}</div>
-      ${m.seeDoctor ? `<div class="ai-doc">⚠️ ${aiIsBn(m.text) ? 'প্রয়োজনে ডাক্তারের পরামর্শ নিন' : 'Please consult a doctor if symptoms are serious or don\'t improve'}</div>` : ''}
+      <div class="ai-bubble"${en ? '' : ' lang="bn"'}>${aiFormat(shown)}</div>
+      ${m.textEn ? `<button type="button" class="ai-tr" data-ai-tr="${idx}">${en ? 'বাংলায় দেখুন' : 'Translate to English'}</button>` : ''}
+      ${m.seeDoctor ? `<div class="ai-doc">⚠️ ${!en ? 'প্রয়োজনে ডাক্তারের পরামর্শ নিন' : 'Please consult a doctor if symptoms are serious or don\'t improve'}</div>` : ''}
       ${prods.length ? `<div class="ai-prods">${prods.map(aiProdRow).join('')}</div>` : ''}
       ${isLast && (m.followups||[]).length ? `<div class="ai-chips">${m.followups.map(f=>`<button class="ai-chip" data-ai-q="${esc(f)}">${esc(f)}</button>`).join('')}</div>` : ''}
     </div>
   </div>`;
 }
 function aiMessagesHTML(){
-  const welcome = { role:'assistant', text: AI_CFG.welcome, products:[], followups: aiChat.length ? [] : AI_CFG.chips };
+  // default welcome hole Bangla (+ English translate); admin nijer lekha dile seta-i
+  const isDef = AI_CFG.welcome === AI_DEFAULTS.welcome;
+  const welcome = { role:'assistant', text: isDef ? AI_WELCOME_BN : AI_CFG.welcome, textEn: isDef ? AI_DEFAULTS.welcome : '', showEn: isDef && aiPrefEn(),
+    products:[], followups: aiChat.length ? [] : AI_CFG.chips };
   const all = [welcome, ...aiChat];
-  return all.map((m,i)=>aiMsgHTML(m, i===all.length-1)).join('')
+  return all.map((m,i)=>aiMsgHTML(m, i===all.length-1, i-1)).join('')
     + (aiBusy ? `<div class="ai-msg bot"><span class="ai-av">${AI_SPARK}</span><div class="ai-body"><div class="ai-bubble"><span class="ai-typing"><i></i><i></i><i></i></span></div></div></div>` : '');
 }
 const aiSpeech = typeof SPEECH !== 'undefined' ? SPEECH : (window.SpeechRecognition || window.webkitSpeechRecognition);
@@ -582,6 +609,8 @@ document.addEventListener('click', e=>{
     if(q.classList.contains('ai-try-chip')) document.getElementById('aiInline')?.scrollIntoView({ behavior:'smooth', block:'center' });
     aiSend(q.dataset.aiQ); return;
   }
+  const tr = e.target.closest('[data-ai-tr]');
+  if(tr){ aiToggleLang(Number(tr.dataset.aiTr)); return; }
   const add = e.target.closest('[data-ai-add]');
   if(add){ addToCart(Number(add.dataset.aiAdd)); add.classList.add('in'); add.textContent = '✓ Added'; return; }
   if(e.target.closest('[data-ai-reset]')){ aiResetChat(); return; }

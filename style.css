@@ -390,7 +390,8 @@ header.site{ background:#fff; position:relative; z-index:41; }
 .vid-band .carousel{ padding-bottom:4px; }
 @media (max-width:760px){
   .vid-band{ grid-template-columns:minmax(0,1fr); padding:16px 12px; gap:18px; }
-  .vid-media{ aspect-ratio:1/1; }
+  /* phone-e purota video (9:16, kichui kata na) — majhkhane, beshi lomba na hoy tai width-er limit */
+  .vid-media{ width:min(100%, 280px); justify-self:center; }
   .vid-sound{ right:auto; left:12px; }   /* dane floating cart thake */
 }
 
@@ -526,12 +527,12 @@ footer ul a:hover, footer ul button:hover{ color:var(--leaf); padding-left:4px; 
 .float-cart.bump .fc-top svg{ animation:fcBump .5s ease; }
 @keyframes fcBump{ 0%,100%{ transform:none; } 30%{ transform:scale(1.3) rotate(-8deg); } 60%{ transform:scale(.95) rotate(4deg); } }
 @media (max-width:760px){
-  /* phone-e choto (niche menu-teo cart ache) — shudhu icon + item, taka lukano */
-  .float-cart, .float-cart:hover{ width:50px; top:60%; border-radius:10px 0 0 10px; }
-  .float-cart .fc-top{ padding:8px 3px 7px; gap:2px; }
+  /* phone-e choto — icon + item + taka */
+  .float-cart, .float-cart:hover{ width:60px; top:60%; border-radius:10px 0 0 10px; }
+  .float-cart .fc-top{ padding:8px 3px 6px; gap:2px; }
   .float-cart .fc-top svg{ width:19px; height:19px; }
-  .float-cart .fc-count{ font-size:10px; }
-  .float-cart .fc-total{ display:none; }
+  .float-cart .fc-count{ font-size:10.5px; }
+  .float-cart .fc-total{ font-size:11px; padding:4px 2px; }
 }
 .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--pine); color:#fff; padding:13px 22px; border-radius:999px;
   font-size:14px; font-weight:700; opacity:0; visibility:hidden; transition:.25s; z-index:70; box-shadow:var(--shadow-h); display:flex; gap:8px; align-items:center; max-width:calc(100vw - 32px); text-align:center; }
@@ -907,6 +908,14 @@ footer ul a:hover, footer ul button:hover{ color:var(--leaf); padding-left:4px; 
 .ai-bubble{ background:#fff; border:1px solid var(--line); border-radius:4px 16px 16px 16px; padding:10px 13px; font-size:14px; line-height:1.6; width:fit-content; max-width:100%; overflow-wrap:anywhere; color:var(--pine); }
 .ai-bubble b{ color:var(--leaf-d); }
 .ai-msg.me .ai-bubble b{ color:#fff; }
+.ai-bubble[lang="bn"]{ font-family:'Hind Siliguri', var(--body); font-size:14.5px; }
+/* uttorer niche choto "Translate to English" / "বাংলায় দেখুন" */
+.ai-tr{ align-self:flex-start; margin-top:-3px; display:inline-flex; align-items:center; gap:5px; padding:3px 9px 3px 7px; border-radius:999px;
+  font-size:12px; font-weight:700; color:var(--leaf-d); background:var(--leaf-ll); border:1px solid var(--leaf-l); transition:.15s; }
+.ai-tr::before{ content:""; width:13px; height:13px; background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18'/%3E%3C/svg%3E") center/contain no-repeat; }
+.ai-tr:hover{ background:var(--leaf); border-color:var(--leaf); color:#fff; }
 .ai-doc{ font-size:12.5px; font-weight:700; color:#9a3412; background:#FFF1E6; border:1px solid #fed7aa; border-radius:10px; padding:7px 10px; width:fit-content; }
 .ai-prods{ display:flex; flex-direction:column; gap:7px; }
 .ai-prod{ display:flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:7px; transition:border-color .15s; }
